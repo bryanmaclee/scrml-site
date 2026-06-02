@@ -1,39 +1,54 @@
-# scrml.dev viewer — C1 self-demo (increment 1)
+# scrml-site — the scrml self-demo viewer (C1, increment 1)
 
-A credibility-first showcase: a scrml app that dissects another scrml app. The
-viewer runs a REAL compiled flagship next to its REAL `.scrml` source, its REAL
-compiled JS/HTML/CSS, and a REAL engine "what-comes-next" diagram — with
+A credibility-first showcase: **a scrml app that dissects another scrml app**.
+The viewer runs a REAL compiled flagship next to its REAL `.scrml` source, its
+REAL compiled JS/HTML/CSS, and a REAL engine "what-comes-next" diagram — with
 hover-provenance driven by the REAL compiler-emitted `.js.map`.
+
+This repo **consumes scrmlTS as a dependency** (not a vendored compiler copy) —
+the strongest version of "it's a scrml app": it dogfoods the real adopter
+install. Test assets (the `examples/` corpus) stay in scrmlTS and are referenced
+cross-repo through that dependency.
+
+## Setup (one-time)
+
+scrmlTS is wired as a **linked dependency**. With the sibling `scrmlTS` repo
+registered via `bun link` (run `bun link` once inside `../scrmlTS`):
+
+```
+bun link scrmlts
+```
+
+This symlinks `node_modules/scrmlts` → the sibling `scrmlTS` and installs the
+`scrml` binary into `node_modules/.bin`. The serve + build scripts use that
+binary and resolve the compiler API + `examples/` corpus through the package.
 
 ## Serve it
 
 ```
-scrml dev docs/website-viewer/
+bash scripts/serve.sh [PORT]   # default port 8787
 ```
 
-This compiles ONLY `docs/website-viewer/*.scrml` (its own `<program>` root +
-pages + components) and serves it with hot reload on its own port. The
-precomputed flagship artifacts under `data/` are served as static files by the
-same Bun.serve static fallback.
-
-### Path coexistence guarantee
-
-The viewer is a SEPARATE compile unit. The existing 97-page site
-(`docs/website/app.scrml` + `docs/website/pages/`) is untouched and still works
-exactly as before via `scrml dev docs/website/`. Full replacement of the site by
-the viewer is a later increment.
+`scrml dev` compiles this repo's `.scrml` sources (the `<program>` root + pages
++ components) and serves them with hot reload. The precomputed flagship
+artifacts under `data/` are exposed via a `dist/data → ../data` symlink that the
+script maintains, so `/data/mario/*` resolve through the same Bun.serve static
+fallback. (Friction note: `scrml dev` has no `--static <dir>` / `public/`
+convention — that symlink is the glue.)
 
 ## Regenerate the flagship artifacts
 
 ```
-bash docs/website-viewer/scripts/build-artifacts.sh
-# (or directly:)  bun docs/website-viewer/scripts/build-artifacts.mjs
+bash scripts/build-artifacts.sh
+# (or directly:)  bun run scripts/build-artifacts.mjs
 ```
 
-This single-file-compiles `examples/14-mario-state-machine.scrml` with
+This single-file-compiles `scrmlts/examples/14-mario-state-machine.scrml`
+(resolved through the linked dependency into the sibling scrmlTS) with
 `sourceMap` + engine-graph on, copies the verbatim source, and writes
 `data/mario/manifest.json`. Single-file ON PURPOSE — it dodges the engine-graph
 multi-file write-loop bug (only mis-writes when many inputs compile together).
+The committed `data/mario/` artifacts are byte-reproducible by this script.
 
 ## What's REAL vs faked
 
@@ -66,6 +81,8 @@ JS; HTML/CSS provenance is Phase 2).
 - `lib/provenance.scrml` — pure VLQ + index helpers.
 - `data/mario/` — precomputed flagship artifacts.
 - `scripts/build-artifacts.{sh,mjs}` — the reproducible precompute.
+- `scripts/serve.sh` — canonical serve (compile + dist/data symlink + dev server).
+- `package.json` — declares the `scrmlts` linked dependency (`bun link scrmlts`).
 
 ## DONE (inc1) vs DEFERRED (inc2)
 

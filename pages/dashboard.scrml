@@ -1,4 +1,4 @@
-// docs/website/viewer/pages/dashboard.scrml — the /dashboard route (inc1 STUB).
+// pages/dashboard.scrml — the /dashboard route (inc1 STUB).
 //
 // inc1 is a STATIC STUB, not the live dashboard. The real verification
 // dashboard (dashboard/app.scrml) is a server-side scrml app that reads

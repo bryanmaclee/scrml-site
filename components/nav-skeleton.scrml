@@ -1,4 +1,4 @@
-// docs/website/viewer/components/nav-skeleton.scrml
+// components/nav-skeleton.scrml
 //
 // The deliberately-plain-HTML nav for the C1 self-demo viewer + the
 // dashboard-embed STUB. Per the ratified nav_and_dashboard constraint: NO

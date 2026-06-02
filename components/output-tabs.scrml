@@ -1,4 +1,4 @@
-// docs/website/viewer/components/output-tabs.scrml
+// components/output-tabs.scrml
 //
 // Pure helpers for the tabbed JS / HTML / CSS output pane. The host page owns
 // the @activeTab engine (a 3-variant enum is the idiomatic scrml shape) and the

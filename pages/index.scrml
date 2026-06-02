@@ -1,4 +1,4 @@
-// docs/website/viewer/pages/index.scrml — the flagship showcase (/).
+// pages/index.scrml — the flagship showcase (/).
 //
 // Left ~60%: the LIVE flagship app (an <iframe> of the flagship's own compiled
 // mario.html — clean isolation, REAL artifact).

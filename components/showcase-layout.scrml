@@ -1,4 +1,4 @@
-// docs/website/viewer/components/showcase-layout.scrml
+// components/showcase-layout.scrml
 //
 // REFERENCE-ONLY in inc1. The showcase layout is inlined directly in
 // pages/index.scrml because the panes need the page's shared reactive

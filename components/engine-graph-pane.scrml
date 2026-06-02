@@ -1,4 +1,4 @@
-// docs/website/viewer/components/engine-graph-pane.scrml
+// components/engine-graph-pane.scrml
 //
 // Renders the engine "what-comes-next" box from the --emit-engine-graph JSON
 // (EngineGraph shape from engine-graph.ts):

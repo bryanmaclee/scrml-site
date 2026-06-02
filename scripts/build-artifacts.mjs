@@ -15,27 +15,32 @@
 // (hand-off-155 line 37) only mis-writes when many inputs compile together;
 // compiling mario alone yields a correct mario.engine-graph.json.
 //
-// Regenerate:  bun docs/website/viewer/scripts/build-artifacts.mjs
-import { compileScrml } from "../../../compiler/src/api.js";
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
+// Regenerate:  bun run scripts/build-artifacts.mjs   (or scripts/build-artifacts.sh)
+//
+// scrmlTS is consumed as a LINKED DEPENDENCY (bun link scrmlts), not a vendored
+// copy — so the compiler API and the test-asset `examples/` both resolve through
+// the `scrmlts` package, into the sibling scrmlTS repo. This is the real adopter
+// path. (S154 extraction: was ../../../compiler when nested inside scrmlTS.)
+import { compileScrml } from "scrmlts/compiler/src/api.js";
+import { writeFileSync, mkdirSync, copyFileSync } from "node:fs";
+import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = resolve(__dirname, "../../../");
 
 const FLAGSHIPS = [
   {
     id: "mario",
     title: "Super Mario State Machine",
-    source: "examples/14-mario-state-machine.scrml",
+    // resolved through the scrmlts package → sibling scrmlTS/examples/ (test asset)
+    source: "scrmlts/examples/14-mario-state-machine.scrml",
     // base name the compiler derives from the source file (basename w/o ext)
     base: "14-mario-state-machine",
   },
 ];
 
 for (const f of FLAGSHIPS) {
-  const srcAbs = join(REPO_ROOT, f.source);
+  const srcAbs = fileURLToPath(import.meta.resolve(f.source));
   const outDir = join(__dirname, "..", "data", f.id);
   mkdirSync(outDir, { recursive: true });
 

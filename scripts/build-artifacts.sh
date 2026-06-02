@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# build-artifacts.sh — reproducible precompute of the C1 viewer's flagship
+# build-artifacts.sh — reproducible precompute of the viewer's flagship
 # artifacts. Thin wrapper over build-artifacts.mjs (the real work). Run from
 # the repo root:
 #
-#   bash docs/website-viewer/scripts/build-artifacts.sh
+#   bash scripts/build-artifacts.sh
 #
-# Produces, under docs/website-viewer/data/mario/:
+# Produces, under data/mario/:
 #   14-mario-state-machine.client.js        — real compiled client JS
 #   14-mario-state-machine.client.js.map    — real Source Map v3 (names + x_scrml_kinds)
 #   14-mario-state-machine.html / .css      — real compiled output
@@ -19,5 +19,4 @@
 # `--sourceMap` / `--source-map` CLI flag wired to the existing API option).
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$HERE/../../.." && pwd)"
 exec bun run "$HERE/build-artifacts.mjs"

@@ -1,0 +1,14 @@
+{
+  "name": "scrml-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "scrml self-demo showcase — a scrml app that dissects another scrml app",
+  "scripts": {
+    "serve": "bash scripts/serve.sh",
+    "build:artifacts": "bun run scripts/build-artifacts.mjs"
+  },
+  "dependencies": {
+    "scrmlts": "link:scrmlts"
+  }
+}

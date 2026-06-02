@@ -1,8 +1,7 @@
-// docs/website/viewer/app.scrml — the C1 self-demo VIEWER root program.
+// app.scrml — the scrml-site self-demo VIEWER root program.
 //
-// A SEPARATE compile unit from docs/website/app.scrml (the 97-page site). The
-// existing site is untouched; this viewer is independently servable:
-//   scrml dev docs/website/viewer/
+// Independently servable from this repo root:
+//   bash scripts/serve.sh
 //
 // The viewer is a credibility harness: it shows a REAL compiled flagship app
 // running next to its REAL .scrml source, its REAL compiled JS/HTML/CSS, and a

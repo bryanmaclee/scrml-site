@@ -1,4 +1,4 @@
-// docs/website/viewer/components/source-pane.scrml
+// components/source-pane.scrml
 //
 // Pure render helpers for the syntax-highlighted, hover-instrumented .scrml
 // source pane. The MAPPING (which line lights up) is REAL — driven by the
