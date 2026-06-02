@@ -1,5 +1,66 @@
 # scrml-site — hand-off
 
+## Session 2 — inc2 #2: 25-triage-board as a 2nd flagship + selector (2026-06-02)
+
+Added `25-triage-board` as a second dissected flagship with a data-driven
+selector. **Gold-verified in Chromium (15/15). NOT pushed** (held for push
+coordination / user authorization).
+
+**Done:**
+1. **build-artifacts.mjs** — added `triage` to `FLAGSHIPS`
+   (`scrmlts/examples/25-triage-board.scrml`, base `25-triage-board`) + a new
+   `sourceFile` manifest field (the honest "Source — <file>.scrml" label).
+   Rebuilds BOTH; mario compiler outputs stayed byte-identical (only
+   `manifest.json` gained the one `sourceFile` line). `data/triage/` is the full
+   precompute (client.js, .js.map w/ x_scrml_kinds, html, css, source,
+   `triage.engine-graph.json` = DragPhase Idle↔Dragging, runtime).
+2. **pages/index.scrml** — flagship selector:
+   - `<flagshipId>`/`<flagships>`/`<sourceName>` cells; `fn flagshipList()`
+     (object-build-in-fn) drives data-driven `for ... lift` selector buttons.
+   - `loadArtifacts()` parameterized off `@flagshipId`
+     (`const base = "/data/" + @flagshipId + "/"`).
+   - Live iframe = two `if=`-gated **literal-src** iframes (mario/triage) — only
+     the active one mounts/runs. Deliberately NO reactive-attribute interpolation
+     on the iframe src (lowest-risk given documented attr friction).
+   - Source-pane label is reactive `${@sourceName}`.
+
+**COMPILER FINDING (candidate report to scrmlTS — see below):** Tier-0
+`${ for ... lift }` lists render via `_scrml_reconcile_list(wrapper, items,
+item => item.id ?? index, createItem)`. Our line items carry **no `id`**, so they
+key **by index**. Replacing the backing cell in place (mario→triage) reuses
+index-matched DOM nodes and only patches *reactive* bindings — the create-time
+**static interpolated line text stays stale**. (Per-element `class:`/`if=`
+toggles DO update — which is why provenance kept working but text didn't.)
+**Workaround (landed):** `selectFlagship()` clears every list cell to `[]` first,
+then `loadArtifacts()` refills — routing through empty forces a full recreate
+(the same []→content path the initial mount uses). This is the FIRST feature to
+re-render a list **post-mount**; the prior app only did per-element toggles over
+a once-built list, so it never hit this. `<each>` (Tier-1) reconciles on change
+but loses hover wiring (friction #7) — so neither stock path is clean for a
+hover-wired list that must re-render. Worth a scrmlTS signal.
+
+**Gold-verify (Chromium via scrmlTS playwright), 15/15 PASS:** default=mario;
+forward provenance on BOTH (mario src L49 → hot cell; triage src L98 → hot cell —
+different lines prove the source list genuinely re-rendered); switch→triage
+re-renders source + engine (DragPhase) + iframe + JS; button active-state flips;
+switch back restores mario. Screenshots: `/tmp/gold-verify-2flagship.png`
+(mario), `/tmp/shot-triage.png` (triage engine graph renders Idle↔Dragging).
+Test: `/tmp/gold-verify-2flagship.mjs` (playwright imported by absolute path;
+CommonJS default-import form).
+
+**Env note:** fresh checkout had NO `node_modules` — ran `bun install` (resolves
+`scrmlts: link:scrmlts` → sibling). `bun.lock` is now tracked (machine-INDEPENDENT;
+no absolute paths). The dev-server watcher did NOT hot-recompile a `.scrml` edit
+this session — had to restart `serve.sh` to serve fresh JS (minor friction).
+
+**Remaining inc2 backlog (pick next):** KB-nav, PE-layer toggle, postMessage
+live-pane↔source hover (needs provenance bridge in flagship build), Phase-2
+HTML/CSS provenance (blocked: needs compiler HTML/CSS maps), live server-side
+dashboard embed (blocked: needs `scrml:fs`). More flagships are now trivial: add
+to `FLAGSHIPS` + `flagshipList()` + one `if=`-gated iframe line. Parked:
+engine-graph multi-file write-loop bug. Watch inbox for scrmlTS scandir fix →
+then optionally simplify serve.sh to `scrml dev .`.
+
 ## Session 1 — extraction finish + first inc2 increment (2026-06-02)
 
 Did carry-forwards 1–3 + the first inc2 deliverable. **PUSHED to `origin/main`**
