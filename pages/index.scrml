@@ -259,6 +259,18 @@
         <title>  = "flagship"
         <loaded> = false
 
+        // ── flagship selector state (inc2: 2nd flagship) ──
+        // @flagshipId is the dissected flagship's data/ subdir id. loadArtifacts()
+        // reads /data/<flagshipId>/manifest.json, so flipping this + re-loading
+        // re-points EVERY reactive right-side pane at once (each pane is driven by
+        // a cell loadArtifacts() reassigns; reassigning a cell that backs a
+        // `for ... lift` loop re-renders it — same mechanism triage-board uses for
+        // @tasks). @flagships is the selector's data source (built on mount).
+        // @sourceName is the per-flagship source filename for the source label.
+        <flagshipId> = "mario"
+        <flagships>  = []
+        <sourceName> = ""
+
         // Output-tab selector. The architecture wants an <engine for=OutputTab>
         // here (idiomatic), but a plain reactive cell is used instead: it drives
         // the same .Js/.Html/.Css selection via if= without rendering an empty
@@ -276,6 +288,17 @@
             return g.engines
         }
 
+        // The flagship registry — the selector's data source. Object construction
+        // lives in a fn (FRICTION note). `id` is the data/ subdir name; the live
+        // iframe is gated per-id in the left pane (literal src, no reactive-attr
+        // interpolation — the lowest-risk shape given attribute friction).
+        fn flagshipList() -> any {
+            let out = []
+            out.push({ id: "mario",  title: "Super Mario State Machine" })
+            out.push({ id: "triage", title: "Triage Board" })
+            return out
+        }
+
         // ── client functions (state writes) ──
 
         function setActiveSourceLine(ln) { @activeSourceLine = ln }
@@ -286,43 +309,75 @@
         // srcLine 0 cells (no origin) clear the highlight.
         function hoverCell(srcLine) { @activeSourceLine = srcLine }
 
+        // Switch the dissected flagship: repoint the data path, clear the hover
+        // highlight, then re-load.
+        //
+        // CLEAR-THEN-REFILL (load-bearing): the compiler renders each `for ... lift`
+        // pane with `_scrml_reconcile_list` keyed by `item.id ?? index`. Our line
+        // items carry no `id`, so they key BY INDEX — and replacing @sourceLines
+        // mario->triage in place reuses indices 0..N, patching only reactive
+        // bindings while the create-time-static line TEXT stays stale. Routing the
+        // change THROUGH [] removes every keyed node first, so the refill creates
+        // all nodes fresh (the same []→content path the initial mount uses, which
+        // works). So: empty every list cell here, then loadArtifacts() refills.
+        function selectFlagship(id) {
+            @flagshipId = id
+            @activeSourceLine = 0
+            @loaded = false
+            @sourceLines = []
+            @htmlLines   = []
+            @cssLines    = []
+            @jsCellLines = []
+            @engines     = []
+            loadArtifacts()
+        }
+
         // ── artifact load (on mount) ──
         // Fetch the manifest, then the source / map / outputs / engine-graph.
         // No async/await — fetch().then() is the JS-host path; reactive writes
         // inside .then callbacks compile to _scrml_reactive_set correctly.
 
         function loadArtifacts() {
-            fetch("/data/mario/manifest.json").then((r) => r.json()).then((m) => {
+            const base = "/data/" + @flagshipId + "/"
+            fetch(base + "manifest.json").then((r) => r.json()).then((m) => {
                 @title = m.title
-                fetch("/data/mario/" + m.source).then((r) => r.text()).then((t) => {
+                @sourceName = m.sourceFile
+                fetch(base + m.source).then((r) => r.text()).then((t) => {
                     @sourceText  = t
                     @sourceLines = toLines(t)
                 })
                 // JS + its map are fetched as a NESTED pair: the cell partition
                 // needs the generated JS text, so build it from the local `t`
                 // inside the map's .then — no cross-fetch reactive race.
-                fetch("/data/mario/" + m.clientJs).then((r) => r.text()).then((t) => {
-                    fetch("/data/mario/" + m.jsMap).then((r) => r.json()).then((map) => {
+                fetch(base + m.clientJs).then((r) => r.text()).then((t) => {
+                    fetch(base + m.jsMap).then((r) => r.json()).then((map) => {
                         let segs = parseMappings(map.mappings)
                         @jsCellLines = buildJsCellLines(t, segs, map.x_scrml_kinds)
                         @loaded = true
                     })
                 })
-                fetch("/data/mario/" + m.html).then((r) => r.text()).then((t) => {
+                fetch(base + m.html).then((r) => r.text()).then((t) => {
                     @htmlText  = t
                     @htmlLines = toLines(t)
                 })
-                fetch("/data/mario/" + m.css).then((r) => r.text()).then((t) => {
+                fetch(base + m.css).then((r) => r.text()).then((t) => {
                     @cssText  = t
                     @cssLines = toLines(t)
                 })
-                fetch("/data/mario/" + m.engineGraph).then((r) => r.text()).then((t) => {
+                fetch(base + m.engineGraph).then((r) => r.text()).then((t) => {
                     @engines = enginesOf(t)
                 })
             })
         }
 
-        on mount { loadArtifacts() }
+        // Single-statement on-mount call (multi-statement bodies are avoided —
+        // see FRICTION); init() populates the selector + loads the default flagship.
+        function init() {
+            @flagships = flagshipList()
+            loadArtifacts()
+        }
+
+        on mount { init() }
     }
 
     #{
@@ -434,6 +489,22 @@
 
         .showcase-intro h1 { font-size: 1.4rem; margin: 0 0 0.25rem; color: rgb(241 245 249); }
         .showcase-intro p { color: rgb(148 163 184); margin: 0 0 1rem; font-size: 0.9rem; }
+
+        /* flagship selector */
+        .flag-switch { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1rem; flex-wrap: wrap; }
+        .flag-switch-label { font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: rgb(100 116 139); }
+        .flag-btn {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.78rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 0.4rem;
+            border: 1px solid rgb(51 65 85);
+            background-color: rgb(15 23 42);
+            color: rgb(148 163 184);
+            cursor: pointer;
+        }
+        .flag-btn:hover { border-color: rgb(56 189 248 / 0.4); color: rgb(203 213 225); }
+        .flag-btn.flag-active { background-color: rgb(56 189 248 / 0.15); color: rgb(125 211 252); border-color: rgb(56 189 248 / 0.5); }
     }
 
     <div class="showcase-intro">
@@ -448,12 +519,30 @@
         </p>
     </div>
 
+    // ── flagship selector (inc2) — data-driven over @flagships; clicking a
+    //    button re-points loadArtifacts() at that flagship's data/ subdir ──
+    <div class="flag-switch">
+        <span class="flag-switch-label">Flagship:</span>
+        ${
+            for (let f of @flagships) {
+                lift <button class="flag-btn"
+                    class:flag-active=(@flagshipId == f.id)
+                    onclick=selectFlagship(f.id)>${f.title}</button>
+            }
+        }
+    </div>
+
     <div class="showcase-grid">
 
         // ── LEFT: live flagship (real artifact, iframe-isolated) ──
         <div class="pane">
             <div class="pane-label">Live app — real compiled artifact</div>
-            <iframe class="showcase-iframe" src="/data/mario/14-mario-state-machine.html" title="live flagship app"></iframe>
+            // One iframe per flagship, gated by if= on @flagshipId — only the
+            // active one is mounted (so only it runs), and switching cleanly
+            // re-mounts the other. Literal src per flagship (no reactive-attribute
+            // interpolation), keeping the load-bearing iframe on proven primitives.
+            <iframe class="showcase-iframe" if=(@flagshipId == "mario")  src="/data/mario/14-mario-state-machine.html" title="live flagship app"></iframe>
+            <iframe class="showcase-iframe" if=(@flagshipId == "triage") src="/data/triage/25-triage-board.html" title="live flagship app"></iframe>
             <p class="showcase-live-note">
                 The actual compiled flagship — the same
                 <span class="mono">.client.js</span> dissected on the right.
@@ -475,7 +564,7 @@
             // via class: toggles (no `${}` in attribute values, which is the
             // part that is still broken in BOTH paths).
             <div class="pane">
-                <div class="pane-label">Source — 14-mario-state-machine.scrml (hover a line)</div>
+                <div class="pane-label">Source — ${@sourceName} (hover a line)</div>
                 <div class="code" onmouseleave=clearActive()>
                     ${
                         for (let ln of @sourceLines) {

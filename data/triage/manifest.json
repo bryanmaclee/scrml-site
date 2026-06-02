@@ -1,0 +1,11 @@
+{
+  "title": "Triage Board",
+  "flagship": "triage",
+  "sourceFile": "25-triage-board.scrml",
+  "source": "source.scrml.txt",
+  "clientJs": "25-triage-board.client.js",
+  "jsMap": "25-triage-board.client.js.map",
+  "html": "25-triage-board.html",
+  "css": "25-triage-board.css",
+  "engineGraph": "triage.engine-graph.json"
+}

@@ -1,0 +1,55 @@
+{
+  "engines": [
+    {
+      "varName": "dragPhase",
+      "forType": "DragPhase",
+      "initialState": "Idle",
+      "derived": false,
+      "variants": [
+        "Idle",
+        "Dragging"
+      ],
+      "transitions": [
+        {
+          "from": "Dragging",
+          "to": "Idle",
+          "wildcard": false
+        },
+        {
+          "from": "Idle",
+          "to": "Dragging",
+          "wildcard": false
+        }
+      ],
+      "states": [
+        {
+          "tag": "Dragging",
+          "next": [
+            "Idle"
+          ],
+          "hasEffect": false,
+          "lifecycle": {
+            "onTransition": false,
+            "onTimeout": false,
+            "internalRule": false,
+            "history": false
+          }
+        },
+        {
+          "tag": "Idle",
+          "next": [
+            "Dragging"
+          ],
+          "hasEffect": false,
+          "lifecycle": {
+            "onTransition": false,
+            "onTimeout": false,
+            "internalRule": false,
+            "history": false
+          }
+        }
+      ],
+      "hasOpenerEffect": false
+    }
+  ]
+}

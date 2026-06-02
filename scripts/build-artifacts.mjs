@@ -37,6 +37,14 @@ const FLAGSHIPS = [
     // base name the compiler derives from the source file (basename w/o ext)
     base: "14-mario-state-machine",
   },
+  {
+    id: "triage",
+    title: "Triage Board",
+    // the other engine-heavy corpus example (DragPhase: Idle <-> Dragging).
+    // Single-file, compiles standalone — same precompute path as mario.
+    source: "scrmlts/examples/25-triage-board.scrml",
+    base: "25-triage-board",
+  },
 ];
 
 for (const f of FLAGSHIPS) {
@@ -77,6 +85,8 @@ for (const f of FLAGSHIPS) {
   const manifest = {
     title: f.title,
     flagship: f.id,
+    // the original example filename (for the honest "Source — <file>.scrml" label)
+    sourceFile: `${f.base}.scrml`,
     source: "source.scrml.txt",
     clientJs: `${f.base}.client.js`,
     jsMap: `${f.base}.client.js.map`,
