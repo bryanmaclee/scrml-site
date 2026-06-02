@@ -90,4 +90,4 @@ status: unread
 
 ## Remote
 
-The GitHub remote is **not yet created** (extraction was local-first on 2026-06-02). Creating the remote + first push needs the user (git-credential-manager can't prompt headlessly). Until then this repo is local-only with its full history in the initial commit.
+`origin` = `git@github.com:bryanmaclee/scrml-site.git` (created + first-pushed 2026-06-02, `f9fe388`). **Use the SSH remote, not HTTPS** — HTTPS routes through git-credential-manager, which hangs in headless/non-interactive shells; the SSH key pushes cleanly. (This is why scrmlTS also uses an SSH remote while giti/scrml are on HTTPS.)
