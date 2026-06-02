@@ -1,0 +1,6 @@
+# scrml-site
+node_modules/
+.scrml-cache/
+dist/
+*.log
+.DS_Store
