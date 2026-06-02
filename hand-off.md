@@ -34,6 +34,10 @@ with no skip + follows symlinks, so `scrml dev .` tries to compile the whole
 linked scrmlTS repo and never listens. **Workaround in serve.sh:** pass the
 app's own `.scrml` files explicitly (same inputFiles set, minus node_modules).
 Once scrmlTS fixes scanDirectory, `scrml dev .` could replace the explicit list.
+**scrmlTS PA replied (read/2026-06-02-0633): CONFIRMED, fix shape accepted
+(skip dirs + lstatSync), QUEUED HIGH for next scrmlTS code session, workaround
+endorsed. Watch the inbox for the landing notice → then optionally simplify
+serve.sh back to `scrml dev .`.**
 
 **Remaining inc2 backlog** (pick next): more flagships + selector (only
 25-triage-board is the other engine-heavy example — mario already shipped),
