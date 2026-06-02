@@ -6,10 +6,13 @@
 // diagram (middle), tabbed JS/HTML/CSS OUTPUT (bottom).
 //
 // HOVER-PROVENANCE (the credibility thesis): hovering a scrml source line
-// highlights the spans in the active output tab that the compiler generated
-// from that line — driven by the REAL .js.map (names + x_scrml_kinds), parsed
-// in pure scrml by lib/provenance.scrml. Reverse: hovering a JS output line
-// lights its source line. Line-granularity. JS tab only (HTML/CSS provenance
+// highlights the exact spans in the JS output that the compiler generated from
+// that line — driven by the REAL .js.map (mappings + names + x_scrml_kinds).
+// COLUMN-PRECISION (inc2): each generated JS line is pre-split into cells at the
+// map's segment boundaries, so only the precise character ranges light up — not
+// the whole row. Reverse: hovering a JS cell lights its source line (and every
+// sibling cell from that line). Source side stays line-grained (the map
+// partitions generated positions, not source). JS tab only (HTML/CSS provenance
 // is Phase 2). Synthetic generated lines have no author origin and never light
 // up (by design — the 'some lines dead' read is intentional).
 //
@@ -117,34 +120,88 @@
             return out
         }
 
-        // forward index: source-line (1-based) -> [generated-line, ...]; synthetic excluded.
-        fn buildForwardIndex(segments: [Segment], kinds: [string]) {
-            let fwd = {}
-            for (let seg of segments) {
-                if (seg.srcLine < 0) { continue }
-                let kind = kinds[seg.genLine]
-                if (kind == "synthetic") { continue }
-                let srcKey = "" + (seg.srcLine + 1)
-                let genLine1 = seg.genLine + 1
-                let bucket = fwd[srcKey]
-                if (bucket is not) { bucket = [] }
-                if (not bucket.includes(genLine1)) { bucket.push(genLine1) }
-                fwd[srcKey] = bucket
+        // ── COLUMN-PRECISION provenance (inc2) ──────────────────────────────
+        // Instead of a line→line index, partition each GENERATED line into
+        // CELLS at the .js.map segment boundaries. Each cell is a run of
+        // characters [genCol, nextGenCol) tagged with the 1-based SOURCE line
+        // it was generated from (srcLine 0 = no origin / synthetic — never
+        // lights). Consecutive runs from the same source line are merged so a
+        // highlight is one contiguous span, not a row of boxed fragments.
+        //
+        // The generated (JS) side is the well-defined direction for column
+        // precision: the map partitions GENERATED positions. So we light exact
+        // character ranges in the JS output; the source side stays line-grained
+        // (source spans are not partitioned by the map).
+
+        // Partition one generated line into merged cells. `synthetic == 1` forces
+        // every cell on the line to srcLine 0 (the whole line has no author origin).
+        fn cellsForLine(lineText: string, segsOnLine: [Segment], synthetic: number) -> any {
+            let len = lineText.length
+            let cells = []
+            if (segsOnLine.length == 0) {
+                cells.push({ text: lineText, srcLine: 0 })
+                return cells
             }
-            return fwd
+            let curText = ""
+            let curSrc = 0 - 2                  // sentinel: nothing accumulated yet
+            let first = segsOnLine[0].genCol
+            if (first > 0) {                    // leading chars before the first mapping
+                curText = lineText.substring(0, first)
+                curSrc = 0
+            }
+            let i = 0
+            while (i < segsOnLine.length) {
+                let startCol = segsOnLine[i].genCol
+                if (startCol > len) { startCol = len }
+                let endCol = len                // last mapping extends to end of line
+                if (i + 1 < segsOnLine.length) {
+                    let nextStart = segsOnLine[i + 1].genCol
+                    if (nextStart < endCol) { endCol = nextStart }
+                }
+                let srcL = 0
+                if (synthetic == 0 && segsOnLine[i].srcLine >= 0) { srcL = segsOnLine[i].srcLine + 1 }
+                if (endCol > startCol) {
+                    let piece = lineText.substring(startCol, endCol)
+                    if (srcL == curSrc) {
+                        curText = curText + piece
+                    } else {
+                        if (curSrc != (0 - 2)) { cells.push({ text: curText, srcLine: curSrc }) }
+                        curText = piece
+                        curSrc = srcL
+                    }
+                }
+                i = i + 1
+            }
+            if (curSrc != (0 - 2)) { cells.push({ text: curText, srcLine: curSrc }) }
+            if (cells.length == 0) { cells.push({ text: lineText, srcLine: 0 }) }
+            return cells
         }
 
-        // reverse index: generated-line (1-based) -> source-line (1-based); synthetic skipped.
-        fn buildReverseIndex(segments: [Segment], kinds: [string]) {
-            let rev = {}
+        // Build the ordered list of generated lines, each pre-split into cells:
+        // [{ n: <1-based gen line>, cells: [{ text, srcLine }] }]. Built ONCE on
+        // load (atomic), so the render loops iterate static data and only the
+        // per-cell `out-hot` class toggle is reactive.
+        fn buildJsCellLines(jsText: string, segments: [Segment], kinds: [string]) -> any {
+            let lines = jsText.split("\n")
+            let byLine = {}
             for (let seg of segments) {
-                if (seg.srcLine < 0) { continue }
-                let kind = kinds[seg.genLine]
-                if (kind == "synthetic") { continue }
-                let genKey = "" + (seg.genLine + 1)
-                if (rev[genKey] is not) { rev[genKey] = seg.srcLine + 1 }
+                let k = "" + seg.genLine
+                let b = byLine[k]
+                if (b is not) { b = [] }
+                b.push(seg)
+                byLine[k] = b
             }
-            return rev
+            let out = []
+            let gi = 0
+            while (gi < lines.length) {
+                let segsOnLine = byLine["" + gi]
+                if (segsOnLine is not) { segsOnLine = [] }
+                let synthetic = 0
+                if (kinds[gi] == "synthetic") { synthetic = 1 }
+                out.push({ n: gi + 1, cells: cellsForLine(lines[gi], segsOnLine, synthetic) })
+                gi = gi + 1
+            }
+            return out
         }
 
         // Split verbatim text into { n, text } line records (n 1-based).
@@ -179,27 +236,25 @@
         }
 
         // ── raw artifact text + parsed structures (all loaded on mount) ──
+        // JS is held as pre-split cell lines (jsCellLines), not raw text/lines.
         <sourceText> = ""
-        <jsText>     = ""
         <htmlText>   = ""
         <cssText>    = ""
 
         // line lists ({ n, text }) built by toLines() — never inline literals
         <sourceLines> = []
-        <jsLines>     = []
         <htmlLines>   = []
         <cssLines>    = []
 
         // engine-graph JSON (parsed) + its engines array
         <engines> = []
 
-        // provenance indexes (plain dictionaries from the builder fns)
-        <forwardIndex> = {}
-        <reverseIndex> = {}
+        // generated JS lines pre-split into column-precise cells (built once on load)
+        <jsCellLines> = []
 
-        // shared hover state — the panes color-coordinate against these
-        <activeSourceLine>  = 0
-        <activeOutputLines> = []
+        // shared hover state — the panes color-coordinate against this single
+        // 1-based source line; JS cells light when their srcLine matches it.
+        <activeSourceLine> = 0
 
         <title>  = "flagship"
         <loaded> = false
@@ -221,38 +276,15 @@
             return g.engines
         }
 
-        // Look up the output lines for a given source line in the forward index.
-        fn forwardLookup(fwd: any, srcLine: number) -> any {
-            let key = "" + srcLine
-            let hit = fwd[key]
-            if (hit is not) { return [] }
-            return hit
-        }
-
-        // Reverse: output (generated) line -> source line (0 when none).
-        fn reverseLookup(rev: any, outLine: number) -> number {
-            let key = "" + outLine
-            let hit = rev[key]
-            if (hit is not) { return 0 }
-            return hit
-        }
-
         // ── client functions (state writes) ──
 
         function setActiveSourceLine(ln) { @activeSourceLine = ln }
         function clearActive()           { @activeSourceLine = 0 }
 
-        // reverse hover: an output JS line lights its source line
-        function hoverOutputLine(outLine) {
-            @activeSourceLine = reverseLookup(@reverseIndex, outLine)
-        }
-
-        // recompute the highlight set — single-statement `when` body calls this
-        function recomputeActiveOutputs() {
-            @activeOutputLines = forwardLookup(@forwardIndex, @activeSourceLine)
-        }
-
-        when @activeSourceLine changes { recomputeActiveOutputs() }
+        // reverse hover: hovering a JS cell lights its source line (and, by the
+        // same @activeSourceLine, every sibling cell from that source line).
+        // srcLine 0 cells (no origin) clear the highlight.
+        function hoverCell(srcLine) { @activeSourceLine = srcLine }
 
         // ── artifact load (on mount) ──
         // Fetch the manifest, then the source / map / outputs / engine-graph.
@@ -266,9 +298,15 @@
                     @sourceText  = t
                     @sourceLines = toLines(t)
                 })
+                // JS + its map are fetched as a NESTED pair: the cell partition
+                // needs the generated JS text, so build it from the local `t`
+                // inside the map's .then — no cross-fetch reactive race.
                 fetch("/data/mario/" + m.clientJs).then((r) => r.text()).then((t) => {
-                    @jsText  = t
-                    @jsLines = toLines(t)
+                    fetch("/data/mario/" + m.jsMap).then((r) => r.json()).then((map) => {
+                        let segs = parseMappings(map.mappings)
+                        @jsCellLines = buildJsCellLines(t, segs, map.x_scrml_kinds)
+                        @loaded = true
+                    })
                 })
                 fetch("/data/mario/" + m.html).then((r) => r.text()).then((t) => {
                     @htmlText  = t
@@ -280,12 +318,6 @@
                 })
                 fetch("/data/mario/" + m.engineGraph).then((r) => r.text()).then((t) => {
                     @engines = enginesOf(t)
-                })
-                fetch("/data/mario/" + m.jsMap).then((r) => r.json()).then((map) => {
-                    let segs = parseMappings(map.mappings)
-                    @forwardIndex = buildForwardIndex(segs, map.x_scrml_kinds)
-                    @reverseIndex = buildReverseIndex(segs, map.x_scrml_kinds)
-                    @loaded = true
                 })
             })
         }
@@ -362,7 +394,8 @@
 
         /* the REAL provenance highlights */
         .src-active { background-color: rgb(56 189 248 / 0.18) !important; outline: 1px solid rgb(56 189 248 / 0.45); }
-        .out-hot    { background-color: rgb(250 204 21 / 0.20) !important; outline: 1px solid rgb(250 204 21 / 0.5); }
+        /* column-precise: highlights an inline cell (a character range), not the row */
+        .out-hot    { background-color: rgb(250 204 21 / 0.28); border-radius: 2px; box-shadow: 0 0 0 1px rgb(250 204 21 / 0.5); }
 
         /* output tabs */
         .tabs { display: flex; gap: 0.25rem; padding: 0.4rem 0.5rem; border-bottom: 1px solid rgb(30 41 59); background-color: rgb(2 6 23); }
@@ -517,14 +550,22 @@
                     <button class="tab" class:tab-active=(@activeTab == .Css)  onclick=showTab(.Css)>.css</button>
                 </div>
 
-                // JS tab — the ONLY tab with hover-provenance (the .js.map covers JS)
-                <div class="code" if=(@activeTab == .Js)>
+                // JS tab — the ONLY tab with hover-provenance (the .js.map covers
+                // JS). COLUMN-PRECISE: each line is a sequence of cells; a cell
+                // lights only when its source line is the active one, so the exact
+                // character ranges the compiler generated from a source line glow
+                // — not the whole row. Hovering a cell reverse-lights its source.
+                <div class="code" if=(@activeTab == .Js) onmouseleave=clearActive()>
                     ${
-                        for (let jl of @jsLines) {
-                            lift <div class="code-line"
-                                class:out-hot=(@activeOutputLines.includes(jl.n))
-                                onmouseover=hoverOutputLine(jl.n)>
-                                <span class="ln">${jl.n}</span>${jl.text}
+                        for (let line of @jsCellLines) {
+                            lift <div class="code-line">
+                                <span class="ln">${line.n}</span>${
+                                    for (let cell of line.cells) {
+                                        lift <span
+                                            class:out-hot=(cell.srcLine > 0 && cell.srcLine == @activeSourceLine)
+                                            onmouseover=hoverCell(cell.srcLine)>${cell.text}</span>
+                                    }
+                                }
                             </div>
                         }
                     }
