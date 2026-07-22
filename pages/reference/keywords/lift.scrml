@@ -121,7 +121,7 @@
 &#125;
 
 &lt;ul&gt;
-  ${ @contacts.forEach(c =&gt; lift &lt;li&gt;${c.name} &mdash; ${c.email}&lt;/li&gt;) }
+  ${ for (let c of @contacts) { lift &lt;li&gt;${c.name} &mdash; ${c.email}&lt;/li&gt; } }
 &lt;/ul&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">

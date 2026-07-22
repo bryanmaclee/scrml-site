@@ -174,7 +174,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
   &lt;input bind:value=@query placeholder="Search by name"&gt;
 
   &lt;ul&gt;
-    ${ @filtered.forEach(c =&gt; lift &lt;li&gt;${c.name} &mdash; ${c.email}&lt;/li&gt;) }
+    ${ for (let c of @filtered) { lift &lt;li&gt;${c.name} &mdash; ${c.email}&lt;/li&gt; } }
   &lt;/ul&gt;
 
 &lt;/program&gt;</code></pre>

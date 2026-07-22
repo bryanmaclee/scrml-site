@@ -69,7 +69,11 @@
 
         <p class="text-slate-700 leading-relaxed mb-3">
             A minimal chat room. One channel, one synced list, one
-            server function exposed to clients.
+            publisher function. The cell write runs on the CLIENT and
+            syncs to every subscriber automatically (§38.4) — it needs no
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">server</code>
+            keyword, and a server-escalated function may not read a
+            channel cell at all.
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
@@ -77,7 +81,7 @@
   &lt;channel name="chat" topic="lobby"&gt;
     &lt;messages&gt; = []
 
-    ${ server function postMessage(author, body) {
+    ${ function postMessage(author, body) {
         @messages = [...@messages, { author, body, ts: Date.now() }]
     } }
   &lt;/channel&gt;

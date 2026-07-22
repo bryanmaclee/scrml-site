@@ -189,21 +189,23 @@
             One structural primitive; four runtime targets. The developer doesn't choose between four worker libraries; they pick the attribute that matches the placement they want.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
 
   &lt;program name="compute"&gt;
-    ${ export function fibonacci(n: number) -&gt; number &#123;
-      if (n &lt; 2) return n
-      return fibonacci(n - 1) + fibonacci(n - 2)
-    &#125; }
+    ${ f&#117;nction fibonacci(n: number) -&gt; number {
+      i&#102; (n &lt; 2) r&#101;turn n
+      r&#101;turn fibonacci(n - 1) + fibonacci(n - 2)
+    } }
+    wh&#101;n message(data) {
+      send(fibonacci(data))
+    }
   &lt;/&gt;
 
   &lt;result&gt; = 0
 
-  function go() &#123;
-    const r = a&#119;ait &lt;#compute&gt;.fibonacci(35)
-    @result = r
-  &#125;
+  ${ f&#117;nction go() {
+    @result = &lt;#compute&gt;.send(35)
+  } }
 
   &lt;button onclick=go()&gt;Compute&lt;/button&gt;
   &lt;p&gt;${@result}&lt;/p&gt;

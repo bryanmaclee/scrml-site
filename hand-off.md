@@ -1,5 +1,74 @@
 # scrml-site — hand-off
 
+## Session 5 — CONTENT AUDIT of the migrated wiki (2026-07-22)
+
+Audited the ~99 migrated pages for prose/semantics drift against v0.7.1. Made it
+**executable** rather than reading 99 pages: extracted all **140 `<pre><code>`
+samples** from the built site and compiled each against the linked compiler.
+Docs that don't compile are provably wrong.
+
+**4 REAL DOC BUGS FOUND AND FIXED** (each isolated to a minimal repro, fixed, and
+re-verified compiling):
+1. **`reference/keywords/lift.scrml`** — documented `${ @contacts.forEach(c => lift
+   <li>…</li>) }`. Not lowerable → `E-CODEGEN-INVALID-LOGIC`. **The `lift` page was
+   documenting `lift` with an idiom that does not compile.** → `for (let c of …) {
+   lift … }`.
+2. **`reference/keywords/derived.scrml`** — same `forEach + lift` idiom. Same fix.
+3. **`articles/why-deprecate-overloading.scrml`** — 6× `if (not fn(…))`, i.e. the
+   REMOVED boolean-negation `not` (`E-TYPE-045`). `not` is the absence value; `!`
+   negates. (Source obfuscates keywords as numeric char refs — `n&#111;t` — so the
+   page's own compile doesn't parse them; fixed in that encoding.)
+4. **`reference/elements/channel.scrml`** — the worked example had a
+   `server function` READING the channel cell `@messages` →
+   `E-CHANNEL-SERVER-CELL-READ`. Per SPEC §38.4 a channel-cell WRITE is
+   **client-side** and auto-syncs; it needs no `server` keyword. Dropped the
+   keyword, and **reconciled the caption**, which still said "one server function
+   exposed to clients" and would otherwise have contradicted the corrected code.
+5. **`articles/realtime-and-workers.scrml`** — the worker example used
+   `export function` + `await <#compute>.fibonacci(35)`. **That API does not
+   exist.** SPEC §4.12.4: workers use `when message(data) { … send(result) }` in
+   the worker and `<#name>.send(value)` in the parent. Rewritten to the normative
+   protocol; verified exit 0.
+
+**VERIFIED NOT BUGS — tested before touching, deliberately left alone:**
+- **`server function` is still valid.** 31 uses across 11 pages. Compiles clean,
+  no deprecation warning. I nearly "fixed" all 31 off the SPEC's phrase "the
+  deprecated `server` keyword" — that phrasing is scoped to channel-publisher
+  escalation, not the keyword generally. **Test before mass-editing docs.**
+- **Plain `forEach` (no `lift`) is valid** — `learn/validators.scrml` untouched.
+- **11 error-reference pages fail with their own error code** — that is the
+  documentation being CORRECT, not broken. Auto-excluded by the tool.
+- `/reference/elements/page #1` "failure" is a **directory listing** in a `<pre>`,
+  not code — an extractor false positive.
+
+**LANDED THE AUDIT AS A TOOL — `scripts/audit-samples.mjs`** (advisory, never
+blocks). Extracts every documented sample from `dist/`, classifies
+(self-contained / fragment / skeleton / shell), auto-excludes error-page
+self-demos, compiles each, and reports **self-contained failures as actionable**.
+Header documents the caveat: fragment failures usually mean the harness lacks
+surrounding context, NOT that the doc is wrong — judge by whether the error names
+a removed or invalid construct.
+
+**Result: self-contained failures 17 → 9.** The remaining 9 are all
+"snippet omits a `<db>`/`<schema>`/surrounding declarations it needs"
+(`E-PA-002` ×2, `E-SQL-004` ×2, `E-SCHEMA-003`, `E-SCOPE-001`/`E-STATE-UNDECLARED`
+×3) plus the one extractor false positive. **No further dead-syntax bugs.** Worth
+a later pass to make those snippets self-contained, but they teach nothing false.
+
+**GATES: wiki 5/5 · showcase 11/11 · `scrml build` exit 0.**
+
+**WHAT THIS AUDIT DOES NOT COVER — be honest about it.** Compiling proves
+*syntax*, not *semantics*. A sample can compile and still describe the wrong
+behaviour, cite a stale SPEC §, or explain a rule that has since inverted. Prose
+claims ("X is the default", "Y is not yet supported") are entirely unchecked.
+Spot-checks against SPEC caught #4 and #5 — a systematic prose-vs-SPEC pass is
+still open, and is the natural next audit.
+
+**NEXT:** KB-nav / reference sidebar (~99 routes, 7-item header nav, the reference
+tree has no navigation of its own) · make the 9 context-poor snippets
+self-contained · prose-vs-SPEC audit · coordinate `docs/website/` retirement with
+the scrml PA · deploy decisions.
+
 ## Session 4 — PROJECT RESET: scrml-site IS THE WIKI (2026-07-22)
 
 **Operator reframe:** *"this isn't meant to just be a novelty dashboard. it is

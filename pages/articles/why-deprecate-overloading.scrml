@@ -55,7 +55,7 @@
   &lt;UserFlow userId(string) email(string) name(string)&gt;
     ${
       f&#117;nction sendNotification(message: string) -&gt; string {
-        i&#102; (n&#111;t checkRateLimit(this.userId, "user")) {
+        i&#102; (!checkRateLimit(this.userId, "user")) {
           r&#101;turn "rate-limited";
         }
         c&#111;nst subject = "Notification f&#111;r " + this.name;
@@ -73,7 +73,7 @@
   &lt;AdminFlow adminId(string) pagerToken(string) role(string)&gt;
     ${
       f&#117;nction sendNotification(message: string) -&gt; string {
-        i&#102; (n&#111;t checkRateLimit(this.adminId, "admin")) {
+        i&#102; (!checkRateLimit(this.adminId, "admin")) {
           r&#101;turn "rate-limited";
         }
         c&#111;nst payload = "[ALERT][" + this.role + "] " + message;
@@ -98,12 +98,12 @@
 
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>f&#117;nction sendUserNotification(user: UserFlow, message: string) -&gt; string {
-  i&#102; (n&#111;t checkRateLimit(user.userId, "user")) { r&#101;turn "rate-limited"; }
+  i&#102; (!checkRateLimit(user.userId, "user")) { r&#101;turn "rate-limited"; }
   &#47;&#47; ... user body, same as above ...
 }
 
 f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; string {
-  i&#102; (n&#111;t checkRateLimit(admin.adminId, "admin")) { r&#101;turn "rate-limited"; }
+  i&#102; (!checkRateLimit(admin.adminId, "admin")) { r&#101;turn "rate-limited"; }
   &#47;&#47; ... admin body, same as above ...
 }</code></pre>
 
@@ -124,11 +124,11 @@ f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; str
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>f&#117;nction sendNotification(target, message: string) -&gt; string {
   c&#111;nst tag = target.__scrml_state_type;
   i&#102; (tag == "UserFlow") {
-    i&#102; (n&#111;t checkRateLimit(target.userId, "user")) { r&#101;turn "rate-limited"; }
+    i&#102; (!checkRateLimit(target.userId, "user")) { r&#101;turn "rate-limited"; }
     &#47;&#47; ... user body ...
     r&#101;turn "queued:" + id;
   } e&#108;se i&#102; (tag == "AdminFlow") {
-    i&#102; (n&#111;t checkRateLimit(target.adminId, "admin")) { r&#101;turn "rate-limited"; }
+    i&#102; (!checkRateLimit(target.adminId, "admin")) { r&#101;turn "rate-limited"; }
     &#47;&#47; ... admin body ...
     r&#101;turn "paged:" + id;
   } e&#108;se {
