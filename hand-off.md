@@ -31,10 +31,10 @@ re-verified compiling):
    protocol; verified exit 0.
 
 **VERIFIED NOT BUGS — tested before touching, deliberately left alone:**
-- **`server function` is still valid.** 31 uses across 11 pages. Compiles clean,
-  no deprecation warning. I nearly "fixed" all 31 off the SPEC's phrase "the
-  deprecated `server` keyword" — that phrasing is scoped to channel-publisher
-  escalation, not the keyword generally. **Test before mass-editing docs.**
+- **`server function` — CORRECTED 2026-07-22, see below.** 31 uses across 11
+  pages, left untouched. My test compiled clean with no deprecation warning, but
+  that test used a function with NO other escalation trigger. **That claim is
+  incomplete as stated** — see the Session-5 addendum.
 - **Plain `forEach` (no `lift`) is valid** — `learn/validators.scrml` untouched.
 - **11 error-reference pages fail with their own error code** — that is the
   documentation being CORRECT, not broken. Auto-excluded by the tool.
@@ -63,6 +63,37 @@ behaviour, cite a stale SPEC §, or explain a rule that has since inverted. Pros
 claims ("X is the default", "Y is not yet supported") are entirely unchecked.
 Spot-checks against SPEC caught #4 and #5 — a systematic prose-vs-SPEC pass is
 still open, and is the natural next audit.
+
+### Addendum — `server` keyword: ARC HELD pending scrml PA reply
+
+The operator confirmed the `server` keyword **is** meant to be deprecated, which
+makes my session-5 "still valid, leave it" verdict the wrong end-state. Re-tested
+properly; the compiler is behaving EXACTLY to spec:
+
+| case | result |
+|---|---|
+| `server function` **+** another trigger (`?{}` SQL) | `W-DEPRECATED-SERVER-MODIFIER` **fires** |
+| `server function`, **no** other trigger | compiles clean, **no warning** |
+
+That matches §34 verbatim ("fires ONLY when at least one other trigger would
+escalate") and is correct — in the trigger-free case, deleting the keyword would
+silently **relocate the function to the client**. The warning is not missing; it
+is deliberately scoped. My earlier claim was measured on a trigger-free function
+only and is incomplete as a general statement.
+
+**The open question** (why the arc is held): §12.2 Trigger 4 is the ONLY way to
+force server placement when the body has no other trigger, so `server` is
+currently *deprecated-but-not-removable*. Redundant uses have a clean migration
+(delete the keyword); trigger-free uses have no replacement we can find.
+
+**SENT, blocking:** `../scrml/handOffs/incoming/2026-07-22-1700-scrml-site-to-
+scrml-server-keyword-deprecation-path.md` (`needs: reply`, `blocking: true`).
+Asks: what is the intended end-state (replacement annotation / new trigger /
+permanent dual-status), is there a version where `server` stops compiling, and
+what spelling should the docs teach?
+
+**DO NOT rewrite the 31 sites until that reply lands.** On the answer: classify
+each site redundant vs trigger-free, rewrite, re-run `scripts/audit-samples.mjs`.
 
 **NEXT:** KB-nav / reference sidebar (~99 routes, 7-item header nav, the reference
 tree has no navigation of its own) · make the 9 context-poor snippets
