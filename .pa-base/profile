@@ -55,6 +55,17 @@ GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only
         `expr is not` to test absence.
   - `ERR_INCOMPLETE_CHUNKED_ENCODING` in the console = benign dev-server static-chunking noise.
   - No test suite exists. Do not fake one as a gate; the artifact is the truth here.
+  - LINT SURFACE (triaged 2026-07-22; `scrml build` is GREEN with all of it present):
+      W-DEAD-FUNCTION x2 (buildJsCellLines, enginesOf) = COMPILER FALSE POSITIVE — the analysis does
+        not traverse arrow-callback bodies. Both ARE called (index.scrml:385, :398). A same-named
+        export elsewhere masks it (that is why toLines escapes). DO NOT "clean up" these functions.
+      W-TAILWIND-UNRECOGNIZED-CLASS x17 (dev only) = COMPILER FALSE POSITIVE — every flagged class is
+        defined in our own #{} style blocks. Ignore.
+      E-ROUTE-001 x7 = inert. Route-placement heuristic firing on plain array/dict indexing in pure
+        client helpers; this app wires 0 server routes.
+      W-STYLE-CONFLICT-POSSIBLE x21 = advisory. Fires on the .tok-* classes, which are mutually
+        exclusive by construction (lineClass() returns exactly one) but not provably so. Accepted.
+      Both false-positive classes reported to ../scrml 2026-07-22.
 
 MODULES:
   loaded:    CORE (~/.claude/CLAUDE.md) · stack-pack-scrml · role-pa · continuity · cross-pa-notify
@@ -125,8 +136,12 @@ CONVENTIONS (load-bearing; full text in .claude/CLAUDE.md + pa.md):
       that lands, and re-verify with assertion 11 of the gate.
     [FIXED UPSTREAM, RETIRED] serve.sh explicit-file-list -> now `scrml dev .`. scanDirectory
       (api.js:134) skips dot-entries + SCAN_SKIP_DIRS and uses lstatSync.
-    [FIXED UPSTREAM, RETIRED] dev-server watcher DOES hot-recompile a .scrml edit — probed
-      2026-07-22, an edit reached dist/ + the served page within 12s. No restart needed.
+    [PARTIAL — CORRECTED 2026-07-22] dev-server watcher: PAGE edits DO hot-recompile (probed, an
+      edit reached dist/ + the served page within 12s). SHELL edits (app.scrml) DO NOT recompose the
+      already-emitted page HTML — `scrml dev` keeps serving the old page markup while the lint
+      correctly updates. An app.scrml change therefore looks like a no-op. `rm -rf dist` + restart
+      serve.sh after ANY app.scrml edit. Reported to ../scrml 2026-07-22 (lint-false-positives-and-
+      shell-watcher). The earlier blanket "watcher is fixed" verdict was based on a page-only probe.
   Commits: conventional-ish prefixes (`inc2:` `chore:` `docs(pa):` `wrap(sN):`).
   REMOTE: origin = git@github.com:bryanmaclee/scrml-site.git — SSH, NEVER HTTPS (HTTPS routes through
     git-credential-manager, which hangs in headless shells).

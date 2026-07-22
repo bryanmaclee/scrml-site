@@ -90,13 +90,20 @@
             <a href="/">Showcase</a>
             <a href="/reference">Reference</a>
             <a href="/dashboard">Dashboard</a>
-            <a href="https://github.com/bryanmaclee/scrmlTS">GitHub</a>
+            <a href="https://github.com/bryanmaclee/scrml">GitHub</a>
         </nav>
     </header>
 
     <main>
         // pages/index.scrml (the showcase) lifts into this slot via
         // filesystem routing per SPEC §40 multi-page composition.
+        //
+        // The explicit <outlet/> (rather than a bare <main>) is what ENABLES
+        // soft navigation: a bare <main> route slot compiles fine but leaves
+        // client-side nav off, so every nav click is a full document load
+        // (W-OUTLET-ABSENT-SOFT-NAV-DISABLED). Wrapping the outlet keeps <main>
+        // as the document landmark while marking the route-content region.
+        <outlet/>
     </main>
 
 </program>

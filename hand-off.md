@@ -98,15 +98,60 @@ compilation errors, `scrml build .` **exit 0**, and `build:artifacts` is now
    **`scripts/gold-verify.mjs`** (version-controlled, `exit 0` = green, header
    documents why assertion 11 must not be deleted). **Now 11/11.**
 
+8. **LINT SURFACE TRIAGED — most of it is compiler false positives.** Verdicts:
+   - **`W-DEAD-FUNCTION` ×2 = FALSE POSITIVE.** `buildJsCellLines` + `enginesOf`
+     ARE called (index.scrml:385, :398) — the analysis **does not traverse
+     arrow-callback bodies**. Isolated the trigger: `parseMappings` (called on
+     the line ABOVE, same arrow body), `cellsForLine` (called from a `fn`), and
+     `flagshipList` (called from a `function` body) all escape. `toLines` is
+     called 3× ONLY from arrow bodies and escapes solely because
+     `components/{source-pane,output-tabs}.scrml` export the same NAME —
+     renaming it to a unique name makes it flag immediately. **DO NOT "clean up"
+     these two functions.**
+   - **`W-TAILWIND-UNRECOGNIZED-CLASS` ×17 = FALSE POSITIVE.** Every flagged
+     class is defined in our own `#{}` style blocks. The lint recommends the
+     `#{}` shim we already wrote. Dev-only (build doesn't emit these).
+   - **`E-ROUTE-001` ×7 = inert.** Route-placement heuristic firing on plain
+     array/dict indexing (`raw[i]`, `byLine[k]`) in pure client helpers; this app
+     wires **0 server routes**. The suggested fix (`row.fieldName`) can't apply.
+   - **`W-STYLE-CONFLICT-POSSIBLE` ×21 = advisory, accepted.** Fires on the
+     `.tok-*` classes, mutually exclusive by construction (`lineClass()` returns
+     exactly one) but not provably so.
+   - **`W-OUTLET-ABSENT-SOFT-NAV-DISABLED` ×1 = REAL, FIXED.** See #9.
+   Both false-positive classes reported → `../scrml/handOffs/incoming/
+   2026-07-22-1210-scrml-site-to-scrml-lint-false-positives-and-shell-watcher.md`.
+9. **REAL BUGS FOUND AND FIXED while triaging:**
+   - **Soft navigation was OFF.** `app.scrml` used a bare `<main>` route slot, so
+     every nav click was a full document load. Added `<outlet/>` inside `<main>`;
+     the warning clears, the runtime now carries the soft-nav code, and `<main>`
+     stays the document landmark.
+   - **The GitHub nav link pointed at the RETIRED `scrmlTS` repo** — in BOTH
+     `app.scrml` (the live inlined nav) and `components/nav-skeleton.scrml` (the
+     reference copy). Repointed to `bryanmaclee/scrml`.
+   - **`README.md` was entirely scrmlTS-wired** — my miss: the rewire commit
+     never touched it, so its setup instructions (`bun link scrmlts`, `../scrmlTS`)
+     would have broken a fresh clone. Rewritten: correct setup, the gate
+     documented, both flagships, column-precision (it still described
+     line-granularity provenance), current status.
+10. **WATCHER VERDICT CORRECTED.** Session-3 item #6 retired the dev-watcher
+    friction outright. That was too broad — it was a PAGE-edit probe. **SHELL
+    edits (`app.scrml`) do NOT recompose the already-emitted page HTML**: a fresh
+    `scrml build` emits `<div data-scrml-outlet>`, the running `scrml dev` keeps
+    serving the old bare `<main>`, and `rm -rf dist` + restart fixes it. So an
+    `app.scrml` edit looks like a no-op. **`rm -rf dist` + restart `serve.sh`
+    after any shell edit.** Reported in the same message.
+
+**Gate re-run after all of the above: 11/11 PASS, zero page errors,
+`scrml build` exit 0.**
+
+**KNOWN, NOT ACTED ON:** the nav links `/reference`, which **404s** on this repo
+(only `/` and `/dashboard` exist). `components/nav-skeleton.scrml` says the nav
+"links OUT to the existing 97-page site routes", so this is probably intentional
+— a link to the larger scrml.dev site, dead only in local dev. **Operator call:**
+leave it, drop it, or stub a `/reference` page.
+
 **NEXT (recommended order):**
-1. **New lint surface to triage** (informational, not blocking): 22 ghost-pattern
-   lints — `W-TAILWIND-UNRECOGNIZED-CLASS` ×17 (our custom classes; may want the
-   `#{}` CSS-shim form) + `W-EACH-PROMOTABLE` ×6 (Tier-0 `for ... lift` → `<each>`;
-   NOTE: `<each>` historically lost hover wiring, friction #7 — verify before
-   promoting) + `W-DEAD-FUNCTION` ×2 (`buildJsCellLines`, `enginesOf`) +
-   `E-ROUTE-001` computed-member-access ×7 + `W-STYLE-CONFLICT-POSSIBLE` ×20.
-   (These are warnings only — `scrml build` is green with them present.)
-2. Then inc2 backlog: KB-nav · PE-layer toggle · postMessage live-pane↔source
+1. inc2 backlog: KB-nav · PE-layer toggle · postMessage live-pane↔source
    hover (needs a provenance bridge in the flagship build). Blocked: Phase-2
    HTML/CSS provenance (needs compiler HTML/CSS maps) · live dashboard embed
    (needs `scrml:fs`). Parked: engine-graph multi-file write-loop bug.

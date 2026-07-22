@@ -20,6 +20,6 @@ ${
         <a href="/">Showcase</a>
         <a href="/reference">Reference</a>
         <a href="/dashboard">Dashboard</a>
-        <a href="https://github.com/bryanmaclee/scrmlTS">GitHub</a>
+        <a href="https://github.com/bryanmaclee/scrml">GitHub</a>
     </>
 }
