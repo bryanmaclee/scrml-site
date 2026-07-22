@@ -74,22 +74,39 @@ gold-verify **10/10 PASS again, zero page errors**, dev-server reports ZERO
 compilation errors, `scrml build .` **exit 0**, and `build:artifacts` is now
 **byte-identical on re-run** — reproducibility against v0.7.1 restored.
 
+6. **FRICTION WORKAROUNDS RE-VERIFIED against v0.7.1 (all three probed empirically):**
+   - **[KEEP — still broken, now sharply characterized]** the `selectFlagship()`
+     `[]`-clear. Removed it and measured: **FLAT lists are FIXED** by `df6d269c`
+     (source pane 177→152, every line's text updates). **NESTED lists are NOT.**
+     The engine pane (`for engines > for states > for next`) still renders
+     mario's `Big,Cape,Fire,Small` after switching to triage instead of
+     `Idle,Dragging`; `jsCellLines > cells` leaves 7 stale cells (192 vs 185).
+     It is a **SILENT wrong-render** — the pane looks plausible and is lying.
+     Restored the workaround (engine pane then correctly shows `Dragging,Idle`).
+     **REPORTED** → `../scrml/handOffs/incoming/2026-07-22-1120-scrml-site-to-
+     scrml-nested-list-reconcile-stale.md` (needs: action). Drop the workaround
+     only when that lands, and re-verify with gate assertion 11.
+   - **[RETIRED — fixed upstream]** `serve.sh` explicit-file-list → `scrml dev .`
+     (landed earlier this session).
+   - **[RETIRED — fixed upstream]** the dev watcher DOES hot-recompile. Probed by
+     editing a `.scrml` against a running server: the change reached `dist/` and
+     the served page within 12s. No restart needed.
+7. **GATE HARDENED + made executable.** The nested-stale bug **passed the 10/10
+   gate** because no assertion reached into the nested engine pane — a gate that
+   only checks flat lists cannot see it. Added assertion 11 (nested engine pane
+   re-renders per flagship) and moved the whole thing out of scratch into
+   **`scripts/gold-verify.mjs`** (version-controlled, `exit 0` = green, header
+   documents why assertion 11 must not be deleted). **Now 11/11.**
+
 **NEXT (recommended order):**
-1. **Re-verify the remaining friction workarounds against v0.7.1** — (a) the
-   `selectFlagship()` `[]`-clear (Tier-0 `for ... lift` index-keyed reconcile
-   leaving static interpolated text stale) — **`../scrml` HEAD `df6d269c` is
-   literally an each-mount reconciliation fix, so this may already be fixed**;
-   (b) the dev-watcher not hot-recompiling. Report to `../scrml` ONLY what
-   survives. The reconcile-list finding was never sent anywhere — good, it may
-   have been stale before it went out.
-2. **New lint surface to triage** (informational, not blocking): 22 ghost-pattern
+1. **New lint surface to triage** (informational, not blocking): 22 ghost-pattern
    lints — `W-TAILWIND-UNRECOGNIZED-CLASS` ×17 (our custom classes; may want the
    `#{}` CSS-shim form) + `W-EACH-PROMOTABLE` ×6 (Tier-0 `for ... lift` → `<each>`;
    NOTE: `<each>` historically lost hover wiring, friction #7 — verify before
    promoting) + `W-DEAD-FUNCTION` ×2 (`buildJsCellLines`, `enginesOf`) +
    `E-ROUTE-001` computed-member-access ×7 + `W-STYLE-CONFLICT-POSSIBLE` ×20.
    (These are warnings only — `scrml build` is green with them present.)
-3. Then inc2 backlog: KB-nav · PE-layer toggle · postMessage live-pane↔source
+2. Then inc2 backlog: KB-nav · PE-layer toggle · postMessage live-pane↔source
    hover (needs a provenance bridge in the flagship build). Blocked: Phase-2
    HTML/CSS provenance (needs compiler HTML/CSS maps) · live dashboard embed
    (needs `scrml:fs`). Parked: engine-graph multi-file write-loop bug.

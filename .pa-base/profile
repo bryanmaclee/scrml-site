@@ -17,22 +17,20 @@ STACK:  scrml (primary) — 9 .scrml / ~1.2K LOC: app.scrml · pages/{index,dash
     ../scrmlTS = STALE/RETIRED. HEAD 9e607bad (S172, 2026-06-07). Its PA is not running.
     ../scrml   = LIVE. HEAD df6d269c (S279, 2026-07-22), v0.7.1, ~107 sessions ahead. Same examples/
                  corpus (both flagships), same compiler/src/api.js entry point.
-    THE REPO IS STILL MIS-WIRED TO THE STALE ONE: package.json `scrmlts: link:scrmlts`,
-    node_modules/scrmlts -> ../../scrmlTS; build-artifacts.mjs + serve.sh both resolve through it.
-    EVERYTHING IN data/ WAS COMPILED BY THE JUNE-7 COMPILER. Rewiring is the TOP work item; until it
-    lands, every artifact + every compiler-friction note below is PROVISIONAL.
-    Rewire is MECHANICAL (verified): scrml package.json has NO `exports` field -> deep subpaths
-    (scrml/compiler/src/api.js, scrml/examples/*.scrml) resolve; bin is still {"scrml": ...} so
-    node_modules/.bin/scrml is unchanged; compileScrml is exported by both.
-    Touch points: package.json dep · `bun link` target · build-artifacts.mjs import + 2 FLAGSHIPS
-    source specifiers · serve.sh header + (post-rewire) collapse to `scrml dev .`.
+    REWIRE LANDED f2367b2 + c5f3a14 (2026-07-22): package.json `scrml: link:scrml`,
+    node_modules/scrml -> ../../scrml; build-artifacts.mjs + serve.sh resolve through it; data/
+    regenerated against v0.7.1 and BYTE-IDENTICAL on re-run; source made v0.7.1-conformant
+    (`scrml build` exit 0). scrml package.json has NO `exports` field -> deep subpaths
+    (scrml/compiler/src/api.js, scrml/examples/*.scrml) resolve; bin is {"scrml": ...}.
+    KEEP the dep pointed at ../scrml. Do NOT re-link scrmlts.
 STAGE:  mid-flight — working app, active dev. inc1 LANDED (compile-transparent viewer, real .js.map
         bidirectional hover-provenance). inc2 #1 LANDED (column-precision highlights) + #2 LANDED
         (25-triage-board as 2nd flagship + data-driven selector). Live inc2 backlog, no rot.
 SCOPE:  small — 9 source files, ~1.2K LOC (data/ + dist/ are GENERATED, not source). Single operator.
         One god-file: pages/index.scrml @ 697 LOC = 58% of source; every inc2 fork lands there.
 GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only). Ratified 2026-07-22.
-  - PRIMARY: `bash scripts/serve.sh` (port 8787; NOT bare `scrml dev`) + real-browser Chromium
+  - PRIMARY: `bash scripts/serve.sh` (port 8787) + `node scripts/gold-verify.mjs` (EXECUTABLE,
+    version-controlled, exit 0 = green; 11 assertions). Real-browser Chromium
     verification via Playwright. Import playwright by ABSOLUTE path from ../scrml/node_modules
     (present + verified 2026-07-22; ../scrmlTS also has a copy but prefer the LIVE repo). A bare
     specifier will NOT resolve from /tmp. CommonJS default-import form.
@@ -43,10 +41,10 @@ GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only
     the user's call, never the PA's.
   - SECONDARY: `bun run build:artifacts` must exit 0. BYTE-IDENTITY IS DELIBERATELY NOT BLOCKING —
     data/ tracks a MOVING sibling compiler, so drift is expected, not a defect.
-    VERIFIED 2026-07-22 against the STALE scrmlTS: exit 0 but ALREADY non-reproducing (new runtime
-    hashes both flagships; 25-triage-board.client.js +35/-13 with a .js.map delta). Expect a MUCH
-    larger delta post-rewire (107 sessions of codegen). The .js.map DRIVES hover-provenance, so the
-    rewire REQUIRES a full re-run of the PRIMARY gate — not a rubber stamp.
+    POST-REWIRE 2026-07-22: exit 0 AND byte-identical on re-run — reproducibility against v0.7.1 is
+    RESTORED, so a data/ diff after `build:artifacts` now genuinely means the compiler moved.
+    The .js.map DRIVES hover-provenance: any compiler bump REQUIRES a full re-run of the PRIMARY
+    gate, never a rubber stamp.
   - TYPES gate (added 2026-07-22): `node_modules/.bin/scrml build . --output <tmp>` must EXIT 0.
     NOT redundant with serve — `scrml dev` emits LENIENTLY (it emitted despite 9 type errors, so the
     site ran while a production build was broken). Only `scrml build` is the real shape-check.
@@ -115,19 +113,20 @@ CONVENTIONS (load-bearing; full text in .claude/CLAUDE.md + pa.md):
     if=-gated literal-src iframe line.
   Iframe src is DELIBERATELY NOT reactive (two if=-gated literal-src iframes). Reactive-attribute
     interpolation on src is documented friction — do not "simplify."
-  COMPILER-FRICTION WORKAROUNDS — ALL observed against the STALE compiler. RE-VERIFY each against
-  ../scrml at the rewire; do not remove one before it is re-verified, and do not report one as a bug
-  until it survives the rewire:
-    serve.sh passes .scrml files EXPLICITLY, not `scrml dev .` — the OLD scrmlTS scanDirectory walked
-      node_modules + followed symlinks. ** FIXED in ../scrml (api.js:134). ** The workaround is
-      OBSOLETE the moment the dep is rewired -> collapse serve.sh to `scrml dev .` in that same arc.
-    selectFlagship() clears every list cell to [] before refilling — Tier-0 `${ for ... lift }`
-      reconciles BY INDEX when items carry no id, so in-place cell replacement reuses DOM nodes and
-      leaves create-time static interpolated text stale. Routing through [] forces a full recreate.
-      NEVER SENT ANYWHERE. ../scrml df6d269c is literally an each-mount reconciliation fix — MAY
-      ALREADY BE FIXED. Re-verify post-rewire; if it survives, THEN report to ../scrml.
-    The dev-server watcher does not reliably hot-recompile a .scrml edit — restart serve.sh. Also
-      stale-compiler-era; re-verify.
+  COMPILER-FRICTION WORKAROUNDS — all RE-VERIFIED against ../scrml v0.7.1 on 2026-07-22:
+    [LOAD-BEARING, KEEP] selectFlagship() clears every list cell to [] before refilling.
+      Tier-0 `${ for ... lift }` NESTED lists do NOT reconcile when the backing cell is replaced in
+      place — the nested subtree keeps rendering the PREVIOUS value. FLAT lists were fixed by
+      df6d269c (source pane 177->152 updates correctly WITHOUT the workaround), but the engine pane
+      (for engines > for states > for next) still renders mario's Big,Cape,Fire,Small after
+      switching to triage, and jsCellLines>cells leaves 7 stale cells (192 vs 185). SILENT
+      wrong-render — the pane looks plausible and is lying. Routing through [] forces a full
+      recreate. REPORTED to ../scrml 2026-07-22 (nested-list-reconcile-stale). Drop it only when
+      that lands, and re-verify with assertion 11 of the gate.
+    [FIXED UPSTREAM, RETIRED] serve.sh explicit-file-list -> now `scrml dev .`. scanDirectory
+      (api.js:134) skips dot-entries + SCAN_SKIP_DIRS and uses lstatSync.
+    [FIXED UPSTREAM, RETIRED] dev-server watcher DOES hot-recompile a .scrml edit — probed
+      2026-07-22, an edit reached dist/ + the served page within 12s. No restart needed.
   Commits: conventional-ish prefixes (`inc2:` `chore:` `docs(pa):` `wrap(sN):`).
   REMOTE: origin = git@github.com:bryanmaclee/scrml-site.git — SSH, NEVER HTTPS (HTTPS routes through
     git-credential-manager, which hangs in headless shells).

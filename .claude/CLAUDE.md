@@ -21,8 +21,8 @@ region. `hand-off.md` is the live session state.
 
 `STACK: scrml (+ thin plain-ESM Node scripts) · STAGE: mid-flight · SCOPE: small · GATE: runtime-verify`
 
-Compiler dep: **`../scrml` v0.7.1 is the live one**; the repo is currently mis-wired to the retired
-`../scrmlTS`. See the ⚑ block below.
+Compiler dep: **`../scrml` v0.7.1** (linked). The retired `../scrmlTS` is NOT the compiler — see the
+⚑ block below.
 
 ## MODULES loaded (init)
 
@@ -54,15 +54,11 @@ Deeper tier (the scrml clone IS on this machine and is CURRENT — prefer it):
 `../scrml` — HEAD `df6d269c` (S279, **2026-07-22**), v0.7.1, ~107 sessions ahead. It carries the same
 `examples/` corpus (both flagships) and the same `compiler/src/api.js` entry point.
 
-**This repo is still WIRED TO THE STALE ONE** — `package.json` declares `scrmlts: link:scrmlts`,
-`node_modules/scrmlts` → `../../scrmlTS`, and both `build-artifacts.mjs` and `serve.sh` resolve
-through it. Everything in `data/` was compiled by the June 7 compiler. **Rewiring to `../scrml` is
-the top work item** — until it lands, treat every artifact and every compiler-friction note below as
-provisional.
-
-Rewire is mechanical: `scrml`'s package.json has **no `exports` field**, so deep subpath imports
-(`scrml/compiler/src/api.js`, `scrml/examples/*.scrml`) resolve; `bin` is still `{"scrml": ...}` so
-`node_modules/.bin/scrml` is unchanged; `compileScrml` is exported by both.
+**Rewire LANDED** (`f2367b2` + `c5f3a14`, 2026-07-22): `package.json` declares
+`scrml: link:scrml`, `node_modules/scrml` → `../../scrml`, `build-artifacts.mjs` + `serve.sh`
+resolve through it, `data/` is regenerated against v0.7.1 and byte-identical on re-run, and the
+source is v0.7.1-conformant (`scrml build` exits 0). **Keep the dep pointed at `../scrml`; do not
+re-link `scrmlts`.**
 
 It is a **dependency, never a vendored copy** — that dogfoods the real adopter install path, which is
 the whole point. Do NOT vendor a compiler into this repo.
@@ -71,12 +67,16 @@ the whole point. Do NOT vendor a compiler into this repo.
 
 **PRIMARY — runtime-verify (merge-blocking).** This repo has no test suite; the artifact is the truth.
 
-1. `bash scripts/serve.sh` (port 8787) — the canonical serve. **Not** bare `scrml dev`.
-2. Real-browser verification in Chromium via Playwright (imported by **absolute path** from
-   `../scrml/node_modules` — a bare specifier will not resolve from `/tmp`): the flagship iframe
-   mounts and runs; forward hover (source line → exact sub-line JS cells light); reverse hover (JS
-   cell → source line + siblings); unmapped cell clears; the flagship selector re-renders source +
-   engine graph + iframe + JS.
+1. `bash scripts/serve.sh` (port 8787) — the canonical serve.
+2. `node scripts/gold-verify.mjs` — **executable, version-controlled, exit 0 = green.** 11
+   assertions in real Chromium (Playwright imported by absolute path from `../scrml/node_modules`;
+   a bare specifier will not resolve): flagship iframe mounts and runs; forward hover lights the
+   exact sub-line JS cells on **both** flagships; reverse hover activates the source line; unhover
+   clears; the selector re-renders source + iframe + JS; **and the nested engine pane re-renders**.
+
+> Assertion 11 (nested engine pane) exists because on 2026-07-22 this gate passed **10/10 while the
+> engine pane silently rendered the wrong flagship's engine** — see the nested-list reconcile bug
+> below. A gate that only checks flat lists cannot see it.
 
 This is the **S146 serve-before-push** discipline the repo already runs (session 1: gold-verify passed;
 session 2: 15/15). The user MAY waive on strong verification (S151 precedent) — that is the user's
@@ -87,10 +87,9 @@ call, never the PA's.
 committed artifacts is **deliberately not merge-blocking**: `data/` tracks a *moving sibling compiler*,
 so drift is expected, not a defect.
 
-> Verified 2026-07-22: exit 0 against the STALE `scrmlTS`, but already non-reproducing (new runtime
-> hashes both flagships; `25-triage-board.client.js` +35/−13 with a `.js.map` delta). Expect a much
-> larger delta once the dep is rewired to `../scrml` — 107 sessions of codegen. The `.js.map` is what
-> drives hover-provenance, so a rewire REQUIRES a full re-run of the primary gate, not a rubber stamp.
+> Post-rewire 2026-07-22: exit 0 **and byte-identical on re-run** — reproducibility against v0.7.1
+> is restored, so a `data/` diff after `build:artifacts` now genuinely means the compiler moved. The
+> `.js.map` drives hover-provenance, so any compiler bump REQUIRES a full re-run of the primary gate.
 
 **TYPES gate** (added 2026-07-22) — `node_modules/.bin/scrml build . --output <tmp>` must **exit 0**.
 This is *not* redundant with the serve gate: `scrml dev` emits **leniently** (it emitted despite 9
@@ -148,20 +147,18 @@ watching the wrong inbox) and its reply. The `handOffs/incoming/read/` entry fro
 - **Iframe src is deliberately NOT reactive** — two `if=`-gated literal-src iframes, one per flagship.
   Reactive-attribute interpolation on `src` is documented friction; do not "simplify" it.
 - **Known compiler friction (workarounds are load-bearing — do not remove without a compiler fix):**
-  - `serve.sh` passes `.scrml` files **explicitly** rather than `scrml dev .` — the OLD scrmlTS
-    `scanDirectory` walked `node_modules` and followed symlinks, so `scrml dev .` tried to compile the
-    whole linked compiler repo and never listened. **FIXED in `../scrml`** (`scanDirectory` at
-    api.js:134 now skips dot-entries + `SCAN_SKIP_DIRS` and uses `lstatSync`, so it never follows a
-    `bun link`ed tree). The workaround is therefore obsolete **the moment the dep is rewired** —
-    simplify `serve.sh` to `scrml dev .` as part of that arc, not before.
-  - `selectFlagship()` clears every list cell to `[]` before refilling. Tier-0 `${ for ... lift }`
-    reconciles **by index** when items carry no `id`, so replacing a backing cell in place reuses
-    DOM nodes and leaves create-time static interpolated text stale. Routing through empty forces a
-    full recreate. **Observed against the STALE compiler — RE-VERIFY against `../scrml` before
-    reporting it; it may already be fixed.** (`df6d269c` is literally an `each`-mount reconciliation
-    fix.) The finding was never sent anywhere; if it survives the rewire it goes to `../scrml`.
-  - The dev-server watcher does not reliably hot-recompile a `.scrml` edit — restart `serve.sh` to
-    serve fresh JS. Also observed against the stale compiler; re-verify.
+  - **[KEEP — load-bearing]** `selectFlagship()` clears every list cell to `[]` before refilling.
+    Tier-0 `${ for ... lift }` **nested** lists do not reconcile when the backing cell is replaced
+    in place — the nested subtree keeps rendering the previous value. Flat lists were fixed by
+    `df6d269c` (the source pane goes 177→152 correctly without the workaround), but the engine pane
+    (`for engines > for states > for next`) still shows mario's `Big,Cape,Fire,Small` after
+    switching to triage, and `jsCellLines > cells` leaves 7 stale cells. It is a **silent
+    wrong-render** — the pane looks plausible and is lying. Reported to `../scrml` 2026-07-22.
+    Drop it only when that lands, and re-verify with gate assertion 11.
+  - **[RETIRED — fixed upstream]** `serve.sh` explicit-file-list → now `scrml dev .`.
+    `scanDirectory` (api.js:134) skips dot-entries + `SCAN_SKIP_DIRS` and uses `lstatSync`.
+  - **[RETIRED — fixed upstream]** the dev-server watcher **does** hot-recompile a `.scrml` edit
+    (probed 2026-07-22: an edit reached `dist/` and the served page within 12s). No restart needed.
 - **Commits:** conventional-ish prefixes in use (`inc2:`, `chore:`, `docs(pa):`, `wrap(sN):`).
 - **Remote:** `origin` = `git@github.com:bryanmaclee/scrml-site.git`. **SSH, never HTTPS** — HTTPS
   routes through git-credential-manager, which hangs in headless shells.
