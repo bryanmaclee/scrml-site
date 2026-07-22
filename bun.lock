@@ -5,11 +5,11 @@
     "": {
       "name": "scrml-site",
       "dependencies": {
-        "scrmlts": "link:scrmlts",
+        "scrml": "link:scrml",
       },
     },
   },
   "packages": {
-    "scrmlts": ["scrmlts@link:scrmlts", { "bin": { "scrml": "compiler/bin/scrml.js" } }],
+    "scrml": ["scrml@link:scrml", { "bin": { "scrml": "compiler/bin/scrml.js" } }],
   }
 }

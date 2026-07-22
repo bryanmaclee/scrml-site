@@ -9,6 +9,6 @@
     "build:artifacts": "bun run scripts/build-artifacts.mjs"
   },
   "dependencies": {
-    "scrmlts": "link:scrmlts"
+    "scrml": "link:scrml"
   }
 }

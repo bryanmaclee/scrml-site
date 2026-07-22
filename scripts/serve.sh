@@ -10,21 +10,22 @@
 # the same Bun.serve static fallback. The symlink survives recompiles (the
 # watcher rewrites .scrml outputs only).
 #
-# scrmlTS is a LINKED DEPENDENCY (bun link scrmlts) — the `scrml` binary comes
-# from node_modules/.bin (the real adopter path), NOT a sibling compiler/src
-# checkout. Run `bun link scrmlts` once if node_modules/.bin/scrml is missing.
+# scrml is a LINKED DEPENDENCY (bun link scrml) — the `scrml` binary comes from
+# node_modules/.bin (the real adopter path), NOT a sibling compiler/src checkout.
+# Run `bun link scrml` once if node_modules/.bin/scrml is missing.
 #
-# WHY explicit file args (not `scrml dev .`): the compiler's directory scanner
-# (api.js scanDirectory) recursively walks EVERY subdir with no node_modules /
-# symlink skip — and `node_modules/scrmlts` is a symlink to the whole sibling
-# scrmlTS repo. `scrml dev .` therefore tries to compile thousands of scrmlTS
-# stdlib/sample/example sources and never starts listening. Passing the app's
-# own .scrml files explicitly yields the SAME inputFiles set as directory mode
-# would (data/ + dist/ carry no .scrml), minus the node_modules pollution.
-# Reported to scrmlTS PA as a scanDirectory friction bug (2026-06-02).
+# HISTORY (2026-06-02 → 2026-07-22): this script used to pass the app's .scrml
+# files EXPLICITLY, because the then-linked compiler's directory scanner
+# (api.js scanDirectory) recursively walked every subdir with no node_modules /
+# symlink skip — so `scrml dev .` followed the linked-compiler symlink and tried
+# to compile thousands of its stdlib/sample/example sources, never listening.
+# We reported it; it is FIXED (scrml api.js scanDirectory now skips dot-entries
+# + SCAN_SKIP_DIRS and uses lstatSync, so it never follows a bun-linked tree).
+# The workaround is retired — directory mode is the canonical invocation again.
 #
-# FRICTION NOTE (logged): `scrml dev` does not serve a sibling static-asset dir.
-# A `--static <dir>` flag (or a `public/` convention) would remove this glue.
+# FRICTION NOTE (still open): `scrml dev` does not serve a sibling static-asset
+# dir. A `--static <dir>` flag (or a `public/` convention) would remove the
+# dist/data symlink glue below.
 set -euo pipefail
 PORT="${1:-8787}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -32,7 +33,7 @@ ROOT="$(cd "$HERE/.." && pwd)"
 
 SCRML="$ROOT/node_modules/.bin/scrml"
 if [ ! -x "$SCRML" ]; then
-  echo "[serve] node_modules/.bin/scrml missing — run 'bun link scrmlts' in this repo first" >&2
+  echo "[serve] node_modules/.bin/scrml missing — run 'bun link scrml' in this repo first" >&2
   exit 1
 fi
 
@@ -46,9 +47,5 @@ fi
 mkdir -p "$ROOT/dist"
 ln -sfn ../data "$ROOT/dist/data"
 
-# Gather the app's own .scrml sources explicitly (see WHY above). The set +
-# common-prefix (repo root) match what `scrml dev .` would gather sans node_modules.
-APP_SRCS=( "$ROOT/app.scrml" "$ROOT"/pages/*.scrml "$ROOT"/components/*.scrml "$ROOT"/lib/*.scrml )
-
-echo "[serve] scrml dev (${#APP_SRCS[@]} app sources)  (port $PORT)  — /data/mario/* via dist/data symlink"
-exec "$SCRML" dev "${APP_SRCS[@]}" --output "$ROOT/dist" --port "$PORT"
+echo "[serve] scrml dev .  (port $PORT)  — /data/<flagship>/* via dist/data symlink"
+exec "$SCRML" dev "$ROOT" --output "$ROOT/dist" --port "$PORT"

@@ -47,16 +47,16 @@
     // §6.6 derived reactives. const <name> = expr is the canonical derived
     // form. Visible to markup ${@marioEmoji} reads.
     const <marioEmoji> = match @marioState {
-        .Small => "🧍"
-        .Big   => "🦸"
-        .Fire  => "🔥"
-        .Cape  => "🦅"
+        .Small :> "🧍"
+        .Big   :> "🦸"
+        .Fire  :> "🔥"
+        .Cape  :> "🦅"
     }
     const <marioName> = match @marioState {
-        .Small => "SMALL MARIO"
-        .Big   => "SUPER MARIO"
-        .Fire  => "FIRE MARIO"
-        .Cape  => "CAPE MARIO"
+        .Small :> "SMALL MARIO"
+        .Big   :> "SUPER MARIO"
+        .Fire  :> "FIRE MARIO"
+        .Cape  :> "CAPE MARIO"
     }
 
     // §1a — match destructures the payload. `n` is bound to the coins field
@@ -156,11 +156,11 @@
                 <span class="text-sm mt-3 text-yellow-400">${@marioName}</>
             </>
 
-            <div class="bg-red-900 border border-red-700 text-red-400 px-4 py-2 rounded-lg text-center text-xs mb-4" if=(@healthRisk == HealthRisk::AtRisk && not @gameOver)>${riskBanner(@healthRisk)}</>
+            <div class="bg-red-900 border border-red-700 text-red-400 px-4 py-2 rounded-lg text-center text-xs mb-4" if=(@healthRisk == HealthRisk::AtRisk && !@gameOver)>${riskBanner(@healthRisk)}</>
 
             <p class="text-xl text-red-500 my-6 text-center font-bold" if=(@gameOver)>GAME OVER</>
 
-            <div if=(not @gameOver)>
+            <div if=(!@gameOver)>
                 <div class="grid grid-cols-3 gap-2 mb-3">
                     <button class="py-3 px-2 bg-green-600 text-white text-xs rounded-lg cursor-pointer border-0" onclick=eatPowerUp(PowerUp::Mushroom(1))>MUSHROOM +1</>
                     <button class="py-3 px-2 bg-yellow-500 text-gray-800 text-xs rounded-lg cursor-pointer border-0" onclick=eatPowerUp(PowerUp::Flower(3))>FLOWER +3</>

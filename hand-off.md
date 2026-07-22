@@ -1,5 +1,91 @@
 # scrml-site — hand-off
 
+## Session 3 — /flobase assembly + COMPILER REWIRE scrmlTS → scrml (2026-07-22)
+
+**The headline: this repo was linked to a DEAD compiler.** `../scrmlTS` last moved
+2026-06-07 (S172). The live compiler is `../scrml` — v0.7.1, S279, ~107 sessions
+ahead. Every artifact in `data/` had been precompiled by the June-7 compiler, and
+sessions 1–3 were watching `../scrmlTS`'s inbox for a fix notice that was never
+coming. Operator-corrected mid-session; rewire executed and gate-verified.
+
+**Done:**
+1. **`/flobase` assembled** (first run on this repo). `.claude/CLAUDE.md`
+   (flobase-fenced region) · `.pa-base/profile` (boot rehydrates from it) ·
+   `.claude/settings.json` + `.flobase/hooks/notify-inbox.sh` (cross-pa-notify,
+   turn-boundary inbox surface). `pa.md` / `README.md` untouched — flobase owns
+   only the fenced region. Profile: `scrml · mid-flight · small · runtime-verify`.
+   Modules: CORE · stack-pack-scrml · role-pa · continuity · cross-pa-notify.
+   Dropped: stack-pack-ts (no TS) · maps (small; RECONSIDER — index.scrml is
+   697 LOC) · vcs-drive · role-vpa · role-spa · role-cpa · dock. dpa/deliberation
+   runtime-only. GATE ratified by user: runtime-verify PRIMARY (merge-blocking),
+   `build:artifacts` exit-0 SECONDARY, byte-identity explicitly NOT blocking.
+2. **REWIRED the compiler dep** `scrmlts` → `scrml`. `bun link` registered in
+   `../scrml`; `package.json` dep `scrml: link:scrml`; `bun.lock` regenerated;
+   `build-artifacts.mjs` import + both `FLAGSHIPS` source specifiers; `serve.sh`
+   header + error message. Verified pre-flight: scrml's package.json has NO
+   `exports` field (deep subpaths resolve), `bin` is still `{"scrml": ...}`,
+   `compileScrml` exported by both. Mechanical, no API adaptation needed.
+3. **`serve.sh` collapsed to `scrml dev .`** — the explicit-file-list workaround
+   is retired. The scandir bug IS FIXED in `../scrml` (`scanDirectory` api.js:134
+   skips dot-entries + `SCAN_SKIP_DIRS`, uses `lstatSync` so it never follows a
+   bun-linked tree). The fix comment credits *"reported by scrml-site S154"* —
+   our report landed and was fixed in `scrml`, so the notice never reached the
+   `scrmlTS` inbox we were watching. **Absence-of-evidence trap; we waited on a
+   dead channel for 3 sessions.**
+4. **`data/` regenerated against v0.7.1.** Large delta (+468/−304 across 10
+   files) — and `source.scrml.txt` changed for BOTH flagships, i.e. the upstream
+   examples themselves evolved. Superseded runtime bundles removed
+   (`scrml-runtime.00okhlvg.js`, `.01f11ozs.js`); new ones tracked.
+
+**GOLD-VERIFY 10/10 PASS** (Chromium via playwright from `../scrml/node_modules`,
+absolute-path import). Source pane 177 lines · selector 2 buttons · flagship
+iframe mounts · 287 JS cells · FORWARD hover lights exact sub-line cells (both
+flagships) · unhover clears to 0 · REVERSE hover activates the source line ·
+selector re-renders source (mario→triage) · active-state flips. **Zero page
+errors.** Script: `scratchpad/gold-verify.mjs`; screenshot `scratchpad/gate.png`
+shows the live Triage Board + real source + DragPhase engine graph.
+
+**⚠ NEW FINDING — `scrml build` FAILS with 9 errors (the app source is not
+v0.7.1-conformant).** `scrml dev` emits anyway (lenient), which is why the
+runtime gate passes and the site works — but a production build is broken. This
+is PRE-EXISTING language drift the rewire *revealed*, not damage it caused: the
+source was written against a compiler 107 sessions old. Two error classes:
+- **`E-TYPE-ANY-FORBIDDEN` ×8** — `any` is no longer a type in scrml. All 8 are
+  `-> any` RETURN annotations: `pages/index.scrml` 138 `cellsForLine`, 184
+  `buildJsCellLines`, 208 `toLines`, 284 `enginesOf`, 295 `flagshipList` ·
+  `components/engine-graph-pane.scrml:26` `stateFlags` ·
+  `components/output-tabs.scrml:11` `toLines` ·
+  `components/source-pane.scrml:35` `toLines`. Each returns an array of records
+  → needs a real record type declared and threaded.
+- **`E-TYPE-045` ×1** — `lib/provenance.scrml:142` `if (not bucket.includes(...))`.
+  `not` is now the unified ABSENCE value, not boolean negation.
+
+**NEXT (recommended order):**
+1. **Fix the 9 conformance errors** → `scrml build` green. Bounded but real:
+   8 return types to author + 1 negation rewrite. This is the top item — the
+   repo currently cannot produce a production build.
+2. **Re-verify the remaining friction workarounds against v0.7.1** — (a) the
+   `selectFlagship()` `[]`-clear (Tier-0 `for ... lift` index-keyed reconcile
+   leaving static interpolated text stale) — **`../scrml` HEAD `df6d269c` is
+   literally an each-mount reconciliation fix, so this may already be fixed**;
+   (b) the dev-watcher not hot-recompiling. Report to `../scrml` ONLY what
+   survives. The reconcile-list finding was never sent anywhere — good, it may
+   have been stale before it went out.
+3. **New lint surface to triage** (informational, not blocking): 22 ghost-pattern
+   lints — `W-TAILWIND-UNRECOGNIZED-CLASS` ×17 (our custom classes; may want the
+   `#{}` CSS-shim form) + `W-EACH-PROMOTABLE` ×6 (Tier-0 `for ... lift` → `<each>`;
+   NOTE: `<each>` historically lost hover wiring, friction #7 — verify before
+   promoting) + `W-DEAD-FUNCTION` ×2 (`buildJsCellLines`, `enginesOf`) +
+   `E-ROUTE-001` computed-member-access ×7 + `W-STYLE-CONFLICT-POSSIBLE` ×20.
+4. Then inc2 backlog: KB-nav · PE-layer toggle · postMessage live-pane↔source
+   hover (needs a provenance bridge in the flagship build). Blocked: Phase-2
+   HTML/CSS provenance (needs compiler HTML/CSS maps) · live dashboard embed
+   (needs `scrml:fs`). Parked: engine-graph multi-file write-loop bug.
+
+**Channel correction — `scrmlTS` is DEAD, do not route to it.** Live channels:
+`../scrml/handOffs/incoming/` (the compiler PA) and `../handOffs/incoming/`
+(master, push coordination).
+
 ## Session 2 — inc2 #2: 25-triage-board as a 2nd flagship + selector (2026-06-02)
 
 Added `25-triage-board` as a second dissected flagship with a data-driven

@@ -17,11 +17,15 @@
 //
 // Regenerate:  bun run scripts/build-artifacts.mjs   (or scripts/build-artifacts.sh)
 //
-// scrmlTS is consumed as a LINKED DEPENDENCY (bun link scrmlts), not a vendored
-// copy — so the compiler API and the test-asset `examples/` both resolve through
-// the `scrmlts` package, into the sibling scrmlTS repo. This is the real adopter
-// path. (S154 extraction: was ../../../compiler when nested inside scrmlTS.)
-import { compileScrml } from "scrmlts/compiler/src/api.js";
+// scrml is consumed as a LINKED DEPENDENCY (bun link scrml), not a vendored copy
+// — so the compiler API and the test-asset `examples/` both resolve through the
+// `scrml` package, into the sibling scrml repo. This is the real adopter path.
+// (S154 extraction: was ../../../compiler when nested inside the compiler repo.)
+//
+// 2026-07-22: REWIRED from the retired `scrmlts` package (sibling scrmlTS, last
+// commit 2026-06-07 / S172) to the live `scrml` (v0.7.1 / S279). The artifacts
+// under data/ had been precompiled by a compiler ~107 sessions behind.
+import { compileScrml } from "scrml/compiler/src/api.js";
 import { writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -32,8 +36,8 @@ const FLAGSHIPS = [
   {
     id: "mario",
     title: "Super Mario State Machine",
-    // resolved through the scrmlts package → sibling scrmlTS/examples/ (test asset)
-    source: "scrmlts/examples/14-mario-state-machine.scrml",
+    // resolved through the scrml package → sibling scrml/examples/ (test asset)
+    source: "scrml/examples/14-mario-state-machine.scrml",
     // base name the compiler derives from the source file (basename w/o ext)
     base: "14-mario-state-machine",
   },
@@ -42,7 +46,7 @@ const FLAGSHIPS = [
     title: "Triage Board",
     // the other engine-heavy corpus example (DragPhase: Idle <-> Dragging).
     // Single-file, compiles standalone — same precompute path as mario.
-    source: "scrmlts/examples/25-triage-board.scrml",
+    source: "scrml/examples/25-triage-board.scrml",
     base: "25-triage-board",
   },
 ];
