@@ -7,10 +7,9 @@ IDENTITY:
   git config user.name -> slugify -> first token -> ../scrml-support/pa-profile-<slug>.md
   bryan maclee -> bryan -> pa-profile-bryan.md   (default: bryan, if unset/unmatched)
 
-STACK:  scrml (primary) — 9 .scrml / ~1.2K LOC: app.scrml · pages/{index,dashboard} ·
-        components/{nav-skeleton,source-pane,output-tabs,engine-graph-pane,showcase-layout} ·
-        lib/provenance.scrml. Compiler = LINKED DEPENDENCY, bun-run. NEVER vendored — the linked dep
-        dogfoods the real adopter install path.
+STACK:  scrml (primary) — 106 .scrml: app.scrml (site shell) · pages/ (99: the WIKI) ·
+        components/ (5) · lib/provenance.scrml. Compiler = LINKED DEPENDENCY, bun-run. NEVER
+        vendored — the linked dep dogfoods the real adopter install path.
         Secondary: thin plain-ESM Node (scripts/build-artifacts.mjs). NO TypeScript, no tsconfig.
 
   ⚑ THE COMPILER IS ../scrml — NOT ../scrmlTS (operator-corrected 2026-07-22).
@@ -26,11 +25,19 @@ STACK:  scrml (primary) — 9 .scrml / ~1.2K LOC: app.scrml · pages/{index,dash
 STAGE:  mid-flight — working app, active dev. inc1 LANDED (compile-transparent viewer, real .js.map
         bidirectional hover-provenance). inc2 #1 LANDED (column-precision highlights) + #2 LANDED
         (25-triage-board as 2nd flagship + data-driven selector). Live inc2 backlog, no rot.
-SCOPE:  small — 9 source files, ~1.2K LOC (data/ + dist/ are GENERATED, not source). Single operator.
-        One god-file: pages/index.scrml @ 697 LOC = 58% of source; every inc2 fork lands there.
+SCOPE:  MEDIUM (was small; changed 2026-07-22 by the wiki migration) — 106 source files / ~100
+        routes. data/ + dist/ are GENERATED, not source. Single operator.
+        One god-file: pages/showcase.scrml @ ~730 LOC (the dissector; every showcase fork lands there).
+        RECONSIDER the `maps` module — it was dropped on "small scope", which no longer holds.
 GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only). Ratified 2026-07-22.
-  - PRIMARY: `bash scripts/serve.sh` (port 8787) + `node scripts/gold-verify.mjs` (EXECUTABLE,
-    version-controlled, exit 0 = green; 11 assertions). Real-browser Chromium
+  - PRIMARY, TWO SCRIPTS — both must exit 0. `bash scripts/serve.sh` (port 8787), then:
+      `node scripts/wiki-verify.mjs`  — SITE-WIDE (5 assertions): every emitted route resolves 200
+        (route list DERIVED from dist/, so a new page is covered the moment it compiles) · shell +
+        outlet render · SOFT NAV genuinely soft (window stamp survives an in-site click) ·
+        code-block contrast (fg/bg luminance separated) · no uncaught page errors.
+      `node scripts/gold-verify.mjs` — the /showcase provenance gate (11 assertions). GATE_BASE
+        overrides the origin; it targets /showcase, NOT / (which is now the wiki landing).
+    Real-browser Chromium
     verification via Playwright. Import playwright by ABSOLUTE path from ../scrml/node_modules
     (present + verified 2026-07-22; ../scrmlTS also has a copy but prefer the LIVE repo). A bare
     specifier will NOT resolve from /tmp. CommonJS default-import form.
@@ -55,6 +62,10 @@ GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only
         `expr is not` to test absence.
   - `ERR_INCOMPLETE_CHUNKED_ENCODING` in the console = benign dev-server static-chunking noise.
   - No test suite exists. Do not fake one as a gate; the artifact is the truth here.
+  - CODE-BLOCK CONTRAST is gated for a reason: the typography layer ships
+    `.prose-slate :where(code) { color: #0f172a }` — a LIGHT-theme value — which rendered every
+    fenced example slate-900-on-slate-900 (INVISIBLE) across the reference pages, the wiki's core
+    content. Fixed in app.scrml with `pre code { color: inherit !important }`. Do not remove.
   - LINT SURFACE (triaged 2026-07-22; `scrml build` is GREEN with all of it present):
       W-DEAD-FUNCTION x2 (buildJsCellLines, enginesOf) = COMPILER FALSE POSITIVE — the analysis does
         not traverse arrow-callback bodies. Both ARE called (index.scrml:385, :398). A same-named
@@ -106,8 +117,15 @@ CROSS-PA (dropbox protocol; hook = .flobase/hooks/notify-inbox.sh via .claude/se
     the fix comment credits "reported by scrml-site S154"). We never saw the landing notice because we
     were watching the WRONG INBOX — the absence-of-evidence trap. Sessions 1-3 waited on a dead channel.
 
-PROJECT-INTENT: scrml-site is the scrml self-demo showcase — AN APPLICATION BUILT WITH SCRML, not
-  compiler internals. The compile-transparent viewer: a scrml app that dissects another scrml app.
+PROJECT-INTENT (RESET by the operator 2026-07-22): **scrml-site IS THE WIKI OF SCRML** — the
+  official documentation site, scrml.dev, built in scrml. NOT a novelty dashboard. The
+  compile-transparent viewer is ONE PAGE of it (/showcase), not the product: the page that PROVES
+  the language is real, sitting beside the reference that explains it.
+  The 98-page wiki was MIGRATED IN from scrml/docs/website/ on 2026-07-22 (it had been written but
+  never built or deployed, sitting in the compiler repo since 2026-06-19). Structure: index ·
+  getting-started · learn/ · about/ · articles/ (17) · reference/{elements,keywords,errors,contexts}
+  · showcase · dashboard(stub).
+  The ORIGINAL showcase framing, still true of /showcase:
   Live compiled flagship (60% left) beside stacked right-40% panes — .scrml source TOP / engine
   "what-comes-next" transition diagram MIDDLE / tabbed compiled output BOTTOM (JS·HTML·CSS) — with
   bidirectional hover-provenance driven by the real compiler-emitted .js.map. Extracted from

@@ -1,5 +1,88 @@
 # scrml-site — hand-off
 
+## Session 4 — PROJECT RESET: scrml-site IS THE WIKI (2026-07-22)
+
+**Operator reframe:** *"this isn't meant to just be a novelty dashboard. it is
+meant to be the wiki of scrml."* That changes what this repo IS. The
+compile-transparent viewer is now ONE PAGE (`/showcase`) of the documentation
+site — the page that PROVES the language is real, beside the reference that
+explains it.
+
+**The wiki already existed, in the wrong repo.** `scrml/docs/website/` held
+**98 `.scrml` pages** — already written in scrml, with exactly the structure our
+nav declared. Three facts made the move obvious:
+1. It **compiles clean against v0.7.1** (built it before touching anything:
+   exit 0, 0 errors, 98 HTML pages). Not stale like this repo had been.
+2. **Nothing built or deployed it.** No Pages workflow; `docs:build` only renders
+   the 10 articles. Untouched since 2026-06-19.
+3. Its own tooling says it's temporary — `docs/build.ts` verbatim: *"This is
+   interim tooling. Once scrml v0.2.0 ships, the site will be built with scrml
+   itself; this script goes away."* We are at **v0.7.1**.
+
+Operator ratified: absorb it here; defer deploy decisions until it's visible.
+
+**MIGRATION DONE — 106 .scrml, ~99 routes, all green.**
+1. `pages/index.scrml` (the dissector) → **`pages/showcase.scrml`** via `git mv`.
+2. `scrml/docs/website/pages/*` → `pages/` (98 files). `scrml/docs/website/app.scrml`
+   → `app.scrml`, REPLACING the viewer shell (sticky header, full nav, footer,
+   dark theme — it is the real site shell).
+3. Shell merged, not just copied: added `<outlet/>`, added the **Showcase** nav
+   entry, ported `.mono` (the only shell style the showcase needed that the wiki
+   shell lacked — it already had a better `.built-in-pill`), repointed **3 more**
+   retired-`scrmlTS` links, corrected VERSION `v0.7.0` → `v0.7.1`.
+4. `scrml build .` → **exit 0, 106 files, 0 errors, 100 pages**.
+
+**⚠ FOUND AND FIXED — the reference pages' code blocks were INVISIBLE.** The
+typography layer ships `.prose-slate :where(code) { color: #0f172a }`, a
+LIGHT-theme value. Measured in-browser: `<pre>` bg `rgb(15,23,42)`, `<code>`
+color `rgb(15,23,42)` — **identical**. Every fenced example on every reference
+page rendered as dark-on-dark. For a documentation site whose core content IS
+code samples, that is the whole product being broken. Fixed in `app.scrml`:
+`pre code { color: inherit !important; background-color: transparent !important }`
+— theme-agnostic, since the `<pre>` already carries `text-slate-100`.
+Re-measured: `rgb(241,245,249)` on `rgb(15,23,42)`. **Now gated** (see below) so
+it cannot regress.
+
+**GATE IS NOW TWO SCRIPTS — both exit 0.**
+- **`scripts/wiki-verify.mjs` (NEW, site-wide, 5/5 PASS):** every emitted route
+  resolves 200 — **99/99**, with the route list **DERIVED from `dist/`** so a new
+  page is covered the moment it compiles (a hardcoded list silently stops gating
+  the thing it gates) · shell + outlet render on a spread of 6 pages · **soft nav
+  is genuinely soft** (a `window` stamp survives an in-site click — a full reload
+  would wipe it) · code-block contrast (fg/bg luminance separation) · no uncaught
+  page errors.
+- **`scripts/gold-verify.mjs` (11/11 PASS):** retargeted to `/showcase`, since
+  `/` is now the wiki landing. `GATE_BASE` overrides the origin. The showcase
+  survived the migration completely intact — provenance, both flagships, nested
+  engine pane.
+
+**Soft nav is now load-bearing, and it was off until today.** Enabling it in
+session 3 looked like a small lint fix on a 2-page site; on a ~100-page wiki it
+is the difference between a site and a stack of documents.
+
+**SCOPE CHANGED: small → MEDIUM** (9 source files → 106). The `maps` module was
+dropped at `/flobase` on "small scope" grounds — **that no longer holds; revisit.**
+
+**NOT DONE — deliberately:**
+- `scrml/docs/website/` is **still in place**; I copied, did not delete. Removing
+  it is the compiler PA's call and needs a coordination message.
+- **Deploy is untouched.** scrml.dev still serves the interim static HTML from
+  `scrml/docs/`. CNAME, Pages, and retiring `docs/build.ts` are all open.
+- **No content audit.** The 98 pages COMPILE against v0.7.1; that proves syntax,
+  NOT that the prose matches current semantics. They sat untouched for a month
+  while the compiler moved. Worth an audit pass.
+
+**NEXT (recommended order):**
+1. **Content audit** of the migrated wiki against v0.7.1 semantics — the highest
+   risk now is confidently-wrong documentation, which is worse than none.
+2. **KB-nav / reference sidebar.** ~99 routes with only a 7-item header nav; the
+   reference tree (elements · keywords · errors · contexts) has no navigation of
+   its own. This is what "KB-nav" in the old backlog actually meant.
+3. **Coordinate with the scrml PA** — the wiki has moved; propose retiring
+   `docs/website/` + `docs/build.ts`.
+4. Then deploy decisions, and the showcase backlog (PE-layer toggle, postMessage
+   live-pane↔source bridge).
+
 ## Session 3 — /flobase assembly + COMPILER REWIRE scrmlTS → scrml (2026-07-22)
 
 **The headline: this repo was linked to a DEAD compiler.** `../scrmlTS` last moved

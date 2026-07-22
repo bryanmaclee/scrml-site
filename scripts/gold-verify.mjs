@@ -1,5 +1,9 @@
 // scripts/gold-verify.mjs — the scrml-site PRIMARY GATE (runtime-verify).
 //
+// Targets /showcase — the compile-transparent viewer page. Since the wiki
+// migration, `/` is the scrml.dev landing page; the dissector lives at
+// /showcase. GATE_BASE overrides the origin (default http://localhost:8787).
+//
 //   bash scripts/serve.sh 8787 &      # then, once it is listening:
 //   node scripts/gold-verify.mjs      # exit 0 = gate green
 //
@@ -21,7 +25,7 @@
 import pw from "/home/bryan/scrmlMaster/scrml/node_modules/playwright/index.js";
 const { chromium } = pw;
 
-const BASE = "http://localhost:8787";
+const BASE = (process.env.GATE_BASE || "http://localhost:8787") + "/showcase";
 const results = [];
 const ok = (n, c, d = "") => results.push({ n, pass: !!c, d });
 

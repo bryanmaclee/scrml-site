@@ -1,0 +1,142 @@
+// scrml.dev /articles/css-without-build-step
+//
+// Full-conversion page. P2 continuation per Machine A's S98A queue-shift
+// directive. Mechanical conversion from css-without-build-step-devto-2026-04-29.md via /tmp/convert_article.py.
+// Per Pillar 5b (PRIMER §2 amendment S98A): reach for engines/states first
+// in worked examples; the corpus goes into LLM training.
+//
+// dev.to publish uses canonical_url=https://scrml.dev/articles/css-without-build-step
+
+<page>
+
+    <article class="prose prose-slate max-w-3xl">
+
+        <header class="mb-8 pb-6 border-b border-slate-200">
+            <div class="text-xs font-mono text-slate-500 mb-2">
+                Articles &rsaquo; The what
+            </div>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900">
+                CSS without a build step
+            </h1>
+        </header>
+        <p class="text-slate-700 leading-relaxed my-4"><em>authored by claude, rubber stamped by Bryan MacLee</em></p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>TL;DR: Native CSS shipped <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@scope</code> while we were not looking. scrml compiles to that. No PostCSS, no runtime, no className mangler.</strong></p>
+        <p class="text-slate-700 leading-relaxed my-4">I designed scrml to have the <em>fewest</em> moving parts that could deliver real reactivity, real state, and real components. Then I looked at what shipping styles costs in modern frameworks, and I almost laughed.</p>
+        <p class="text-slate-700 leading-relaxed my-4">I am not an experienced framework developer. I can hobble through React if I HAVE TO. I have written enough CSS to know what fine-tuning a layout feels like. Most of what I have read about scoped CSS in framework land is people building elaborate machinery to compensate for a feature the browser had not yet shipped. The browser shipped it. The machinery did not retire.</p>
+        <p class="text-slate-700 leading-relaxed my-4">This is the fourth of six features the browser-language overview piece promised to unpack later. CSS, in detail.</p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">What shipping scoped styles actually costs (BEFORE)</h2>
+
+        <p class="text-slate-700 leading-relaxed my-4">Pick the path you took the last time you scoped a component's styles. One of these:</p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>Tailwind utility-first.</strong> A PostCSS pipeline. A JIT scanner that walks your source files. A <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">tailwind.config.js</code>. A <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">content</code> glob you keep wrong until something disappears in production. The class-name strings on every element grow until the markup looks like a base64 blob. The system is good. The plumbing it sits on is a build pipeline you maintain.</p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>styled-components or emotion (CSS-in-JS).</strong> A runtime that injects style tags as components mount. A Babel plugin to attach component display names. SSR ceremony to extract critical CSS without flashing unstyled content. A re-render every time a styled component's props change. The runtime cost has been argued about for years, and it is genuinely real for high-frequency renders.</p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>CSS Modules.</strong> A build step that hashes class names. The compiled output reads <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.btn_3xK9f</code> and the source reads <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.btn</code>. DevTools shows you the hash. You learn to read it. Source maps fix this when they work.</p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>vanilla-extract.</strong> A typed DSL on top of CSS. Still a build step. Still a layer between what you write and what the browser parses.</p>
+        <p class="text-slate-700 leading-relaxed my-4">Each of those paths exists for one reason: in 2019, scoped styles were not a primitive. The browser did not give you a way to say "these rules apply only inside this component, and not inside its children." Frameworks built it themselves. Five different ways. All five required tooling. All five became how things are done.</p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">What native CSS actually shipped</h2>
+
+        <p class="text-slate-700 leading-relaxed my-4"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@scope</code> is in the browser now.</p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>@scope ([data-card]) to ([data-card]) {
+    .body { padding: 16px; }
+    .title { font-size: 1.25rem; }
+}</code></pre>
+
+        <p class="text-slate-700 leading-relaxed my-4">The block applies inside any element with <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">data-card</code>, and stops at any nested element with <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">data-card</code>. That second clause is the <em>donut</em>: child components inherit nothing of the parent's styles, no matter how generic the selector inside the block looks. Parent's <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.title</code> does not bleed into child's <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.title</code>. No hash. No mangler. No runtime. The browser does it.</p>
+        <p class="text-slate-700 leading-relaxed my-4"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@scope</code> reached Baseline in December 2025. Chrome 143+, Firefox 146+, Safari 26.2+. Most application devs do not know about it because the framework path obscured it. The framework path was a workaround for an absent feature. The feature is no longer absent.</p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">The scrml way (AFTER)</h2>
+
+        <p class="text-slate-700 leading-relaxed my-4">scrml's CSS sigil is <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">#{}</code>. Inside a component declaration, it scopes. At program scope, it goes global. There is no third mode.</p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
+
+${
+    c&#111;nst Card = &lt;article props={ title: string }&gt;
+        #{
+            .card { padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; }
+            .title { font-size: 1.25rem; font-weight: 600; }
+        }
+        &lt;div class="card" data-scrml="card"&gt;
+            &lt;h2 class="title"&gt;${title}&lt;&#47;h2&gt;
+        &lt;&#47;div&gt;
+    &lt;&#47;&gt;
+}
+
+&lt;&#47;program&gt;</code></pre>
+
+        <p class="text-slate-700 leading-relaxed my-4">The compiler emits this CSS:</p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>@scope ([data-scrml="card"]) to ([data-scrml]) {
+    .card { padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; }
+    .title { font-size: 1.25rem; font-weight: 600; }
+}</code></pre>
+
+        <p class="text-slate-700 leading-relaxed my-4">That is the entire pipeline. The selectors in the source are the selectors in the output. DevTools shows you <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.title</code>, not <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.title_h7Bz4</code>. Source maps are optional. The donut limit (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">to ([data-scrml])</code>) is implicit: nested constructors get their own scope and the outer rules stop at the boundary.</p>
+        <p class="text-slate-700 leading-relaxed my-4">There is one more sub-mode. A <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">#{}</code> block with no selectors, just bare <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">property: value;</code> pairs, compiles to an inline <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">style=""</code> attribute on the containing element. It does not appear in the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.css</code> file at all.</p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>${
+    &lt;title&gt; = "Hello"
+
+    l&#105;ft &lt;div data-scrml="card"&gt;
+        #{ padding: 16px; }
+        &lt;h2&gt;${@title}&lt;&#47;h2&gt;
+    &lt;&#47;div&gt;
+}</code></pre>
+
+        <p class="text-slate-700 leading-relaxed my-4">becomes a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;div style="padding: 16px;"&gt;</code> directly. The most common case (one or two declarations on one element) gets the lightest possible compilation.</p>
+        <p class="text-slate-700 leading-relaxed my-4">That is it. No PostCSS. No runtime. No hash mangler. No <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">tailwind.config.js</code> <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">content</code> glob. No styled-components Babel plugin. No SSR critical-extraction. The compiler reads the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">#{}</code> block, decides whether it is selector-based or flat-declaration, and emits the corresponding output. Co-location of behavior was a founding philosophy of scrml. The styles for a component live inside the component. They compile next to the markup that wears them.</p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">What this kills</h2>
+
+        <ul class="list-disc list-outside ml-6 space-y-2 text-slate-700 my-4">
+            <li>The PostCSS config. There is no <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">postcss.config.js</code> in a scrml project. There is a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml build</code>.</li>
+            <li>The Tailwind CLI step. The compiler runs the utility-class scan as part of its normal pass.</li>
+            <li>The styled-components runtime. There are no style tags injected on mount. CSS is emitted at compile time and served as a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.css</code> file the browser loads once.</li>
+            <li>The Babel plugin tier for CSS-in-JS. There is no Babel.</li>
+            <li>Hash-mangled class names. The class you wrote is the class the browser sees.</li>
+            <li>The "where is my SSR critical CSS extraction layer" decision. There isn't one to configure.</li>
+            <li>The decision of which CSS-in-JS library to use. The decision is <em>no CSS-in-JS library</em>; the language has CSS as a context.</li>
+        </ul>
+        <p class="text-slate-700 leading-relaxed my-4">That's the tier of tooling that compresses out when the browser already has scoping.</p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">What is still real</h2>
+
+        <p class="text-slate-700 leading-relaxed my-4">Tailwind's <em>system</em> is genuinely useful. The utility-first vocabulary, the design-token discipline, the spacing scale, the way the class names compose: that is real ergonomics. The point of this article is not "no Tailwind." It is "no Tailwind <em>pipeline</em>."</p>
+        <p class="text-slate-700 leading-relaxed my-4">scrml has a built-in Tailwind engine. It scans the source for used utility classes and emits only the CSS rules for what the source actually uses. No <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">tailwind.config.js</code>. No <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">content</code> array. No PostCSS. The engine is in the compiler.</p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>${
+    c&#111;nst Badge = &lt;span props={ label: string }
+                         data-scrml="badge"
+                         class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800"&gt;
+        ${label}
+    &lt;&#47;&gt;
+}</code></pre>
+
+        <p class="text-slate-700 leading-relaxed my-4">That works out of the box. Mixed with <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">#{}</code> for things utilities don't reach, in the same component.</p>
+        <p class="text-slate-700 leading-relaxed my-4">Two honest disclosures.</p>
+        <p class="text-slate-700 leading-relaxed my-4">1. The current built-in engine covers the core utility set. Arbitrary values (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">p-[1.5rem]</code>), responsive prefixes (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">md:</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">lg:</code>), variant prefixes (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">hover:</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">focus:</code>), and custom theme configuration are tracked in <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">SPEC-ISSUE-012</code> and not yet shipped. If your design language requires those today, you would still need them. They are on the roadmap. 2. Tailwind utility classes live <em>outside</em> <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@scope</code>. They remain globally scoped, by design. A <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.bg-emerald-100</code> rule in a child constructor uses the same emerald as the parent. That is what Tailwind users expect; it is the right call.</p>
+        <p class="text-slate-700 leading-relaxed my-4">The <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">#{}</code> block is for the cases utilities don't cover. The utilities are for the design-token cases, where consistency across the app is the value.</p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">The deeper point</h2>
+
+        <p class="text-slate-700 leading-relaxed my-4">A reactive system that wires its dependencies at compile time does no work at runtime to figure out what to update. A query that batches itself at compile time does not need a DataLoader. A boundary that is enforced at compile time does not need a validator on the wire. CSS that compiles to native <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@scope</code> does not need a runtime mangler.</p>
+        <p class="text-slate-700 leading-relaxed my-4">The runtime does less because the compiler did more. The browser shipped a feature. A language designed today should compile to it. A language designed in 2019 had to ship the workaround as a library. That is not a critique of styled-components or Tailwind: those are excellent solutions to the problem available at the time. It is an observation about the tooling tier that compresses out when the language sits on top of the browser the browser actually is, not the browser it was when the framework was conceived.</p>
+        <p class="text-slate-700 leading-relaxed my-4">I am sure I am wrong about plenty. But every time I look at what a fresh-shape primitive subsumes, the same thing happens. A whole tier of tooling stops being a thing you have to assemble. A little short of perfect is still pretty awesome.</p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">Further reading</h2>
+
+        <ul class="list-disc list-outside ml-6 space-y-2 text-slate-700 my-4">
+            <li><a href="https://dev.to/bryan_maclee/why-programming-for-the-browser-needs-a-different-kind-of-language-6m2" class="text-blue-700 hover:text-blue-900 underline">Why programming for the browser needs a different kind of language</a>. The high-altitude six-feature overview that this piece zooms in on.</li>
+            <li><a href="https://dev.to/bryan_maclee/introducing-scrml-a-single-file-full-stack-reactive-web-language-9dp" class="text-blue-700 hover:text-blue-900 underline">Introducing scrml: a single-file, full-stack reactive web language</a>. Mentions the built-in Tailwind engine in context. Starting-point if you haven't seen scrml before.</li>
+            <li><a href="https://dev.to/bryan_maclee/what-npm-package-do-you-actually-need-in-scrml-2247" class="text-blue-700 hover:text-blue-900 underline">What npm package do you actually need in scrml?</a>. The package-list-collapses argument worked through one tier at a time. The CSS-in-JS &#47; scoping line item is in there.</li>
+            <li><a href="https://dev.to/bryan_maclee/the-server-boundary-disappears-hap" class="text-blue-700 hover:text-blue-900 underline">The server boundary disappears</a>. The same compiler-owns-it pattern, applied to the wire.</li>
+            <li><a href="https://dev.to/bryan_maclee/scrmls-living-compiler-23f9" class="text-blue-700 hover:text-blue-900 underline">scrml's Living Compiler</a>. The transformation-registry framing for why scrml puts work in the compiler.</li>
+            <li><a href="https://dev.to/bryan_maclee/what-scrmls-lsp-can-do-that-no-other-lsp-can-and-why-giti-follows-from-the-same-principle-4899" class="text-blue-700 hover:text-blue-900 underline">What scrml's LSP can do that no other LSP can, and why giti follows from the same principle</a>. What vertical integration unlocks for tooling and version control.</li>
+            <li><strong>scrml on GitHub:</strong> <a href="https://github.com/bryanmaclee/scrmlTS" class="text-blue-700 hover:text-blue-900 underline">github.com&#47;bryanmaclee&#47;scrmlTS</a>. The working compiler, examples, spec, benchmarks.</li>
+        </ul>
+
+    </article>
+
+</page>

@@ -9,17 +9,29 @@ changes.*
 
 ## What this project is
 
-**scrml-site** is the scrml self-demo showcase — **an application built with scrml**, not compiler
-internals. The compile-transparent viewer: a scrml app that dissects another scrml app (live compiled
-flagship beside its real `.scrml` source, real compiled JS/HTML/CSS, real engine transition-diagram),
-with bidirectional hover-provenance driven by the real compiler-emitted `.js.map`.
+**scrml-site IS THE WIKI OF SCRML** — scrml.dev, the official documentation site for the language,
+built in scrml (operator reset 2026-07-22: *"this isn't meant to just be a novelty dashboard. it is
+meant to be the wiki of scrml."*). ~99 routes: getting-started · learn · reference
+(elements · keywords · errors · contexts) · articles · about.
+
+The compile-transparent viewer is **one page** of it — `/showcase`: a scrml app that dissects another
+scrml app (live compiled flagship beside its real `.scrml` source, real compiled JS/HTML/CSS, real
+engine transition-diagram), with bidirectional hover-provenance driven by the real compiler-emitted
+`.js.map`. The reference explains the language; the showcase proves it.
+
+The wiki was migrated in from `scrml/docs/website/` on 2026-07-22, where it had been written but
+never built or deployed. `scrml/docs/build.ts` still says *"interim tooling … once scrml v0.2.0
+ships, the site will be built with scrml itself"* — we are at v0.7.1, and this repo is that.
 
 The normative project contract is **`pa.md`** (repo root) — read it, it is not superseded by this
 region. `hand-off.md` is the live session state.
 
 ## PROFILE (summary — full form in `.pa-base/profile`)
 
-`STACK: scrml (+ thin plain-ESM Node scripts) · STAGE: mid-flight · SCOPE: small · GATE: runtime-verify`
+`STACK: scrml (+ thin plain-ESM Node scripts) · STAGE: mid-flight · SCOPE: medium · GATE: runtime-verify`
+
+106 `.scrml` source files, ~99 routes. Scope went small → medium with the wiki migration; the `maps`
+module was dropped at `/flobase` on "small scope" grounds and is worth revisiting.
 
 Compiler dep: **`../scrml` v0.7.1** (linked). The retired `../scrmlTS` is NOT the compiler — see the
 ⚑ block below.
@@ -68,12 +80,22 @@ the whole point. Do NOT vendor a compiler into this repo.
 **PRIMARY — runtime-verify (merge-blocking).** This repo has no test suite; the artifact is the truth.
 
 1. `bash scripts/serve.sh` (port 8787) — the canonical serve.
-2. `node scripts/gold-verify.mjs` — **executable, version-controlled, exit 0 = green.** 11
+2. `node scripts/wiki-verify.mjs` — **site-wide, exit 0 = green.** Every emitted route resolves 200
+   (route list **derived from `dist/`**, so a new page is gated the moment it compiles); shell +
+   outlet render; **soft nav is genuinely soft** (a `window` stamp survives an in-site click);
+   code-block contrast; no uncaught page errors.
+3. `node scripts/gold-verify.mjs` — **the `/showcase` provenance gate, exit 0 = green.** 11
    assertions in real Chromium (Playwright imported by absolute path from `../scrml/node_modules`;
    a bare specifier will not resolve): flagship iframe mounts and runs; forward hover lights the
    exact sub-line JS cells on **both** flagships; reverse hover activates the source line; unhover
    clears; the selector re-renders source + iframe + JS; **and the nested engine pane re-renders**.
 
+> The contrast assertion exists because the typography layer ships
+> `.prose-slate :where(code) { color: #0f172a }` — a light-theme value that rendered every fenced
+> example on every reference page as slate-900-on-slate-900, i.e. **invisible**. For a docs site whose
+> core content is code samples that is the whole product broken. Fixed in `app.scrml` with
+> `pre code { color: inherit !important }`. Do not remove either the fix or the assertion.
+>
 > Assertion 11 (nested engine pane) exists because on 2026-07-22 this gate passed **10/10 while the
 > engine pane silently rendered the wrong flagship's engine** — see the nested-list reconcile bug
 > below. A gate that only checks flat lists cannot see it.

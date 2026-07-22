@@ -1,9 +1,15 @@
-# scrml-site — the scrml self-demo viewer
+# scrml-site — scrml.dev
 
-A credibility-first showcase: **a scrml app that dissects another scrml app**.
-The viewer runs a REAL compiled flagship next to its REAL `.scrml` source, its
-REAL compiled JS/HTML/CSS, and a REAL engine "what-comes-next" diagram — with
-bidirectional hover-provenance driven by the REAL compiler-emitted `.js.map`.
+**The wiki of scrml** — the official documentation site for the language, built
+in scrml. ~100 routes: getting-started, learn, the reference
+(elements · keywords · errors · contexts), articles, and about.
+
+Its `/showcase` page is a credibility harness: **a scrml app that dissects
+another scrml app**. It runs a REAL compiled flagship next to its REAL `.scrml`
+source, its REAL compiled JS/HTML/CSS, and a REAL engine "what-comes-next"
+diagram — with bidirectional hover-provenance driven by the REAL
+compiler-emitted `.js.map`. The reference explains the language; the showcase
+proves it.
 
 This repo **consumes the scrml compiler as a dependency** (not a vendored copy) —
 the strongest version of "it's a scrml app": it dogfoods the real adopter
@@ -44,14 +50,20 @@ convention — that symlink is the glue.)
 ## The gate
 
 This repo has **no test suite** — the running artifact is the truth
-(serve-before-push). The gate is executable:
+(serve-before-push). The gate is executable, and it is TWO scripts:
 
 ```
 bash scripts/serve.sh 8787 &     # wait for it to listen
-node scripts/gold-verify.mjs     # exit 0 = green
+node scripts/wiki-verify.mjs     # site-wide   — exit 0 = green
+node scripts/gold-verify.mjs     # /showcase   — exit 0 = green
 ```
 
-11 assertions in real Chromium: the flagship iframe mounts and runs; forward
+`wiki-verify` gates the site: every emitted route resolves 200 (the route list
+is **derived from `dist/`**, so a new page is covered the moment it compiles),
+the shell + outlet render, soft navigation is genuinely soft (a window stamp
+survives an in-site click), code blocks are readable, and nothing throws.
+
+`gold-verify` gates `/showcase` with 11 assertions in real Chromium: the flagship iframe mounts and runs; forward
 hover lights the exact sub-line JS cells on both flagships; reverse hover
 activates the source line; unhover clears; the selector re-renders source +
 iframe + JS; and the **nested** engine pane re-renders. Playwright is imported by
@@ -76,7 +88,7 @@ compile together). The committed artifacts are byte-reproducible by this script
 against the pinned compiler.
 
 **Adding a flagship** is three edits: `FLAGSHIPS` in `scripts/build-artifacts.mjs`,
-`flagshipList()` in `pages/index.scrml`, and one `if=`-gated literal-src iframe
+`flagshipList()` in `pages/showcase.scrml`, and one `if=`-gated literal-src iframe
 line in the live pane.
 
 ## What's REAL vs faked
@@ -107,29 +119,40 @@ maps (Phase 2).
 
 ## Layout
 
-- `app.scrml` — viewer program root (theme, plain nav, `<main>` route slot).
-- `pages/index.scrml` — the showcase (`/`). The big one; every increment lands here.
+- `app.scrml` — the site shell: dark theme, header nav, footer, and the
+  `<main><outlet/></main>` route slot that enables soft navigation.
+- `pages/` — the wiki (~99 pages): `index` · `getting-started` · `learn/` ·
+  `reference/{elements,keywords,errors,contexts}` · `articles/` · `about/`.
+- `pages/showcase.scrml` — the compile-transparent dissector. The big one
+  (~730 LOC); every showcase increment lands here.
 - `pages/dashboard.scrml` — the `/dashboard` embed STUB (live dashboard needs `scrml:fs`).
 - `components/` — source-pane, output-tabs, engine-graph-pane, showcase-layout,
   nav-skeleton (helper fns + presentational components). NOTE: the nav is
   currently INLINED in `app.scrml`; `nav-skeleton.scrml` is the reference copy.
 - `lib/provenance.scrml` — pure VLQ + index helpers (reference copy; the page
-  inlines its own, see the import-friction note in `pages/index.scrml`).
+  inlines its own, see the import-friction note in `pages/showcase.scrml`).
 - `data/mario/`, `data/triage/` — precomputed flagship artifacts.
 - `scripts/build-artifacts.{sh,mjs}` — the reproducible precompute.
 - `scripts/serve.sh` — canonical serve (compile + dist/data symlink + dev server).
-- `scripts/gold-verify.mjs` — the executable gate.
+- `scripts/wiki-verify.mjs` — the site-wide gate.
+- `scripts/gold-verify.mjs` — the /showcase provenance gate.
 - `package.json` — declares the `scrml` linked dependency.
 
 ## Status
 
-**Landed:** the viewer shell as a scrml app · real `.js.map` hover-provenance at
+**Landed:** the ~99-page wiki, migrated in from `scrml/docs/website/` where it
+had been written but never built or deployed · soft navigation · the site-wide
+gate · the viewer shell as a scrml app · real `.js.map` hover-provenance at
 **column precision** · engine what-comes-next box from the engine-graph JSON ·
 **two** engine-heavy flagships (`14-mario-state-machine`, `25-triage-board`) with
 a data-driven selector · plain nav + dashboard stub · the precompute pipeline ·
 the executable browser gate.
 
-**Next:** KB-nav · PE-layer toggle · postMessage live-pane↔source hover
+**Next:** wire the wiki's own nav depth (KB-nav / sidebar for the reference
+tree) · a content audit of the migrated pages against v0.7.1 semantics (they
+compile, but compiling proves syntax, not accuracy) · deploy decisions (CNAME,
+Pages, retiring `scrml/docs/build.ts`) · PE-layer toggle · postMessage
+live-pane↔source hover
 (bidirectional, across the iframe — needs a provenance bridge injected into the
 flagship build).
 
