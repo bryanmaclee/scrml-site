@@ -1,5 +1,64 @@
 # scrml-site — hand-off
 
+## Session 7 — `server` SPLIT MIGRATION executed (2026-07-22)
+
+Executed the scrml PA's ruling. **10 migrated · 1 held · `server fn` untouched.**
+
+**Corrected our own count first.** We had reported 31 sites; the real figure is
+**43 `server`-keyword occurrences**. The original grep missed pages that
+obfuscate keywords as numeric character refs (`s&#101;rver f&#117;nction`) so the
+doc page's own compile doesn't parse the sample. Proper breakdown:
+
+| | count | action |
+|---|---|---|
+| `server fn` | 9 | **untouched** — NOT deprecated (SPEC §48), permanent for pure server-pinned helpers |
+| `server function` in prose / inline `<code>` | 22 | **untouched** — editorial, not code |
+| `server function` in `<pre>` code samples | 11 | the migration scope |
+
+**The PA's suggested detector could not be used.** `W-DEPRECATED-SERVER-MODIFIER`
+cannot fire on our samples: every one omits the `<db>`/`<schema>` a doc snippet
+naturally leaves out, so they die on `E-SQL-004`/`E-SCHEMA-003`/`E-PA-002` before
+placement analysis says anything. So we **validated the rule on a minimal
+compiling case** and applied it structurally:
+
+| variant | `.server.js` emitted | `W-DEPRECATED` | SQL in client bundle |
+|---|---|---|---|
+| **with** `server` | yes | **fires** | 0 |
+| **without** `server` | **yes** | — | 0 |
+
+That is the exact safety property the PA warned about, confirmed in the direction
+that matters: **removing the keyword from a `?{}`-bodied function keeps it on the
+server.** All 10 migrated sites have `?{}` SQL in the function body.
+Migrated: `lsp-and-giti-advantages` · `orm-trap` · `server-boundary-disappears` ·
+`tier-ladder-promotion` (×3) · `learn/server-boundary` · `reference/contexts/sql` (×3).
+
+**HELD — 1 site.** `articles/v0.2.0-announce.scrml`, `server function postMessage`
+inside a `<channel>` writing `@messages`. Trigger-free by the PA's rule → held per
+instruction. **Not the secret-leak shape** — it is the §38.4 channel-cell case and
+currently fails `E-CHANNEL-SERVER-CELL-READ`. We fixed the IDENTICAL pattern on
+`reference/elements/channel.scrml` in the content audit. Not applied here because
+it is a **v0.2.0 announcement** and the client-held model is the later 2026-06-12
+RULING A. **OPERATOR CALL: do historical announcement articles get updated to
+current semantics, or preserved as period records?** That decision governs this
+file and probably others.
+
+**GATES: wiki 6/6 · showcase 11/11 · `scrml build` exit 0 · sample audit unchanged
+at 9 self-contained failures (no regressions).**
+
+**Sent** `../scrml/handOffs/incoming/2026-07-22-1930-…-split-migration-done-plus-
+static-component-import-bug.md`: migration report + **the static-component import
+bug** owed from session 6 (a purely-static component's import emits a client
+destructure of a module the page never loads, and which exports an empty object
+anyway — 66 of our 74 reference pages threw). Also flagged that
+`E-CODEGEN-INVALID-LOGIC` on `forEach(x => lift …)` should reject earlier with the
+canonical form named.
+
+**STILL HELD:** the trigger-free sweep, pending
+`g-trigger-3-server-only-import-does-not-escalate` landing on their side.
+
+**NEXT:** operator call on historical articles · prose-vs-SPEC audit · make the 9
+context-poor doc snippets self-contained · deploy decisions (CNAME, Pages).
+
 ## Session 6 — reference sidebar + scrml PA ruling received (2026-07-22)
 
 ### A. REFERENCE SIDEBAR — landed, gated

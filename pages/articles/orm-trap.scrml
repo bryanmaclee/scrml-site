@@ -64,7 +64,7 @@
 &lt;db src=".&#47;app.db" tables="users, posts"&#47;&gt;
 
 ${
-    s&#101;rver f&#117;nction getUserPosts(userId) {
+    f&#117;nction getUserPosts(userId) {
         r&#101;turn ?{`
             SELECT p.title, p.body, u.username
             FROM posts p

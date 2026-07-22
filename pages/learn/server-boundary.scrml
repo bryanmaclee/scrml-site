@@ -181,7 +181,7 @@
   &lt;newPhone: string is some&gt; = ""
 
   $&#123;
-    s&#101;rver function addContact(name, email, phone) &#123;
+    function addContact(name, email, phone) &#123;
       ?&#123;`INSERT INTO contacts (name, email, phone) VALUES (${name}, ${email}, ${phone})`&#125;.run()
     &#125;
   &#125;

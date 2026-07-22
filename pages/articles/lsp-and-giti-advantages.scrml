@@ -43,7 +43,7 @@
 
 &lt;program&gt;
 ${
-    s&#101;rver f&#117;nction list_recent() {
+    f&#117;nction list_recent() {
         r&#101;turn ?{`
             SELECT u.|     -- cursor here
             FROM users u

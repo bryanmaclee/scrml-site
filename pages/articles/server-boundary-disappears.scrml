@@ -96,7 +96,7 @@ ${
         ItemCountOutOfRange
     }
 
-    s&#101;rver f&#117;nction submitOrder(items)! -&gt; SubmitError {
+    f&#117;nction submitOrder(items)! -&gt; SubmitError {
         i&#102; (items.length == 0 || items.length &gt; 100) {
             f&#97;il SubmitError::ItemCountOutOfRange
         }

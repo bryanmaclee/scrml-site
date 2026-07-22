@@ -48,7 +48,7 @@ ${
     &lt;errorMsg&gt;  = ""
     &lt;data&gt;      = n&#111;t
 
-    s&#101;rver f&#117;nction fetchItems()! -&gt; LoadError {
+    f&#117;nction fetchItems()! -&gt; LoadError {
         c&#111;nst result = ?{`SELECT * FROM items`}.all()
         i&#102; (result.length == 0) f&#97;il LoadError::Empty
         r&#101;turn result
@@ -120,7 +120,7 @@ ${
     }
     &lt;phase&gt;: Phase = .Idle
 
-    s&#101;rver f&#117;nction fetchItems()! -&gt; LoadError {
+    f&#117;nction fetchItems()! -&gt; LoadError {
         c&#111;nst result = ?{`SELECT * FROM items`}.all()
         i&#102; (result.length == 0) f&#97;il LoadError::Empty
         r&#101;turn result
@@ -221,7 +221,7 @@ ${
         Success(count: int)
     }
 
-    s&#101;rver f&#117;nction fetchItems()! -&gt; LoadError {
+    f&#117;nction fetchItems()! -&gt; LoadError {
         c&#111;nst result = ?{`SELECT * FROM items`}.all()
         i&#102; (result.length == 0) f&#97;il LoadError::Empty
         r&#101;turn result
