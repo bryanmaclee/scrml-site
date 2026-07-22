@@ -1,5 +1,91 @@
 # scrml-site — hand-off
 
+## Session 6 — reference sidebar + scrml PA ruling received (2026-07-22)
+
+### A. REFERENCE SIDEBAR — landed, gated
+
+~99 routes were served by a 7-item header nav; the 73-page reference tree had no
+navigation of its own. Now it does: Elements (12) · Keywords (4) · Contexts (3) ·
+Errors & warnings (54, collapsed into 28 `<details>` families with counts).
+Sticky, scrollable, current page highlighted.
+
+**Architecture — three constraints forced it, in order:**
+1. **The shell cannot branch on route.** `route.*` is page-scoped; using it in
+   `app.scrml` is `E-SCOPE-001`. So "render the sidebar only on /reference/*"
+   cannot be expressed in the shell directly.
+2. **No per-section layout.** SPEC §20.8.1: V1 has ONE flat `<outlet>` per shell;
+   nested layouts are v1.next. So there is nowhere to hang a section layout.
+3. **Component import is BROKEN for static components** (compiler bug, see C).
+
+**Resulting design:** the nav is authored ONCE in `app.scrml`, **hidden by
+default**, and each reference page opts in with a scoped `#{}` rule that shows it
+and marks its own link active. Fully static — **zero client JS**, present in the
+server HTML, no flash, crawlable.
+- **GENERATED**: `node scripts/gen-reference-nav.mjs` rewrites the marked region
+  in `app.scrml` from the filesystem. A hand-maintained tree over 73 pages drifts
+  the moment someone adds a page, and a nav that omits a page makes it
+  unreachable by browsing.
+- **`!important` on the opt-in is load-order, not laziness:** the shell's
+  `app.css` is linked AFTER the page stylesheet, so its `.refnav{display:none}`
+  default wins at equal specificity. Documented inline at all 74 sites.
+
+**GATE: wiki 6/6** (new assertion: sidebar shown in-section, hidden out,
+current link active — it fails silently otherwise, since a botched opt-in just
+renders nothing) **· showcase 11/11 · `scrml build` exit 0.**
+
+### B. WHAT I TRIED FIRST AND BACKED OUT — component import
+
+The obvious design (a `ReferenceNav` component imported by each page) **compiles
+clean and renders correctly server-side, but throws on every reference page.**
+The wiki gate caught it — 4/5, `no uncaught page errors` FAIL. Two compiler
+defects compounding:
+1. The page's `client.js` emits
+   `const { ReferenceNav } = _scrml_modules["components/reference-nav.client.js"]`
+   but **the page never script-includes that module** — so it is `undefined` →
+   `TypeError` on all 66 reference pages that emit client JS.
+2. That module registers an **empty object** anyway: a purely-static
+   presentational component has nothing to export client-side.
+Reverted the 74-file wiring and rebuilt on the shell+CSS approach. **Do not retry
+the import approach until the compiler fix lands.**
+
+### C. SCRML PA REPLY RECEIVED — the `server` arc is PARTIALLY unblocked
+
+`handOffs/incoming/read/2026-07-22-1815-…-server-keyword-ruling-and-two-findings.md`
+
+**Ruling: option 1.** Inference is meant to cover every case; `server` is fully
+deprecated with plain `function` as the migration. No replacement annotation, no
+permanent dual-status.
+
+**But our question exposed a live HIGH defect on their side.** SPEC §12.2
+Trigger 3 (a function importing a server-only stdlib module escalates) **is
+spec'd and NOT implemented** — `SERVER_ONLY_SCRML_MODULES` exists but is only
+consumed by async classification, never wired as a placement trigger. They
+reproduced it with our exact `issueToken` example: **without `server`, no
+`.server.js` is emitted at all and the secret ships to the browser**
+(`grep -c "s3cr3t" app.client.js` → 1). Filed
+`g-trigger-3-server-only-import-does-not-escalate` (HIGH, confidentiality-adjacent).
+They confirmed holding the arc was correct and `server` is currently
+**load-bearing, not redundant**.
+
+**Our action — SPLIT the 31 sites, migrate only half:**
+- **Redundant** (body has another trigger — `?{}` SQL, `broadcast()`, `handle()`,
+  a server-classified caller): **migrate now**, delete the keyword. Reliable
+  detector: **`W-DEPRECATED-SERVER-MODIFIER` fires exactly where it is redundant.**
+- **Trigger-free**: **HOLD.** Deleting today silently relocates the function and
+  any secret it closes over to the client. They will notify when Trigger 3 lands.
+- **`server fn` is NOT deprecated** — permanent for pure server-pinned helpers
+  (SPEC §48). Must not be swept up in the migration.
+- No target version for hard removal; warn-only until Trigger 3 ships.
+
+**Also ruled: `docs/website/` STAYS** on their side as a live test fixture for 3
+compiler tests (esm-script-tag-module-format, tailwind-phase1-coverage,
+bs-layer-corpus-friction-bugs). **Our migration stands and scrml-site is the
+wiki** — the copy is a fixture, not a second source of truth. Nothing to do.
+
+**NEXT:** the split-migration above (use `W-DEPRECATED-SERVER-MODIFIER` as the
+detector) · report the static-component import bug to ../scrml · prose-vs-SPEC
+audit · make the 9 context-poor doc snippets self-contained · deploy decisions.
+
 ## Session 5 — CONTENT AUDIT of the migrated wiki (2026-07-22)
 
 Audited the ~99 migrated pages for prose/semantics drift against v0.7.1. Made it

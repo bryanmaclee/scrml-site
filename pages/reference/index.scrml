@@ -9,6 +9,17 @@
 
 <page>
 
+    // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
+    // authored once in app.scrml and hidden by default; this shows it and
+    // marks THIS page's link active. See scripts/gen-reference-nav.mjs.
+    #{
+        /* !important is load-order, not laziness: the shell's app.css is linked
+           AFTER this page's stylesheet, so its `.refnav{display:none}` default
+           wins at equal specificity. */
+        .ref-shell { display: grid !important; }
+        .refnav { display: block !important; }
+    }
+
     <article class="prose prose-slate max-w-3xl">
 
         <header class="not-prose mb-8 pb-6 border-b border-slate-200">

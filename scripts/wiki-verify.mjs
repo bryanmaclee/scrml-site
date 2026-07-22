@@ -104,6 +104,23 @@ for (const r of ["/reference/elements/engine", "/getting-started", "/learn/valid
 ok("code blocks are readable (fg/bg luminance separated)", lowContrast.length === 0,
    lowContrast.length ? lowContrast.slice(0, 3).join(" | ") : "all sampled <pre> readable");
 
+// 3c. REFERENCE SIDEBAR — visible on reference pages, hidden elsewhere, and the
+// current page's link marked active. The nav is authored once in the shell and
+// opted into per page via scoped CSS; a botched load-order or a missing opt-in
+// block fails silently (the nav is simply invisible), so assert both directions.
+await page.goto(ORIGIN + "/reference/elements/engine", { waitUntil: "domcontentloaded", timeout: 60000 });
+await page.waitForTimeout(500);
+const navOn = await page.locator(".refnav").isVisible().catch(() => false);
+const navLinks = await page.locator(".refnav-link").count();
+const activeBorder = await page.locator('.refnav-link[data-ref="elements/engine"]')
+  .evaluate((el) => getComputedStyle(el).borderLeftColor).catch(() => "");
+await page.goto(ORIGIN + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
+await page.waitForTimeout(400);
+const navOffHome = await page.locator(".refnav").isVisible().catch(() => false);
+ok("reference sidebar: shown in-section, hidden out, current link active",
+   navOn && navLinks > 60 && !navOffHome && /56, 189, 248/.test(activeBorder),
+   `ref=${navOn} links=${navLinks} home=${navOffHome} active=${activeBorder}`);
+
 // 4. no page errors across the sample
 ok("no uncaught page errors", errs.length === 0, errs.length ? errs.slice(0, 3).join(" | ") : "clean");
 
