@@ -1,0 +1,130 @@
+# .pa-base/profile — the scrml-site PA boot manifest. /boot REHYDRATES from this; it does not re-derive.
+# Assembled by /flobase 2026-07-22 (first assembly). Re-run `/flobase reinit` when stack/scope changes.
+# The assembled context region lives in .claude/CLAUDE.md (flobase-fenced). This file POINTS at the
+# normative contract; it does not replace it. Authority: pa.md (repo root) + hand-off.md.
+
+IDENTITY:
+  git config user.name -> slugify -> first token -> ../scrml-support/pa-profile-<slug>.md
+  bryan maclee -> bryan -> pa-profile-bryan.md   (default: bryan, if unset/unmatched)
+
+STACK:  scrml (primary) — 9 .scrml / ~1.2K LOC: app.scrml · pages/{index,dashboard} ·
+        components/{nav-skeleton,source-pane,output-tabs,engine-graph-pane,showcase-layout} ·
+        lib/provenance.scrml. Compiler = LINKED DEPENDENCY, bun-run. NEVER vendored — the linked dep
+        dogfoods the real adopter install path.
+        Secondary: thin plain-ESM Node (scripts/build-artifacts.mjs). NO TypeScript, no tsconfig.
+
+  ⚑ THE COMPILER IS ../scrml — NOT ../scrmlTS (operator-corrected 2026-07-22).
+    ../scrmlTS = STALE/RETIRED. HEAD 9e607bad (S172, 2026-06-07). Its PA is not running.
+    ../scrml   = LIVE. HEAD df6d269c (S279, 2026-07-22), v0.7.1, ~107 sessions ahead. Same examples/
+                 corpus (both flagships), same compiler/src/api.js entry point.
+    THE REPO IS STILL MIS-WIRED TO THE STALE ONE: package.json `scrmlts: link:scrmlts`,
+    node_modules/scrmlts -> ../../scrmlTS; build-artifacts.mjs + serve.sh both resolve through it.
+    EVERYTHING IN data/ WAS COMPILED BY THE JUNE-7 COMPILER. Rewiring is the TOP work item; until it
+    lands, every artifact + every compiler-friction note below is PROVISIONAL.
+    Rewire is MECHANICAL (verified): scrml package.json has NO `exports` field -> deep subpaths
+    (scrml/compiler/src/api.js, scrml/examples/*.scrml) resolve; bin is still {"scrml": ...} so
+    node_modules/.bin/scrml is unchanged; compileScrml is exported by both.
+    Touch points: package.json dep · `bun link` target · build-artifacts.mjs import + 2 FLAGSHIPS
+    source specifiers · serve.sh header + (post-rewire) collapse to `scrml dev .`.
+STAGE:  mid-flight — working app, active dev. inc1 LANDED (compile-transparent viewer, real .js.map
+        bidirectional hover-provenance). inc2 #1 LANDED (column-precision highlights) + #2 LANDED
+        (25-triage-board as 2nd flagship + data-driven selector). Live inc2 backlog, no rot.
+SCOPE:  small — 9 source files, ~1.2K LOC (data/ + dist/ are GENERATED, not source). Single operator.
+        One god-file: pages/index.scrml @ 697 LOC = 58% of source; every inc2 fork lands there.
+GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only). Ratified 2026-07-22.
+  - PRIMARY: `bash scripts/serve.sh` (port 8787; NOT bare `scrml dev`) + real-browser Chromium
+    verification via Playwright. Import playwright by ABSOLUTE path from ../scrml/node_modules
+    (present + verified 2026-07-22; ../scrmlTS also has a copy but prefer the LIVE repo). A bare
+    specifier will NOT resolve from /tmp. CommonJS default-import form.
+    Assertions: flagship iframe mounts+runs · forward hover (source line -> exact sub-line JS cells) ·
+    reverse hover (JS cell -> source line + siblings) · unmapped cell clears · selector re-renders
+    source + engine graph + iframe + JS. This IS the S146 serve-before-push discipline.
+    Precedent: S1 gold-verify PASS; S2 15/15 PASS. User MAY waive on strong verification (S151) —
+    the user's call, never the PA's.
+  - SECONDARY: `bun run build:artifacts` must exit 0. BYTE-IDENTITY IS DELIBERATELY NOT BLOCKING —
+    data/ tracks a MOVING sibling compiler, so drift is expected, not a defect.
+    VERIFIED 2026-07-22 against the STALE scrmlTS: exit 0 but ALREADY non-reproducing (new runtime
+    hashes both flagships; 25-triage-board.client.js +35/-13 with a .js.map delta). Expect a MUCH
+    larger delta post-rewire (107 sessions of codegen). The .js.map DRIVES hover-provenance, so the
+    rewire REQUIRES a full re-run of the PRIMARY gate — not a rubber stamp.
+  - NO types gate (no tsc). A scrml compile error inside serve/build is the shape-check + a hard stop.
+  - `ERR_INCOMPLETE_CHUNKED_ENCODING` in the console = benign dev-server static-chunking noise.
+  - No test suite exists. Do not fake one as a gate; the artifact is the truth here.
+
+MODULES:
+  loaded:    CORE (~/.claude/CLAUDE.md) · stack-pack-scrml · role-pa · continuity · cross-pa-notify
+  on-demand: role-dpa + deliberation (runtime, on a design fork only) · role-spa (if the inc2 backlog
+             becomes heavy enough to queue)
+  dropped:   stack-pack-ts (no TS — one plain .mjs) · maps (small scope; RECONSIDER if index.scrml
+             keeps growing) · vcs-drive (single main, no satellite branches) · role-vpa (no
+             maintenance surface) · role-cpa (single project; master PA owns cross-project) ·
+             dock (0 coverage)
+
+PROFILE-A read-set (FULL boot — the DEFAULT):
+  1. .claude/CLAUDE.md            (auto-loaded — the flobase-assembled region)
+  2. pa.md                        IN FULL   (the normative project contract)
+  3. hand-off.md                  IN FULL   (session state; newest session at top)
+  4. handOffs/incoming/*.md       (inbox; move processed -> read/)
+  5. ../scrml-support/pa-profile-bryan.md   (personal layer — register + voice ledger pointer)
+PROFILE-B read-set (THIN — ONE landed-spec arc whose brief carries the sweep):
+  .claude/CLAUDE.md + hand-off.md + the named spec sections from the brief.
+  scope_blindness guardrail: escalate to A if the arc needs design/context the thin reads don't carry.
+  DEFAULT = Profile A when the user gives no signal. The USER picks; the PA may recommend, never auto-switch.
+
+CONTINUITY store:
+  live hand-off: hand-off.md (repo root)   changelog: none yet (folded into hand-off)
+  inbox: handOffs/incoming/ -> read/       outbox: sibling handOffs/incoming/ (the ONE write exception)
+  memory: ~/.claude/projects/-home-bryan-scrmlMaster-scrml-site/memory/
+  NO delta-log (small scope, few sessions — the hand-off carries state directly). Wrap via /wrap.
+
+CROSS-PA (dropbox protocol; hook = .flobase/hooks/notify-inbox.sh via .claude/settings.json UserPromptSubmit):
+  filename YYYY-MM-DD-HHMM-<from>-to-<target>-<slug>.md ; frontmatter from/to/date/subject/needs/status.
+  needs: reply|action -> surfaced at the TURN boundary. needs: fyi -> boot-time inbox read only.
+  LIVE CHANNELS:
+    scrml  (../scrml/handOffs/incoming/) — THE compiler PA. Codegen output-shape changes land a notice
+      HERE and trigger a provenance-pane rebuild. Compiler bugs found here go OUT to its inbox.
+    master (../handOffs/incoming/) — push coordination.
+  DEAD CHANNEL — scrmlTS. Do NOT route anything there; its PA is not running (last commit 2026-06-07).
+    Historical traffic: our scandir bug report + its reply (handOffs/incoming/read/). The scandir bug
+    is SINCE FIXED in ../scrml (api.js:134 scanDirectory — dot-entry + SCAN_SKIP_DIRS skip + lstatSync;
+    the fix comment credits "reported by scrml-site S154"). We never saw the landing notice because we
+    were watching the WRONG INBOX — the absence-of-evidence trap. Sessions 1-3 waited on a dead channel.
+
+PROJECT-INTENT: scrml-site is the scrml self-demo showcase — AN APPLICATION BUILT WITH SCRML, not
+  compiler internals. The compile-transparent viewer: a scrml app that dissects another scrml app.
+  Live compiled flagship (60% left) beside stacked right-40% panes — .scrml source TOP / engine
+  "what-comes-next" transition diagram MIDDLE / tabbed compiled output BOTTOM (JS·HTML·CSS) — with
+  bidirectional hover-provenance driven by the real compiler-emitted .js.map. Extracted from
+  scrmlTS/docs/website-viewer/ on 2026-06-02 (S154) so scrmlTS stays pure language/compiler.
+
+CONVENTIONS (load-bearing; full text in .claude/CLAUDE.md + pa.md):
+  THE MAPPING IS ALWAYS REAL (real .js.map bytes · real VLQ decode · real engine-graph JSON · real live
+    flagship). Only syntax-highlight COLORING is faked (S148-permitted). Never fake a mapping.
+  Precompute is SINGLE-FILE ON PURPOSE — the parked engine-graph multi-file write-loop bug only
+    mis-writes when many inputs compile together. Do NOT batch build-artifacts.mjs.
+  Test assets STAY IN THE COMPILER REPO — flagships referenced cross-repo from the linked package's
+    examples/; this repo owns only the precomputed data/ outputs. (Post-rewire: scrml/examples/.)
+  Adding a flagship = 3 edits: FLAGSHIPS (build-artifacts.mjs) + flagshipList() (index.scrml) + one
+    if=-gated literal-src iframe line.
+  Iframe src is DELIBERATELY NOT reactive (two if=-gated literal-src iframes). Reactive-attribute
+    interpolation on src is documented friction — do not "simplify."
+  COMPILER-FRICTION WORKAROUNDS — ALL observed against the STALE compiler. RE-VERIFY each against
+  ../scrml at the rewire; do not remove one before it is re-verified, and do not report one as a bug
+  until it survives the rewire:
+    serve.sh passes .scrml files EXPLICITLY, not `scrml dev .` — the OLD scrmlTS scanDirectory walked
+      node_modules + followed symlinks. ** FIXED in ../scrml (api.js:134). ** The workaround is
+      OBSOLETE the moment the dep is rewired -> collapse serve.sh to `scrml dev .` in that same arc.
+    selectFlagship() clears every list cell to [] before refilling — Tier-0 `${ for ... lift }`
+      reconciles BY INDEX when items carry no id, so in-place cell replacement reuses DOM nodes and
+      leaves create-time static interpolated text stale. Routing through [] forces a full recreate.
+      NEVER SENT ANYWHERE. ../scrml df6d269c is literally an each-mount reconciliation fix — MAY
+      ALREADY BE FIXED. Re-verify post-rewire; if it survives, THEN report to ../scrml.
+    The dev-server watcher does not reliably hot-recompile a .scrml edit — restart serve.sh. Also
+      stale-compiler-era; re-verify.
+  Commits: conventional-ish prefixes (`inc2:` `chore:` `docs(pa):` `wrap(sN):`).
+  REMOTE: origin = git@github.com:bryanmaclee/scrml-site.git — SSH, NEVER HTTPS (HTTPS routes through
+    git-credential-manager, which hangs in headless shells).
+  Commit to main ONLY after explicit user authorization in the CURRENT session. Never --no-verify
+    without explicit authorization.
+  bryan: field-direct register · no preambles · no reflexive hedging · REAL DISAGREEMENT IS REQUESTED ·
+    the `---` answer delimiter · operator-authoritative context budget · Profile A/B picked by the user.
