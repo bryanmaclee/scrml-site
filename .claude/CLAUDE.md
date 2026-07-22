@@ -92,8 +92,16 @@ so drift is expected, not a defect.
 > larger delta once the dep is rewired to `../scrml` — 107 sessions of codegen. The `.js.map` is what
 > drives hover-provenance, so a rewire REQUIRES a full re-run of the primary gate, not a rubber stamp.
 
-**No types gate** — no `tsc`, no `go vet` equivalent. The compile step inside `serve.sh` /
-`build:artifacts` is the closest shape-check; a scrml compile error is a hard stop.
+**TYPES gate** (added 2026-07-22) — `node_modules/.bin/scrml build . --output <tmp>` must **exit 0**.
+This is *not* redundant with the serve gate: `scrml dev` emits **leniently** (it emitted despite 9
+type errors, so the site ran while a production build was broken). Only `scrml build` is the real
+shape-check.
+
+Language invariants that bit us at the v0.7.1 rewire — now conformant, **do not reintroduce**:
+- **`any` is not a type** (`E-TYPE-ANY-FORBIDDEN`). Declare a named struct, return `[Struct]`.
+  Inline object return types mis-compile (pre-existing friction), so it is *always* a named struct.
+- **`not` is the absence value, not boolean negation** (`E-TYPE-045`). Use `!expr` to negate;
+  `expr is not` to test absence.
 
 **`ERR_INCOMPLETE_CHUNKED_ENCODING`** console lines during verification are benign dev-server
 static-chunking noise — not a failure signal.

@@ -47,7 +47,14 @@ GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only
     hashes both flagships; 25-triage-board.client.js +35/-13 with a .js.map delta). Expect a MUCH
     larger delta post-rewire (107 sessions of codegen). The .js.map DRIVES hover-provenance, so the
     rewire REQUIRES a full re-run of the PRIMARY gate — not a rubber stamp.
-  - NO types gate (no tsc). A scrml compile error inside serve/build is the shape-check + a hard stop.
+  - TYPES gate (added 2026-07-22): `node_modules/.bin/scrml build . --output <tmp>` must EXIT 0.
+    NOT redundant with serve — `scrml dev` emits LENIENTLY (it emitted despite 9 type errors, so the
+    site ran while a production build was broken). Only `scrml build` is the real shape-check.
+    Language invariants that bit us at the v0.7.1 rewire, now conformant — do NOT reintroduce:
+      `any` IS NOT A TYPE (E-TYPE-ANY-FORBIDDEN). Declare a named struct and return `[Struct]`.
+        Inline object return types mis-compile (pre-existing friction), so ALWAYS a named struct.
+      `not` IS THE ABSENCE VALUE, not boolean negation (E-TYPE-045). Use `!expr` to negate;
+        `expr is not` to test absence.
   - `ERR_INCOMPLETE_CHUNKED_ENCODING` in the console = benign dev-server static-chunking noise.
   - No test suite exists. Do not fake one as a gate; the artifact is the truth here.
 

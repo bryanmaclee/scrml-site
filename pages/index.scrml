@@ -44,6 +44,36 @@
         // decoded mapping segment (srcLine == -1 means no source origin)
         type Segment:struct = { genLine: number, genCol: number, srcLine: number, srcCol: number, nameIdx: number }
 
+        // ── render-shape records ──
+        // `any` is not a type in scrml (E-TYPE-ANY-FORBIDDEN), so every helper
+        // that builds objects declares its shape. Named structs, not inline
+        // object return types (those mis-compile — see the FRICTION note).
+
+        // One column-precision cell of a generated line. srcLine is 1-based;
+        // 0 means "no author origin" (synthetic / unmapped).
+        type Cell:struct = { text: string, srcLine: number }
+        // One generated JS line, pre-split into cells. n is 1-based.
+        type JsCellLine:struct = { n: number, cells: [Cell] }
+        // One rendered text line (source / HTML / CSS panes). n is 1-based.
+        type TextLine:struct = { n: number, text: string }
+        // A dissectable flagship — `id` is the data/ subdir name.
+        type Flagship:struct = { id: string, title: string }
+
+        // ── engine-graph records (the --emit-engine-graph JSON shape) ──
+        type EngineLifecycle:struct = { onTransition: boolean, onTimeout: boolean, internalRule: boolean, history: boolean }
+        type EngineState:struct = { tag: string, next: [string], hasEffect: boolean, lifecycle: EngineLifecycle }
+        type EngineTransition:struct = { from: string, to: string, wildcard: boolean }
+        type Engine:struct = {
+            varName: string,
+            forType: string,
+            initialState: string,
+            derived: boolean,
+            variants: [string],
+            transitions: [EngineTransition],
+            states: [EngineState],
+            hasOpenerEffect: boolean
+        }
+
         const B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
         fn b64Value(ch: string) -> number { return B64.indexOf(ch) }
@@ -135,7 +165,7 @@
 
         // Partition one generated line into merged cells. `synthetic == 1` forces
         // every cell on the line to srcLine 0 (the whole line has no author origin).
-        fn cellsForLine(lineText: string, segsOnLine: [Segment], synthetic: number) -> any {
+        fn cellsForLine(lineText: string, segsOnLine: [Segment], synthetic: number) -> [Cell] {
             let len = lineText.length
             let cells = []
             if (segsOnLine.length == 0) {
@@ -181,7 +211,7 @@
         // [{ n: <1-based gen line>, cells: [{ text, srcLine }] }]. Built ONCE on
         // load (atomic), so the render loops iterate static data and only the
         // per-cell `out-hot` class toggle is reactive.
-        fn buildJsCellLines(jsText: string, segments: [Segment], kinds: [string]) -> any {
+        fn buildJsCellLines(jsText: string, segments: [Segment], kinds: [string]) -> [JsCellLine] {
             let lines = jsText.split("\n")
             let byLine = {}
             for (let seg of segments) {
@@ -205,7 +235,7 @@
         }
 
         // Split verbatim text into { n, text } line records (n 1-based).
-        fn toLines(src: string) -> any {
+        fn toLines(src: string) -> [TextLine] {
             let raw = src.split("\n")
             let out = []
             let i = 0
@@ -281,7 +311,7 @@
         // ── pure helpers (object construction lives here, see FRICTION note) ──
 
         // Parse the engine-graph JSON text and return its engines[] array.
-        fn enginesOf(graphText: string) -> any {
+        fn enginesOf(graphText: string) -> [Engine] {
             if (graphText == "") { return [] }
             let g = JSON.parse(graphText)
             if (g.engines is not) { return [] }
@@ -292,7 +322,7 @@
         // lives in a fn (FRICTION note). `id` is the data/ subdir name; the live
         // iframe is gated per-id in the left pane (literal src, no reactive-attr
         // interpolation — the lowest-risk shape given attribute friction).
-        fn flagshipList() -> any {
+        fn flagshipList() -> [Flagship] {
             let out = []
             out.push({ id: "mario",  title: "Super Mario State Machine" })
             out.push({ id: "triage", title: "Triage Board" })

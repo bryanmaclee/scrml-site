@@ -29,10 +29,14 @@ ${
         return "tok-plain"
     }
 
+    // One rendered text line. Named struct — inline object return types
+    // mis-compile (see the provenance.scrml FRICTION note), and `any` is not a
+    // type in scrml (E-TYPE-ANY-FORBIDDEN), so the shape is declared.
+    type TextLine:struct = { n: number, text: string }
+
     // Split the verbatim source text into a list of { n, text } line records
-    // (n is 1-based — matches the source-map's 1-based source lines). Returned
-    // untyped (see provenance.scrml FRICTION note on inline object return types).
-    export fn toLines(src: string) -> any {
+    // (n is 1-based — matches the source-map's 1-based source lines).
+    export fn toLines(src: string) -> [TextLine] {
         let raw = src.split("\n")
         let out = []
         let i = 0

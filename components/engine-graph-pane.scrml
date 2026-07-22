@@ -23,7 +23,7 @@ ${
     // string the page renders as a badge row; empty string when all flags are
     // false (mario's case — but the rendering must HANDLE the true case so
     // inc2 engines with timers/effects light up).
-    export fn stateFlags(hasEffect: boolean, onTransition: boolean, onTimeout: boolean, internalRule: boolean, history: boolean) -> any {
+    export fn stateFlags(hasEffect: boolean, onTransition: boolean, onTimeout: boolean, internalRule: boolean, history: boolean) -> [string] {
         let flags = []
         if (hasEffect)    flags.push("effect")
         if (onTransition) flags.push("onTransition")

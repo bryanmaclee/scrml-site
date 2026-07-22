@@ -139,7 +139,7 @@ ${
             let genLine1 = seg.genLine + 1
             let bucket = fwd[srcKey]
             if (bucket is not) { bucket = [] }
-            if (not bucket.includes(genLine1)) { bucket.push(genLine1) }
+            if (!bucket.includes(genLine1)) { bucket.push(genLine1) }
             fwd[srcKey] = bucket
         }
         return fwd

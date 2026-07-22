@@ -37,6 +37,30 @@ coming. Operator-corrected mid-session; rewire executed and gate-verified.
    examples themselves evolved. Superseded runtime bundles removed
    (`scrml-runtime.00okhlvg.js`, `.01f11ozs.js`); new ones tracked.
 
+5. **v0.7.1 CONFORMANCE — all 9 errors FIXED; `scrml build` now exits 0.** The
+   rewire had revealed pre-existing language drift (source written against a
+   compiler 107 sessions old); `scrml dev` emits leniently, so the site ran
+   while a production build was broken. Two classes, both closed:
+   - **`E-TYPE-ANY-FORBIDDEN` ×8** — `any` is no longer a type in scrml. All 8
+     were `-> any` RETURN annotations. Fixed by declaring named structs and
+     threading real types (inline object return types mis-compile — the
+     pre-existing FRICTION note still holds, so every shape is a named struct):
+     - `pages/index.scrml` — new records `Cell {text, srcLine}` ·
+       `JsCellLine {n, cells:[Cell]}` · `TextLine {n, text}` ·
+       `Flagship {id, title}` · and the engine-graph shape
+       `EngineLifecycle` / `EngineState` / `EngineTransition` / `Engine`
+       (mirrors the `--emit-engine-graph` JSON exactly). Signatures:
+       `cellsForLine -> [Cell]` · `buildJsCellLines -> [JsCellLine]` ·
+       `toLines -> [TextLine]` · `enginesOf -> [Engine]` ·
+       `flagshipList -> [Flagship]`.
+     - `components/output-tabs.scrml` + `components/source-pane.scrml` — local
+       `TextLine` struct; `toLines -> [TextLine]`.
+     - `components/engine-graph-pane.scrml` — `stateFlags -> [string]`.
+   - **`E-TYPE-045` ×1** — `lib/provenance.scrml:142`
+     `if (not bucket.includes(...))` → `if (!bucket.includes(...))`. `not` is
+     now the unified ABSENCE value (`expr is not`), NOT boolean negation; `!` is
+     the negation operator.
+
 **GOLD-VERIFY 10/10 PASS** (Chromium via playwright from `../scrml/node_modules`,
 absolute-path import). Source pane 177 lines · selector 2 buttons · flagship
 iframe mounts · 287 JS cells · FORWARD hover lights exact sub-line cells (both
@@ -45,39 +69,27 @@ selector re-renders source (mario→triage) · active-state flips. **Zero page
 errors.** Script: `scratchpad/gold-verify.mjs`; screenshot `scratchpad/gate.png`
 shows the live Triage Board + real source + DragPhase engine graph.
 
-**⚠ NEW FINDING — `scrml build` FAILS with 9 errors (the app source is not
-v0.7.1-conformant).** `scrml dev` emits anyway (lenient), which is why the
-runtime gate passes and the site works — but a production build is broken. This
-is PRE-EXISTING language drift the rewire *revealed*, not damage it caused: the
-source was written against a compiler 107 sessions old. Two error classes:
-- **`E-TYPE-ANY-FORBIDDEN` ×8** — `any` is no longer a type in scrml. All 8 are
-  `-> any` RETURN annotations: `pages/index.scrml` 138 `cellsForLine`, 184
-  `buildJsCellLines`, 208 `toLines`, 284 `enginesOf`, 295 `flagshipList` ·
-  `components/engine-graph-pane.scrml:26` `stateFlags` ·
-  `components/output-tabs.scrml:11` `toLines` ·
-  `components/source-pane.scrml:35` `toLines`. Each returns an array of records
-  → needs a real record type declared and threaded.
-- **`E-TYPE-045` ×1** — `lib/provenance.scrml:142` `if (not bucket.includes(...))`.
-  `not` is now the unified ABSENCE value, not boolean negation.
+**GATE RE-RUN after the conformance fix (type changes can move codegen):**
+gold-verify **10/10 PASS again, zero page errors**, dev-server reports ZERO
+compilation errors, `scrml build .` **exit 0**, and `build:artifacts` is now
+**byte-identical on re-run** — reproducibility against v0.7.1 restored.
 
 **NEXT (recommended order):**
-1. **Fix the 9 conformance errors** → `scrml build` green. Bounded but real:
-   8 return types to author + 1 negation rewrite. This is the top item — the
-   repo currently cannot produce a production build.
-2. **Re-verify the remaining friction workarounds against v0.7.1** — (a) the
+1. **Re-verify the remaining friction workarounds against v0.7.1** — (a) the
    `selectFlagship()` `[]`-clear (Tier-0 `for ... lift` index-keyed reconcile
    leaving static interpolated text stale) — **`../scrml` HEAD `df6d269c` is
    literally an each-mount reconciliation fix, so this may already be fixed**;
    (b) the dev-watcher not hot-recompiling. Report to `../scrml` ONLY what
    survives. The reconcile-list finding was never sent anywhere — good, it may
    have been stale before it went out.
-3. **New lint surface to triage** (informational, not blocking): 22 ghost-pattern
+2. **New lint surface to triage** (informational, not blocking): 22 ghost-pattern
    lints — `W-TAILWIND-UNRECOGNIZED-CLASS` ×17 (our custom classes; may want the
    `#{}` CSS-shim form) + `W-EACH-PROMOTABLE` ×6 (Tier-0 `for ... lift` → `<each>`;
    NOTE: `<each>` historically lost hover wiring, friction #7 — verify before
    promoting) + `W-DEAD-FUNCTION` ×2 (`buildJsCellLines`, `enginesOf`) +
    `E-ROUTE-001` computed-member-access ×7 + `W-STYLE-CONFLICT-POSSIBLE` ×20.
-4. Then inc2 backlog: KB-nav · PE-layer toggle · postMessage live-pane↔source
+   (These are warnings only — `scrml build` is green with them present.)
+3. Then inc2 backlog: KB-nav · PE-layer toggle · postMessage live-pane↔source
    hover (needs a provenance bridge in the flagship build). Blocked: Phase-2
    HTML/CSS provenance (needs compiler HTML/CSS maps) · live dashboard embed
    (needs `scrml:fs`). Parked: engine-graph multi-file write-loop bug.

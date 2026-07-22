@@ -7,8 +7,13 @@
 // JS is what the .js.map covers (HTML/CSS provenance is Phase 2).
 
 ${
+    // One rendered text line. Named struct — inline object return types
+    // mis-compile (see the provenance.scrml FRICTION note), and `any` is not a
+    // type in scrml (E-TYPE-ANY-FORBIDDEN), so the shape is declared.
+    type TextLine:struct = { n: number, text: string }
+
     // Same line-splitter shape as the source pane: { n, text }, n 1-based.
-    export fn toLines(src: string) -> any {
+    export fn toLines(src: string) -> [TextLine] {
         let raw = src.split("\n")
         let out = []
         let i = 0
