@@ -1,5 +1,74 @@
 # scrml-site — hand-off
 
+## Session 8 — PROSE-vs-SPEC AUDIT (2026-07-22)
+
+The class neither gate can see: prose that compiles and renders but is *wrong*.
+Made it evidence-based by checking claims against SPEC + compiler rather than
+reading for vibes.
+
+### Mechanical cross-checks
+
+**Error codes — 54 documented, cross-checked against compiler source AND the SPEC
+diagnostics table.** All exist except one:
+- **`E-PURE-001` was RETIRED 2026-07-16 (S263).** SPEC carries it struck through:
+  *"Superseded by the E-FN-001..009 family (§33.6); the `pure` modifier is
+  deprecated language-wide (use `fn`)."* Zero occurrences in `compiler/src`,
+  while `E-FN-001..005/007/008` are all live. **The wiki had a full reference page
+  for an error the compiler cannot emit**, plus `reference/contexts/logic.scrml`
+  citing it as current.
+  → page kept as a **tombstone** with a retirement banner (old build output and
+  existing code still name it); `logic.scrml` updated to `E-FN-001…009`.
+  *(Two other codes initially flagged — `E-CHANNEL-INSIDE-PAGE/PROGRAM` — were my
+  grep artifact; they exist in `symbol-table.ts`.)*
+
+**SPEC citations — all 156 distinct `§` references resolved against SPEC headings.**
+4 unresolvable, of which only **1 is a real error**:
+- `articles/components-are-states.scrml` cited **§52.2** for "no `authority=`, so
+  client-local by default". §52 skips from 52.1 to 52.3 — **52.2 was removed**.
+  The *claim is correct* (SPEC: *"`authority="local"` is the default"*); the
+  citation was stale. → retargeted to **§52.3.2**.
+- The other 3 (§0.1, §3.7, §9.7) cite **other documents** — master-list, the
+  primer, giti's spec — not SPEC.md. Not errors. (My first parser also produced 8
+  false positives by missing headings written `## §53.1` with the section symbol.)
+
+### The structural finding — coverage, not correctness
+
+**35 of 74 reference pages are ~60-word stubs** (median real page: 180 rendered
+words). By section:
+
+| section | written | note |
+|---|---|---|
+| contexts | 3/3 | complete |
+| keywords | 4/4 | complete |
+| elements | 11/12 | only `<db>` is a stub |
+| **errors** | **19/54** | **65% stub** |
+
+The conceptual surface is genuinely written; **the error-code reference is mostly
+empty** — and that is precisely what the session-6 sidebar surfaces most
+prominently (54 entries across 28 families). Browsing promised 73 written pages
+and delivered 38.
+
+*Measurement note:* an initial pass counted 40 stubs off a `// Day-30 placeholder
+stub` header comment, but exactly one page (`E-IDLE-DUPLICATE`) had that stale
+comment over real content. Re-measured from **rendered word count**, not comments.
+
+→ **FIXED, not just reported:** `scripts/gen-reference-nav.mjs` now measures each
+page from source and marks stubs in the sidebar (dimmed + `·`, `title="stub — not
+yet written"`). It prints `coverage: 38/73 written, 35 stubs marked` on every
+regeneration, so coverage is visible while authoring instead of discoverable only
+by clicking.
+
+### Coverage gap left open
+
+**Zero pages document `E-FN-001…009`** — the family that replaced `E-PURE-001`.
+A reader hitting `E-FN-003` today finds nothing.
+
+**GATES: wiki 6/6 · showcase 11/11 · `scrml build` exit 0.**
+
+**NEXT:** write the 35 stub error pages (or narrow the sidebar to what exists) ·
+document `E-FN-001…009` · operator call on historical announcement articles ·
+make the 9 context-poor doc snippets self-contained · deploy decisions.
+
 ## Session 7 — `server` SPLIT MIGRATION executed (2026-07-22)
 
 Executed the scrml PA's ruling. **10 migrated · 1 held · `server fn` untouched.**

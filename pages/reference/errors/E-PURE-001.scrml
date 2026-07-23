@@ -21,6 +21,33 @@
 
     <article class="prose prose-slate max-w-3xl">
 
+        // RETIREMENT NOTICE — added by the prose-vs-SPEC audit 2026-07-22.
+        // SPEC's diagnostics table carries this code STRUCK THROUGH:
+        //   "~~E-PURE-001~~ … Retired 2026-07-16 (S263). Superseded by the
+        //    E-FN-001..009 family (§33.6 defines them as specialized
+        //    subcategories of E-PURE-001); the `pure` modifier is deprecated
+        //    language-wide (use `fn`)."
+        // The compiler emits NO E-PURE-001 — grep of compiler/src confirms zero
+        // occurrences, while E-FN-001..005/007/008 are all live. The page is kept
+        // as a tombstone because old build output and old code still name it.
+        <div class="not-prose mb-8 rounded-md border border-amber-200 bg-amber-50 px-4 py-3">
+            <div class="font-mono text-xs uppercase tracking-wide text-amber-700 mb-1">
+                Retired code
+            </div>
+            <p class="text-slate-700 text-sm leading-relaxed">
+                <code class="font-mono">E-PURE-001</code> was
+                <strong>retired 2026-07-16</strong> and is no longer emitted by
+                the compiler. It is superseded by the
+                <code class="font-mono">E-FN-001&hellip;009</code> family, which
+                SPEC &sect;33.6 defines as specialized subcategories of it. The
+                <code class="font-mono">pure</code> modifier is deprecated
+                language-wide &mdash; use <code class="font-mono">fn</code>.
+                This page is kept because older build output and existing code
+                still reference the old code.
+            </p>
+        </div>
+
+
         <header class="not-prose mb-8 pb-6 border-b border-slate-200">
             <div class="text-xs font-mono text-slate-500 mb-2">
                 Reference &rsaquo; Errors

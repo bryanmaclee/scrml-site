@@ -9,12 +9,32 @@
 import { readdirSync, writeFileSync, readFileSync } from "node:fs";
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+// STUB DETECTION. The prose-vs-SPEC audit (2026-07-22) found 35 of 74 reference
+// pages are ~60-word placeholders while the median real page is ~180 words. The
+// sidebar makes all 74 browsable, so without a marker half the tree leads to
+// near-empty pages with no warning. Measured from SOURCE (not dist/) so the nav
+// can be regenerated without a build.
+const STUB_WORDS = 120;
+const wordsIn = (path) => {
+  let t = readFileSync(path, "utf8");
+  t = t.replace(/^\s*\/\/[^\n]*$/gm, "");          // strip scrml line comments
+  t = t.replace(/#\{[\s\S]*?\}/g, "");              // strip scoped CSS blocks
+  t = t.replace(/<[^>]+>/g, " ");                    // strip markup
+  t = t.replace(/&[a-z]+;|&#\d+;/g, " ");
+  return t.split(/\s+/).filter(Boolean).length;
+};
+const isStub = (rel) => wordsIn(`pages/reference/${rel}.scrml`) < STUB_WORDS;
 const list = (d) => readdirSync(`pages/reference/${d}`).filter((f) => f.endsWith(".scrml"))
   .map((f) => f.replace(/\.scrml$/, "")).filter((n) => n !== "index").sort();
 
-const link = (slug, label, mono) =>
-  `        <a href="/reference/${slug}" data-ref="${slug}"`
-  + ` class="refnav-link${mono ? " font-mono" : ""}">${esc(label)}</a>`;
+const link = (slug, label, mono) => {
+  const stub = isStub(slug);
+  return `        <a href="/reference/${slug}" data-ref="${slug}"`
+    + ` class="refnav-link${mono ? " font-mono" : ""}${stub ? " refnav-stub" : ""}"`
+    + (stub ? ` title="stub — not yet written"` : "")
+    + `>${esc(label)}${stub ? `<span class="refnav-stubdot" aria-label="stub">·</span>` : ""}</a>`;
+};
 
 const section = (title, body) =>
   `      <div class="refnav-group">\n`
@@ -66,5 +86,9 @@ let next;
 if (si !== -1 && ei !== -1) next = shell.slice(0, si) + nav + shell.slice(ei + END.length);
 else next = shell.replace(/(\n\s*<\/main>)/, `\n${nav}$1`);
 writeFileSync("app.scrml", next);
+const all = [...list("elements").map((n) => `elements/${n}`), ...list("keywords").map((n) => `keywords/${n}`),
+             ...list("contexts").map((n) => `contexts/${n}`), ...errs.map((n) => `errors/${n}`)];
+const stubs = all.filter(isStub);
 console.log(`generated: ${list("elements").length} elements, ${list("keywords").length} keywords, `
   + `${list("contexts").length} contexts, ${errs.length} errors in ${Object.keys(fam).length} families`);
+console.log(`coverage: ${all.length - stubs.length}/${all.length} written, ${stubs.length} stubs marked`);
