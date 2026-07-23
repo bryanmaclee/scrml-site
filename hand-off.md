@@ -1,5 +1,101 @@
 # scrml-site — hand-off
 
+## ⇢ SESSION CLOSE 2026-07-22 — NEXT SESSION IS ON THE OTHER MACHINE
+
+**READ THIS FIRST NEXT BOOT.** Everything is pushed (`origin/main` = local, 0
+ahead / 0 behind, tree clean). The next session runs on the operator's **other
+machine**, so the first thing to do is the per-machine setup, which is NOT in git.
+
+### Cross-machine setup (per-machine state, gitignored)
+
+`node_modules/` is gitignored and `bun link` is a **per-machine global registry**.
+On the other machine, before anything else:
+
+```
+cd ../scrml && bun link          # register the `scrml` package on THAT machine
+cd ../scrml-site && bun install  # resolves `scrml: link:scrml`
+```
+
+Then sanity-check the link before trusting any gate:
+`ls node_modules/scrml/compiler/bin/scrml.js` and
+`ls node_modules/scrml/node_modules/playwright/index.js` must both resolve.
+
+**Requires the sibling layout** `<root>/scrml` + `<root>/scrml-site`. Playwright is
+NOT a devDependency here — it is borrowed from the compiler repo's `node_modules`
+through the link.
+
+### Portability fix landed THIS wrap — do not undo it
+
+All three scripts previously hardcoded `/home/bryan/...`, including **both
+merge-blocking gates**. On a different machine or home dir they would all have
+failed at the first boot. Now they resolve **through the linked dependency**
+(`node_modules/scrml/...`), which is machine-independent by construction:
+- `scripts/wiki-verify.mjs`, `scripts/gold-verify.mjs` — `PLAYWRIGHT` env override
+- `scripts/audit-samples.mjs` — `SCRML` env override
+Re-verified after the change: **wiki 6/6 · showcase 11/11.** If the sibling layout
+differs on the other machine, set those env vars rather than re-hardcoding a path.
+
+### Gate commands (the full green check)
+
+```
+bash scripts/serve.sh 8787 &      # wait ~30s for it to listen
+node scripts/wiki-verify.mjs      # site-wide      -> 6/6
+node scripts/gold-verify.mjs      # /showcase      -> 11/11
+node_modules/.bin/scrml build . --output /tmp/x    # types gate -> exit 0
+node scripts/audit-samples.mjs    # advisory       -> 9 known self-contained failures
+```
+**Dev-server caveat:** after ANY `app.scrml` (shell) edit, `rm -rf dist` and
+restart `serve.sh` — the watcher recompiles pages but does NOT recompose emitted
+page HTML on a shell change (reported to ../scrml).
+
+### Inbox absorbed at close — scrml PA S281 triage (`needs: fyi`, no reply owed)
+
+Our static-component `TypeError` is **three defects, one new**:
+- `g-composition-strip-eats-last-dep-script` (pre-existing, now confirmed live) —
+  **this is what actually throws**; the dep `<script>` is dropped in composed
+  nested routes.
+- **`g-static-component-import-dead-destructure` (NEW, HIGH)** — our suggested fix
+  was recorded: don't emit the import/destructure when every binding resolves to
+  static markup. Fixing this alone makes the dep-script gaps non-fatal.
+- `g-runtime-script-tag-not-depth-prefixed` — the bare runtime tag is emitted
+  *alongside* the correct `../` one: a duplicate 404, not a broken load.
+Also filed from our report: `g-foreach-lift-codegen-stage-rejection` (LOW).
+**Their guidance: KEEP the CSS-opt-in sidebar for now.** It works around the
+dep-script strip, not around component reuse being unsound — ordinary component
+reuse should work in flat layouts as soon as the destructure fix lands. They also
+logged that this is the **second** feature pushed into CSS-opt-in shape by the V1
+one-flat-`<outlet>` rule (§20.8.1), as a design signal for per-section layouts.
+They will **ping us when `g-trigger-3-server-only-import-does-not-escalate` lands**
+— that unblocks the held trigger-free `server` sweep.
+
+### Wrap bookkeeping
+
+- **Gates at close:** wiki **6/6** · showcase **11/11** · `scrml build` **exit 0** ·
+  sample audit **9** known self-contained failures (all context-poor snippets, no
+  regressions).
+- **Changelog:** this repo has no `docs/changelog.md`; per `.pa-base/profile` the
+  changelog is **folded into this hand-off** (small scope). Not skipped — by design.
+- **Maps:** the `maps` module was dropped at `/flobase` on small-scope grounds.
+  **Scope has since gone small → medium (9 → 106 source files), so this is worth
+  revisiting** — noted in the profile, not silently skipped.
+- **Worktrees:** only the main checkout; nothing to prune.
+- **Generated docs:** `node scripts/gen-reference-nav.mjs` re-run at close — a
+  no-op, so the committed nav is current (`coverage: 38/73 written, 35 stubs`).
+- **Inbox:** empty. All traffic in `handOffs/incoming/read/`.
+
+### Open decisions waiting on the operator
+
+1. **Deploy + GitHub metadata** — explicitly deferred to next session on the other
+   machine. scrml.dev still serves the interim static HTML from `scrml/docs/`;
+   CNAME, Pages, and retiring `scrml/docs/build.ts` are all open. The repo
+   (`github.com/bryanmaclee/scrml-site`) is **public** with **no description /
+   topics / homepage** set — the README's first line is the ready-made description.
+2. **Historical articles** — do v0.2.0/v0.3.0 announcements get updated to current
+   semantics, or preserved as period records? Governs the 1 held `server` site and
+   likely others.
+3. **Stub coverage** — 35 of 74 reference pages are ~60-word stubs (errors 19/54).
+   Write them, or narrow the sidebar to what exists.
+
 ## Session 8 — PROSE-vs-SPEC AUDIT (2026-07-22)
 
 The class neither gate can see: prose that compiles and renders but is *wrong*.

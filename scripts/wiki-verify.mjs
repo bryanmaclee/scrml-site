@@ -11,9 +11,14 @@
 // covered the moment it compiles — a hardcoded list would silently stop
 // covering the thing it is supposed to gate.
 //
-// playwright by ABSOLUTE path out of the linked compiler's node_modules
-// (this repo carries no devDependencies of its own).
-import pw from "/home/bryan/scrmlMaster/scrml/node_modules/playwright/index.js";
+// playwright resolves through the linked compiler dependency (see PW below).
+// Playwright resolves THROUGH the linked compiler dependency
+// (node_modules/scrml -> the sibling scrml repo), not an absolute path: this repo
+// carries no devDependencies, and a hardcoded /home/<user>/... breaks on any other
+// machine or checkout layout. PLAYWRIGHT override is the escape hatch.
+const PW = process.env.PLAYWRIGHT
+  || new URL("../node_modules/scrml/node_modules/playwright/index.js", import.meta.url).pathname;
+const pw = (await import(PW)).default;
 import { readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 const { chromium } = pw;

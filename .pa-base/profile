@@ -30,6 +30,14 @@ SCOPE:  MEDIUM (was small; changed 2026-07-22 by the wiki migration) — 106 sou
         One god-file: pages/showcase.scrml @ ~730 LOC (the dissector; every showcase fork lands there).
         RECONSIDER the `maps` module — it was dropped on "small scope", which no longer holds.
 GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only). Ratified 2026-07-22.
+  CROSS-MACHINE (per-machine, gitignored — do FIRST on a fresh clone/machine):
+    cd ../scrml && bun link   then   cd ../scrml-site && bun install
+    verify: node_modules/scrml/compiler/bin/scrml.js AND
+            node_modules/scrml/node_modules/playwright/index.js both resolve.
+    Requires the sibling layout <root>/scrml + <root>/scrml-site. Playwright is NOT a devDependency
+    here — it is borrowed from the compiler repo through the link. All scripts resolve THROUGH that
+    link (machine-independent); env overrides PLAYWRIGHT / SCRML exist if the layout differs.
+    NEVER re-hardcode an absolute /home/<user>/ path — that broke all three scripts until 2026-07-22.
   - PRIMARY, TWO SCRIPTS — both must exit 0. `bash scripts/serve.sh` (port 8787), then:
       `node scripts/wiki-verify.mjs`  — SITE-WIDE (5 assertions): every emitted route resolves 200
         (route list DERIVED from dist/, so a new page is covered the moment it compiles) · shell +

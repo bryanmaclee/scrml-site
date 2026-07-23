@@ -11,9 +11,8 @@
 // serve-before-push). This script is that gate, made executable and
 // version-controlled so it survives the session that wrote it.
 //
-// playwright is imported by ABSOLUTE path out of the linked compiler's
-// node_modules: a bare specifier does not resolve from here, and scrml-site
-// deliberately carries no devDependencies of its own.
+// playwright resolves through the linked compiler dependency (see PW below);
+// scrml-site deliberately carries no devDependencies of its own.
 //
 // WHY THE NESTED-LIST ASSERTION EXISTS (assertion 11): on 2026-07-22 this gate
 // passed 10/10 while the engine pane was silently rendering the WRONG
@@ -22,7 +21,13 @@
 // updated fine, so nothing else caught it. Reported to ../scrml; the
 // clear-then-refill workaround in selectFlagship() is load-bearing until it
 // lands. Do not delete assertion 11 without re-verifying that bug is fixed.
-import pw from "/home/bryan/scrmlMaster/scrml/node_modules/playwright/index.js";
+// Playwright resolves THROUGH the linked compiler dependency
+// (node_modules/scrml -> the sibling scrml repo), not an absolute path: this repo
+// carries no devDependencies, and a hardcoded /home/<user>/... breaks on any other
+// machine or checkout layout. PLAYWRIGHT override is the escape hatch.
+const PW = process.env.PLAYWRIGHT
+  || new URL("../node_modules/scrml/node_modules/playwright/index.js", import.meta.url).pathname;
+const pw = (await import(PW)).default;
 const { chromium } = pw;
 
 const BASE = (process.env.GATE_BASE || "http://localhost:8787") + "/showcase";

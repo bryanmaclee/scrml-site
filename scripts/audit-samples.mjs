@@ -32,15 +32,19 @@
 //   - reference/elements/channel had a `server function` reading a channel cell
 //     (E-CHANNEL-SERVER-CELL-READ). A channel-cell write is CLIENT-side (§38.4).
 //
-// It also cleared things that LOOKED wrong: `server function` is still valid
-// (31 uses across the wiki, deliberately untouched), and plain `forEach` without
-// `lift` is fine. Verify before "fixing" working documentation.
+// It also cleared things that LOOKED wrong: plain `forEach` without `lift` is
+// fine, and `server function` is still valid where no other trigger exists.
+// (The `server` split migration later removed the 10 redundant uses and HELD the
+// trigger-free one — see hand-off Session 7.) Verify before "fixing" working docs.
 import { readdirSync, statSync, readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join, relative } from "node:path";
 import { execFileSync } from "node:child_process";
 
 const DIST = process.argv[2] || "dist";
-const SCRML = "/home/bryan/scrmlMaster/scrml/compiler/bin/scrml.js";
+// Resolve the compiler THROUGH the linked dependency, not an absolute path —
+// a hardcoded /home/<user>/... breaks on any other machine. SCRML overrides.
+const SCRML = process.env.SCRML
+  || new URL("../node_modules/scrml/compiler/bin/scrml.js", import.meta.url).pathname;
 const WORK = "/tmp/scrml-site-audit";
 
 const walk = (d, o = []) => {
