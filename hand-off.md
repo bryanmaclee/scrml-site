@@ -1,6 +1,119 @@
 # scrml-site — hand-off
 
-## ⇢ SESSION CLOSE 2026-07-22 — NEXT SESSION IS ON THE OTHER MACHINE
+## ⇢ SESSION 9 CLOSE 2026-07-26 — **scrml.dev IS LIVE, SERVING THIS REPO**
+
+**READ FIRST.** The deploy landed. `scrml.dev` now serves the scrml-built wiki
+out of `bryanmaclee/scrml-site` via GitHub Actions → Pages. Everything is
+pushed; `main` == `origin/main`, tree clean.
+
+### The state that matters next boot
+
+- **Live:** `scrml.dev` (HTTPS enforced; cert covers `scrml.dev` +
+  `www.scrml.dev`; `www` 301s to apex). Default URL
+  `bryanmaclee.github.io/scrml-site/` also works but nav 404s there — the site
+  uses ABSOLUTE links (`/reference`) and the compiler has NO base-path flag, so
+  it is apex-only by construction. Do not try to host it under a path prefix.
+- **Deploy path:** `.github/workflows/deploy.yml` — checks out the compiler
+  (NOT on npm) and builds with `--target static`. **The compiler ref is PINNED**
+  to `50478f0e` (S287), the commit this repo's gate suite was actually run
+  against. **Bumping that SHA requires re-running the full gate first** — the
+  emitted `.js.map` drives showcase hover-provenance.
+- **Reference is complete:** 73/73 written, 0 stubs.
+
+### ⚠ ONE LIVE DEFECT — page titles are filenames
+
+`/`, `/reference`, `/articles` all render `<title>index</title>`. Pre-existing
+content debt that only became consequential at go-live (tabs, search results).
+
+**Fix is verified, not guessed.** SPEC §40.7 order: author-written `<title>`
+wins → else `<program title=>` → else **basename**. Probed it: a page with an
+authored `<title>` gets it; a page without falls to basename **even when
+`<program title=>` is set**, so there is NO one-line shell fix. Needs a
+`<title>` in each of the 99 pages, derivable from each page's `<h1>`.
+**This is the recommended first item of the next thread.**
+
+### What the deploy exposed (and why the gates missed it)
+
+`/about` and `/learn` **404'd on static hosting**: `pages/about.scrml` emitted
+`about.html` beside a directory `about/` with no `index.html`. `scrml dev`
+resolves that; static hosts do not. Four sessions of green gates never saw it
+**because the gates only ever exercised the dev server.** Fixed by moving both
+to the `index.scrml`-in-directory shape `reference/` and `articles/` already
+used. The workflow now carries a collision guard, verified to fail on the
+pre-fix artifact and pass on the fixed one.
+
+**Lesson worth keeping: gate the ARTIFACT, not the dev server.** The static
+artifact was served through a Pages-alike static server and re-gated (6/6 +
+11/11) — that is what caught this.
+
+### Cross-repo: what was done to `../scrml` (operator-authorized)
+
+The operator explicitly authorized editing the sibling repo for the cutover,
+overriding the inbox-only rule. What happened:
+- `../scrml` `main` is a **PROTECTED branch** (required check `gate`,
+  0 approvals, `enforce_admins` on). Direct push was rejected; **nothing was
+  bypassed.** Change went via **PR #187**, merged after `gate` passed.
+  `tracking` failed — verified **pre-existing** on their `main` at `57789971`,
+  identical failure, and our diff was one deleted line no test reads.
+- `docs/CNAME` removed there so this repo could claim the domain (GitHub allows
+  one repo per domain). **Their Pages stays ENABLED** at its default URL;
+  nothing deleted, fully reversible.
+- Their local `main` was restored byte-identical after the branch was cut;
+  their working tree untouched apart from our inbox note.
+- **NOT done, deliberately:** retiring `docs/build.ts` / `docs/website/` —
+  still a live fixture for 3 compiler tests per their S280 ruling.
+
+### AWAITING REPLY — scrml PA, `needs: action`
+
+`../scrml/handOffs/incoming/2026-07-26-0400-…-three-unemittable-or-shadowed-
+error-codes.md` — still **unread** in their inbox as of close. Three §34
+codes that never reach a developer, each with a verified reproducer:
+- **`E-CHANNEL-INSIDE-PAGE` — NEVER FIRES.** `<channel>` inside `<page>`
+  compiles clean *and wires the channel*. Zero fire-sites; the source comment
+  deferring it to "once `<page>` parser support lands" is stale.
+- **`E-SQL-006`** — build exits 0; error ships as a runtime `throw` in emitted JS.
+- **`E-CHANNEL-008`** — shadowed by `E-IMPORT-004`, even with `as` aliasing.
+
+The operator has said we **wait for that reply** before acting on it.
+
+### Compiler moved MID-SESSION — re-gate is mandatory after any dep move
+
+`../scrml` went S281 `fix/each-multi-root` → S287 `main` while this session was
+running. All gates were re-run against S287. A new upstream lint
+**`W-INTERP-IN-RAW-CONTENT`** (§4.17: a literal `?{` or `${` inside raw-content
+`<pre>`/`<code>`) appeared: fixed on our 3 new pages; **~120 occurrences remain
+on pre-existing article + reference pages.** Warning-level, build exits 0.
+
+### `data/` is still NOT attributable — open
+
+Committed artifacts were baked from `feat/wave1c-nav`, a branch never merged to
+`main`; nobody could tell because nothing records which compiler produced them.
+The linked dep is a symlink to a live working tree, so `data/` reflects
+whichever branch the sibling is on — **a `data/` diff does NOT reliably mean
+"the compiler moved"** (correct that claim in `.pa-base/profile`). CI is now
+pinned; `build-artifacts.mjs` is not. Stamping the compiler SHA into the build
+manifest is the fix. Regeneration was **reverted** this session rather than bake
+an unmerged branch in twice.
+
+### GATES AT CLOSE
+
+`dev server` wiki **6/6** · showcase **11/11** · 101 routes · **0 dead links**
+`static artifact` wiki **6/6** · showcase **11/11**
+`scrml build` **exit 0** · sample audit **9** known self-contained failures (no regressions)
+
+### NEXT — recommended order
+
+1. **Page titles** (99 pages, scriptable from `<h1>`) — the one live defect.
+2. `/dashboard` ships a 212-word "coming soon" page — build it or drop it from nav.
+3. `about/changelog.scrml` 60w stub; `about`/`learn` index pages are thin (~75w).
+4. `data/` SHA attribution in `build-artifacts.mjs`.
+5. Held on operator: historical-articles ruling (governs 1 held `server` site).
+6. Held on scrml PA: the three findings above; trigger-free `server` sweep
+   (`g-trigger-3`); dropping the nested-list reconcile workaround.
+7. `maps` module still worth revisiting (dropped on small-scope grounds; scope
+   is now medium).
+
+## ⇢ SESSION CLOSE 2026-07-22 — (superseded; machine setup below still valid)
 
 **READ THIS FIRST NEXT BOOT.** Everything is pushed (`origin/main` = local, 0
 ahead / 0 behind, tree clean). The next session runs on the operator's **other
