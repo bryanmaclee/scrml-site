@@ -308,7 +308,7 @@
         <div class="refnav-title">Elements</div>
         <a href="/reference/elements/auth" data-ref="elements/auth" class="refnav-link font-mono">&lt;auth&gt;</a>
         <a href="/reference/elements/channel" data-ref="elements/channel" class="refnav-link font-mono">&lt;channel&gt;</a>
-        <a href="/reference/elements/db" data-ref="elements/db" class="refnav-link font-mono refnav-stub" title="stub — not yet written">&lt;db&gt;<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/elements/db" data-ref="elements/db" class="refnav-link font-mono">&lt;db&gt;</a>
         <a href="/reference/elements/engine" data-ref="elements/engine" class="refnav-link font-mono">&lt;engine&gt;</a>
         <a href="/reference/elements/errors" data-ref="elements/errors" class="refnav-link font-mono">&lt;errors&gt;</a>
         <a href="/reference/elements/match" data-ref="elements/match" class="refnav-link font-mono">&lt;match&gt;</a>
@@ -336,16 +336,16 @@
         <div class="refnav-title">Errors &amp; warnings</div>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-AUTH-… <span class="refnav-count">2</span></summary>
-        <a href="/reference/errors/E-AUTH-GRAPH-002" data-ref="errors/E-AUTH-GRAPH-002" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-AUTH-GRAPH-002<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/E-AUTH-GRAPH-003" data-ref="errors/E-AUTH-GRAPH-003" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-AUTH-GRAPH-003<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-AUTH-GRAPH-002" data-ref="errors/E-AUTH-GRAPH-002" class="refnav-link font-mono">E-AUTH-GRAPH-002</a>
+        <a href="/reference/errors/E-AUTH-GRAPH-003" data-ref="errors/E-AUTH-GRAPH-003" class="refnav-link font-mono">E-AUTH-GRAPH-003</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-CHANNEL-… <span class="refnav-count">5</span></summary>
-        <a href="/reference/errors/E-CHANNEL-008" data-ref="errors/E-CHANNEL-008" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-CHANNEL-008<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/E-CHANNEL-INSIDE-PAGE" data-ref="errors/E-CHANNEL-INSIDE-PAGE" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-CHANNEL-INSIDE-PAGE<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-CHANNEL-008" data-ref="errors/E-CHANNEL-008" class="refnav-link font-mono">E-CHANNEL-008</a>
+        <a href="/reference/errors/E-CHANNEL-INSIDE-PAGE" data-ref="errors/E-CHANNEL-INSIDE-PAGE" class="refnav-link font-mono">E-CHANNEL-INSIDE-PAGE</a>
         <a href="/reference/errors/E-CHANNEL-INSIDE-PROGRAM" data-ref="errors/E-CHANNEL-INSIDE-PROGRAM" class="refnav-link font-mono">E-CHANNEL-INSIDE-PROGRAM</a>
         <a href="/reference/errors/E-CHANNEL-OUTSIDE-PROGRAM" data-ref="errors/E-CHANNEL-OUTSIDE-PROGRAM" class="refnav-link font-mono">E-CHANNEL-OUTSIDE-PROGRAM</a>
-        <a href="/reference/errors/E-CHANNEL-SHARED-MODIFIER" data-ref="errors/E-CHANNEL-SHARED-MODIFIER" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-CHANNEL-SHARED-MODIFIER<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-CHANNEL-SHARED-MODIFIER" data-ref="errors/E-CHANNEL-SHARED-MODIFIER" class="refnav-link font-mono">E-CHANNEL-SHARED-MODIFIER</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-COMPONENT-… <span class="refnav-count">1</span></summary>
@@ -354,29 +354,29 @@
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-DERIVED-… <span class="refnav-count">4</span></summary>
         <a href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL" data-ref="errors/E-DERIVED-ENGINE-NO-INITIAL" class="refnav-link font-mono">E-DERIVED-ENGINE-NO-INITIAL</a>
-        <a href="/reference/errors/E-DERIVED-VALUE-MUTATE" data-ref="errors/E-DERIVED-VALUE-MUTATE" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-DERIVED-VALUE-MUTATE<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-DERIVED-VALUE-MUTATE" data-ref="errors/E-DERIVED-VALUE-MUTATE" class="refnav-link font-mono">E-DERIVED-VALUE-MUTATE</a>
         <a href="/reference/errors/E-DERIVED-WITH-VALIDATORS" data-ref="errors/E-DERIVED-WITH-VALIDATORS" class="refnav-link font-mono">E-DERIVED-WITH-VALIDATORS</a>
-        <a href="/reference/errors/E-DERIVED-WRITE" data-ref="errors/E-DERIVED-WRITE" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-DERIVED-WRITE<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-DERIVED-WRITE" data-ref="errors/E-DERIVED-WRITE" class="refnav-link font-mono">E-DERIVED-WRITE</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-ENGINE-… <span class="refnav-count">4</span></summary>
-        <a href="/reference/errors/E-ENGINE-EFFECT-AMBIGUOUS" data-ref="errors/E-ENGINE-EFFECT-AMBIGUOUS" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-ENGINE-EFFECT-AMBIGUOUS<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-ENGINE-EFFECT-AMBIGUOUS" data-ref="errors/E-ENGINE-EFFECT-AMBIGUOUS" class="refnav-link font-mono">E-ENGINE-EFFECT-AMBIGUOUS</a>
         <a href="/reference/errors/E-ENGINE-INVALID-TRANSITION" data-ref="errors/E-ENGINE-INVALID-TRANSITION" class="refnav-link font-mono">E-ENGINE-INVALID-TRANSITION</a>
-        <a href="/reference/errors/E-ENGINE-STATE-CHILD-MISSING" data-ref="errors/E-ENGINE-STATE-CHILD-MISSING" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-ENGINE-STATE-CHILD-MISSING<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/E-ENGINE-VAR-DUPLICATE" data-ref="errors/E-ENGINE-VAR-DUPLICATE" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-ENGINE-VAR-DUPLICATE<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-ENGINE-STATE-CHILD-MISSING" data-ref="errors/E-ENGINE-STATE-CHILD-MISSING" class="refnav-link font-mono">E-ENGINE-STATE-CHILD-MISSING</a>
+        <a href="/reference/errors/E-ENGINE-VAR-DUPLICATE" data-ref="errors/E-ENGINE-VAR-DUPLICATE" class="refnav-link font-mono">E-ENGINE-VAR-DUPLICATE</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-EQ-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-EQ-004" data-ref="errors/E-EQ-004" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-EQ-004<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-EQ-004" data-ref="errors/E-EQ-004" class="refnav-link font-mono">E-EQ-004</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-ERRORS-… <span class="refnav-count">2</span></summary>
-        <a href="/reference/errors/E-ERRORS-001" data-ref="errors/E-ERRORS-001" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-ERRORS-001<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/E-ERRORS-002" data-ref="errors/E-ERRORS-002" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-ERRORS-002<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-ERRORS-001" data-ref="errors/E-ERRORS-001" class="refnav-link font-mono">E-ERRORS-001</a>
+        <a href="/reference/errors/E-ERRORS-002" data-ref="errors/E-ERRORS-002" class="refnav-link font-mono">E-ERRORS-002</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-HISTORY-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-HISTORY-NO-INNER-ENGINE" data-ref="errors/E-HISTORY-NO-INNER-ENGINE" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-HISTORY-NO-INNER-ENGINE<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-HISTORY-NO-INNER-ENGINE" data-ref="errors/E-HISTORY-NO-INNER-ENGINE" class="refnav-link font-mono">E-HISTORY-NO-INNER-ENGINE</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-IDLE-… <span class="refnav-count">3</span></summary>
@@ -386,7 +386,7 @@
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-INTERNAL-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-INTERNAL-RULE-NOT-COMPOSITE" data-ref="errors/E-INTERNAL-RULE-NOT-COMPOSITE" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-INTERNAL-RULE-NOT-COMPOSITE<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-INTERNAL-RULE-NOT-COMPOSITE" data-ref="errors/E-INTERNAL-RULE-NOT-COMPOSITE" class="refnav-link font-mono">E-INTERNAL-RULE-NOT-COMPOSITE</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-MATCH-… <span class="refnav-count">3</span></summary>
@@ -396,16 +396,16 @@
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-MULTI-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-MULTI-STATEMENT-HANDLER" data-ref="errors/E-MULTI-STATEMENT-HANDLER" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-MULTI-STATEMENT-HANDLER<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-MULTI-STATEMENT-HANDLER" data-ref="errors/E-MULTI-STATEMENT-HANDLER" class="refnav-link font-mono">E-MULTI-STATEMENT-HANDLER</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-NAME-… <span class="refnav-count">2</span></summary>
-        <a href="/reference/errors/E-NAME-COLLIDES-RESERVED" data-ref="errors/E-NAME-COLLIDES-RESERVED" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-NAME-COLLIDES-RESERVED<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/E-NAME-COLLIDES-STATE" data-ref="errors/E-NAME-COLLIDES-STATE" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-NAME-COLLIDES-STATE<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-NAME-COLLIDES-RESERVED" data-ref="errors/E-NAME-COLLIDES-RESERVED" class="refnav-link font-mono">E-NAME-COLLIDES-RESERVED</a>
+        <a href="/reference/errors/E-NAME-COLLIDES-STATE" data-ref="errors/E-NAME-COLLIDES-STATE" class="refnav-link font-mono">E-NAME-COLLIDES-STATE</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-ONTRANSITION-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-ONTRANSITION-NO-TARGET" data-ref="errors/E-ONTRANSITION-NO-TARGET" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-ONTRANSITION-NO-TARGET<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-ONTRANSITION-NO-TARGET" data-ref="errors/E-ONTRANSITION-NO-TARGET" class="refnav-link font-mono">E-ONTRANSITION-NO-TARGET</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-PURE-… <span class="refnav-count">1</span></summary>
@@ -413,16 +413,16 @@
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-RI-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-RI-002" data-ref="errors/E-RI-002" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-RI-002<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-RI-002" data-ref="errors/E-RI-002" class="refnav-link font-mono">E-RI-002</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-SCOPE-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-SCOPE-001" data-ref="errors/E-SCOPE-001" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-SCOPE-001<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-SCOPE-001" data-ref="errors/E-SCOPE-001" class="refnav-link font-mono">E-SCOPE-001</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-SQL-… <span class="refnav-count">2</span></summary>
-        <a href="/reference/errors/E-SQL-006" data-ref="errors/E-SQL-006" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-SQL-006<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/E-SQL-008" data-ref="errors/E-SQL-008" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-SQL-008<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-SQL-006" data-ref="errors/E-SQL-006" class="refnav-link font-mono">E-SQL-006</a>
+        <a href="/reference/errors/E-SQL-008" data-ref="errors/E-SQL-008" class="refnav-link font-mono">E-SQL-008</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-STRUCTURAL-… <span class="refnav-count">1</span></summary>
@@ -434,23 +434,23 @@
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-TIMER-… <span class="refnav-count">2</span></summary>
-        <a href="/reference/errors/E-TIMER-NAME-DUPLICATE" data-ref="errors/E-TIMER-NAME-DUPLICATE" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-TIMER-NAME-DUPLICATE<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/E-TIMER-NAME-INVALID" data-ref="errors/E-TIMER-NAME-INVALID" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-TIMER-NAME-INVALID<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-TIMER-NAME-DUPLICATE" data-ref="errors/E-TIMER-NAME-DUPLICATE" class="refnav-link font-mono">E-TIMER-NAME-DUPLICATE</a>
+        <a href="/reference/errors/E-TIMER-NAME-INVALID" data-ref="errors/E-TIMER-NAME-INVALID" class="refnav-link font-mono">E-TIMER-NAME-INVALID</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-VALIDATOR-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-VALIDATOR-CIRCULAR-DEP" data-ref="errors/E-VALIDATOR-CIRCULAR-DEP" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-VALIDATOR-CIRCULAR-DEP<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-VALIDATOR-CIRCULAR-DEP" data-ref="errors/E-VALIDATOR-CIRCULAR-DEP" class="refnav-link font-mono">E-VALIDATOR-CIRCULAR-DEP</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">E-VARIANT-… <span class="refnav-count">1</span></summary>
-        <a href="/reference/errors/E-VARIANT-AMBIGUOUS" data-ref="errors/E-VARIANT-AMBIGUOUS" class="refnav-link font-mono refnav-stub" title="stub — not yet written">E-VARIANT-AMBIGUOUS<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/E-VARIANT-AMBIGUOUS" data-ref="errors/E-VARIANT-AMBIGUOUS" class="refnav-link font-mono">E-VARIANT-AMBIGUOUS</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">W-AUTH-… <span class="refnav-count">4</span></summary>
         <a href="/reference/errors/W-AUTH-CONTENT-NOT-GATED" data-ref="errors/W-AUTH-CONTENT-NOT-GATED" class="refnav-link font-mono">W-AUTH-CONTENT-NOT-GATED</a>
-        <a href="/reference/errors/W-AUTH-LOGIN-MISSING" data-ref="errors/W-AUTH-LOGIN-MISSING" class="refnav-link font-mono refnav-stub" title="stub — not yet written">W-AUTH-LOGIN-MISSING<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/W-AUTH-PAGE-INFERRED" data-ref="errors/W-AUTH-PAGE-INFERRED" class="refnav-link font-mono refnav-stub" title="stub — not yet written">W-AUTH-PAGE-INFERRED<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/W-AUTH-RUNTIME-FALLBACK" data-ref="errors/W-AUTH-RUNTIME-FALLBACK" class="refnav-link font-mono refnav-stub" title="stub — not yet written">W-AUTH-RUNTIME-FALLBACK<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/W-AUTH-LOGIN-MISSING" data-ref="errors/W-AUTH-LOGIN-MISSING" class="refnav-link font-mono">W-AUTH-LOGIN-MISSING</a>
+        <a href="/reference/errors/W-AUTH-PAGE-INFERRED" data-ref="errors/W-AUTH-PAGE-INFERRED" class="refnav-link font-mono">W-AUTH-PAGE-INFERRED</a>
+        <a href="/reference/errors/W-AUTH-RUNTIME-FALLBACK" data-ref="errors/W-AUTH-RUNTIME-FALLBACK" class="refnav-link font-mono">W-AUTH-RUNTIME-FALLBACK</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">W-ENGINE-… <span class="refnav-count">2</span></summary>
@@ -463,13 +463,13 @@
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">W-PROGRAM-… <span class="refnav-count">3</span></summary>
-        <a href="/reference/errors/W-PROGRAM-001" data-ref="errors/W-PROGRAM-001" class="refnav-link font-mono refnav-stub" title="stub — not yet written">W-PROGRAM-001<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/W-PROGRAM-SPA-INFERRED" data-ref="errors/W-PROGRAM-SPA-INFERRED" class="refnav-link font-mono refnav-stub" title="stub — not yet written">W-PROGRAM-SPA-INFERRED<span class="refnav-stubdot" aria-label="stub">·</span></a>
-        <a href="/reference/errors/W-PROGRAM-TITLE-NESTED" data-ref="errors/W-PROGRAM-TITLE-NESTED" class="refnav-link font-mono refnav-stub" title="stub — not yet written">W-PROGRAM-TITLE-NESTED<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/W-PROGRAM-001" data-ref="errors/W-PROGRAM-001" class="refnav-link font-mono">W-PROGRAM-001</a>
+        <a href="/reference/errors/W-PROGRAM-SPA-INFERRED" data-ref="errors/W-PROGRAM-SPA-INFERRED" class="refnav-link font-mono">W-PROGRAM-SPA-INFERRED</a>
+        <a href="/reference/errors/W-PROGRAM-TITLE-NESTED" data-ref="errors/W-PROGRAM-TITLE-NESTED" class="refnav-link font-mono">W-PROGRAM-TITLE-NESTED</a>
         </details>
         <details class="refnav-fam">
           <summary class="refnav-fam-sum font-mono">other-… <span class="refnav-count">2</span></summary>
-        <a href="/reference/errors/I-AUTH-REDIRECT-UNRESOLVED" data-ref="errors/I-AUTH-REDIRECT-UNRESOLVED" class="refnav-link font-mono refnav-stub" title="stub — not yet written">I-AUTH-REDIRECT-UNRESOLVED<span class="refnav-stubdot" aria-label="stub">·</span></a>
+        <a href="/reference/errors/I-AUTH-REDIRECT-UNRESOLVED" data-ref="errors/I-AUTH-REDIRECT-UNRESOLVED" class="refnav-link font-mono">I-AUTH-REDIRECT-UNRESOLVED</a>
         <a href="/reference/errors/I-MATCH-PROMOTABLE" data-ref="errors/I-MATCH-PROMOTABLE" class="refnav-link font-mono">I-MATCH-PROMOTABLE</a>
         </details>
       </div>

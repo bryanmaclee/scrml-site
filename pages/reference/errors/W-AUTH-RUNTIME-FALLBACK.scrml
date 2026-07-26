@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/W-AUTH-RUNTIME-FALLBACK — Day-30 placeholder stub
+// scrml.dev /reference/errors/W-AUTH-RUNTIME-FALLBACK
+//
+// Reference page for W-AUTH-RUNTIME-FALLBACK. An auth gate's predicate cannot be statically resolved, so the gate ships eagerly.
+//
+// SPEC anchors: §40.9.5, §40.1.1, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -25,39 +33,95 @@
             <div class="text-xs font-mono text-slate-500 mb-2">
                 Reference &rsaquo; Errors
             </div>
-            <h1 class="text-4xl font-bold tracking-tight text-amber-700 font-mono">
+            <h1 class="text-4xl font-bold tracking-tight text-sky-700 font-mono">
                 W-AUTH-RUNTIME-FALLBACK
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                &lt;auth&gt; visibility could not be resolved at compile time; runtime check inserted.
+                An auth gate's predicate cannot be statically resolved, so the gate ships eagerly.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
-                <span class="px-2 py-1 bg-amber-50 text-amber-700 rounded font-semibold">
-                    Warning
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
+                <span class="px-2 py-1 bg-sky-50 text-sky-700 rounded font-semibold">
+                    Info
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#40"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §40.9.5 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
+        <div class="rounded-lg border border-sky-300 bg-sky-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
+                Despite the <code>W-</code> prefix, the compiler assigns this diagnostic severity <strong>info</strong>.
             </p>
         </div>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Closed-form gate predicates — a variant literal, a literal comma-OR, a const-ref to a role set — let the compiler compute per-role bundles, so a visitor never downloads code for a role they do not hold. A predicate the compiler cannot resolve statically (a reactive read, an async server check) defeats that: the gated component ships to everyone and the check moves to render time. The gate is still <strong>enforced</strong> — this is a bundle-size and information-exposure trade-off, not a security hole in the check itself.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>W-AUTH-RUNTIME-FALLBACK</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p" auth="required"&gt;
+    type Role:enum = &#123; Admin, Member &#125;
+    &lt;currentRole&gt; = "Member"
+    &lt;auth role=@currentRole&gt;
+        &lt;p&gt;gated&lt;/p&gt;
+    &lt;/&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Refactor to a closed-form predicate.</strong>
+                <code>&lt;auth role="Admin"&gt;</code> resolves statically and gets its own per-role chunk.
+            </li>
+            <li>
+                <strong>Accept the eager-ship default.</strong>
+                Legitimate when the role genuinely is not known at compile time. The lint exists to make the cost visible, not to forbid the pattern.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/auth" class="text-blue-700 hover:text-blue-900 underline">&lt;auth&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/errors/W-AUTH-CONTENT-NOT-GATED" class="text-amber-700 hover:text-amber-900 underline">W-AUTH-CONTENT-NOT-GATED</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§40.9.5, §40.1.1, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

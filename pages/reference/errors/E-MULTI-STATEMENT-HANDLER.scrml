@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/E-MULTI-STATEMENT-HANDLER — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-MULTI-STATEMENT-HANDLER
+//
+// Reference page for E-MULTI-STATEMENT-HANDLER. A bare-form event handler contains more than one statement.
+//
+// SPEC anchors: §4.14, §5.2.3, §17.7.6, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,84 @@
                 E-MULTI-STATEMENT-HANDLER
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                Inline event handler contains more than one statement; lift to a named function.
+                A bare-form event handler contains more than one statement.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#4"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §4.14 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            A bare-form event-handler attribute must be exactly one expression — a call (<code>onclick=save()</code>), an assignment (<code>onclick=@phase = .Loading</code>), or a single expression (<code>onclick=@count++</code>). Semicolon-separated statements in an attribute are rejected, because attribute position is not a statement context and the resulting code has no clear sequencing or scoping story. The same rule governs the <code>:</code>-shorthand body of an engine state-child.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>E-MULTI-STATEMENT-HANDLER</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    &lt;count&gt; = 0
+    &lt;flag&gt; = false
+    &lt;button onclick=@count++; @flag = true&gt;go&lt;/button&gt;
+    &lt;p&gt;$&#123;@count&#125;&lt;/p&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Lift the body into a named function.</strong>
+                Declare <code>function handleClick() &#123; … &#125;</code> and write <code>onclick=handleClick()</code>. This is the canonical fix and keeps the handler testable.
+            </li>
+            <li>
+                <strong>For a state-child, switch to bare-body form.</strong>
+                <code>&lt;Idle&gt;…children + logic…&lt;/&gt;</code> hosts multiple statements where the <code>:</code>-shorthand cannot.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/contexts/logic" class="text-blue-700 hover:text-blue-900 underline">logic context</a>
+            </li>
+            <li>
+                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§4.14, §5.2.3, §17.7.6, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

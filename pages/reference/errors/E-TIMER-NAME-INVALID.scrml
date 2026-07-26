@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/E-TIMER-NAME-INVALID — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-TIMER-NAME-INVALID
+//
+// Reference page for E-TIMER-NAME-INVALID. `<onTimeout name=…>` carries a name that is not a valid identifier.
+//
+// SPEC anchors: §51.0.M, §19.13, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,88 @@
                 E-TIMER-NAME-INVALID
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                &lt;onTimeout name=…/&gt; attribute value is not a valid identifier.
+                <code>&lt;onTimeout name=…&gt;</code> carries a name that is not a valid identifier.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#51"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §51.0.M (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            A timer name must be a valid identifier: ASCII letters, digits and underscores, PascalCase or camelCase, and <strong>not</strong> starting with a digit. The constraint exists because the name is used as a key in generated code; whitespace, punctuation or a leading digit would not survive into a usable <code>cancelTimer()</code> target.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>E-TIMER-NAME-INVALID</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    type Phase:enum = &#123; Idle, Busy &#125;
+    &lt;engine for=Phase initial=.Idle&gt;
+        &lt;Idle rule=(.Busy)&gt;
+            &lt;onTimeout name="1retry" after=1000ms to=.Busy/&gt;
+            idle
+        &lt;/&gt;
+        &lt;Busy rule=(.Idle)&gt;busy&lt;/&gt;
+    &lt;/&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Rename to a valid identifier.</strong>
+                <code>name="1retry"</code> becomes <code>name="retry1"</code> — a digit is fine anywhere except first.
+            </li>
+            <li>
+                <strong>Drop <code>name=</code> entirely.</strong>
+                The timer becomes index-keyed and uncancellable. Correct when nothing needs to cancel it.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-TIMER-NAME-DUPLICATE" class="text-rose-700 hover:text-rose-900 underline">E-TIMER-NAME-DUPLICATE</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§51.0.M, §19.13, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

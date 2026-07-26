@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/W-AUTH-PAGE-INFERRED — Day-30 placeholder stub
+// scrml.dev /reference/errors/W-AUTH-PAGE-INFERRED
+//
+// Reference page for W-AUTH-PAGE-INFERRED. A `<page>` has no explicit `auth=` under `<program auth="required">`.
+//
+// SPEC anchors: §40.1.1, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -25,39 +33,96 @@
             <div class="text-xs font-mono text-slate-500 mb-2">
                 Reference &rsaquo; Errors
             </div>
-            <h1 class="text-4xl font-bold tracking-tight text-amber-700 font-mono">
+            <h1 class="text-4xl font-bold tracking-tight text-sky-700 font-mono">
                 W-AUTH-PAGE-INFERRED
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                &lt;auth&gt; placement was inferred onto a &lt;page&gt;; explicit placement preferred.
+                A <code>&lt;page&gt;</code> has no explicit <code>auth=</code> under <code>&lt;program auth="required"&gt;</code>.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
-                <span class="px-2 py-1 bg-amber-50 text-amber-700 rounded font-semibold">
-                    Warning
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
+                <span class="px-2 py-1 bg-sky-50 text-sky-700 rounded font-semibold">
+                    Info
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#40"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §40.1.1 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
+        <div class="rounded-lg border border-sky-300 bg-sky-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
+                The lint is <strong>file-scoped</strong>: it fires only where the <code>&lt;page&gt;</code> sits in the same file as the <code>&lt;program auth="required"&gt;</code> that establishes the auth config. A <code>&lt;page&gt;</code> in its own file under <code>pages/</code> does not fire it. Despite the <code>W-</code> prefix the compiler assigns severity <strong>info</strong>.
             </p>
         </div>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Page-level auth is <strong>not inherited</strong> from <code>&lt;program&gt;</code> for closure analysis. The program-level middleware still enforces at the request boundary — the page is not unprotected — but without an explicit per-page <code>auth=</code> the closure analysis has no gate to feed into per-role traversal, so the page reads as ungated when bundles are computed. The lint nudges you to state the intent explicitly.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>W-AUTH-PAGE-INFERRED</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p" auth="required"&gt;
+    type Role:enum = &#123; Admin, Member &#125;
+    &lt;page&gt;
+        &lt;auth role="Admin"&gt;
+            &lt;p&gt;admin&lt;/p&gt;
+        &lt;/&gt;
+    &lt;/&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Add an explicit <code>auth=</code> to the <code>&lt;page&gt;</code>.</strong>
+                The page then participates in per-role chunking.
+            </li>
+            <li>
+                <strong>Leave it if request-boundary enforcement is enough.</strong>
+                This is informational. The page is still protected; it just does not contribute to per-role bundle splitting.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/page" class="text-blue-700 hover:text-blue-900 underline">&lt;page&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/elements/auth" class="text-blue-700 hover:text-blue-900 underline">&lt;auth&gt;</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§40.1.1, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

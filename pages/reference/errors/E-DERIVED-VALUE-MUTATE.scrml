@@ -1,6 +1,12 @@
-// scrml.dev /reference/errors/E-DERIVED-VALUE-MUTATE — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-DERIVED-VALUE-MUTATE
 //
-// SPEC anchor: §6.6.18 + §34 catalog.
+// Reference page for E-DERIVED-VALUE-MUTATE. In-place mutation of a derived cell.
+//
+// SPEC anchors: §6.5.1, §6.6.8, §6.6.18, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -31,36 +37,84 @@
                 E-DERIVED-VALUE-MUTATE
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                In-place mutation of a derived cell &mdash; calling
-                a mutator method on it, assigning into a property of
-                it, or splicing it. The next dep-fire would clobber
-                the mutation; forbidden at compile time.
+                In-place mutation of a derived cell.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§6"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#6"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC &sect;6.6.18 / &sect;34
+                    SPEC §6.5.1 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                Companion to
-                <a href="/reference/errors/E-DERIVED-WRITE"
-                   class="text-rose-700 hover:text-rose-900 underline">
-                    E-DERIVED-WRITE
-                </a>
-                (direct reassignment). Mutate the upstream cell
-                instead; the derived expression will recompute.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            This is the mutation counterpart to <a href="/reference/errors/E-DERIVED-WRITE" class="text-blue-700 hover:text-blue-900 underline">E-DERIVED-WRITE</a>. Rebinding a derived cell with <code>=</code> is caught as a write; reaching <em>into</em> it and mutating the value it currently holds — <code>.push()</code>, <code>.sort()</code>, an indexed assignment — is caught here. Both are the same underlying error: the next recomputation rebuilds the value from the expression and the mutation vanishes.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>E-DERIVED-VALUE-MUTATE</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    &lt;items&gt; = [1, 2]
+    const &lt;doubled&gt; = @items
+    function bump() &#123; @doubled.push(3) &#125;
+    &lt;button onclick=bump()&gt;go&lt;/button&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Mutate the source collection.</strong>
+                Push to the plain cell the derived expression reads from; the derived value recomputes.
+            </li>
+            <li>
+                <strong>Derive a new value rather than editing in place.</strong>
+                A derived cell that needs sorting or filtering should express that in its own expression — <code>const &lt;sorted&gt; = @items.toSorted(…)</code> — not mutate an upstream result.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/keywords/derived" class="text-blue-700 hover:text-blue-900 underline">derived</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-DERIVED-WRITE" class="text-rose-700 hover:text-rose-900 underline">E-DERIVED-WRITE</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§6.5.1, §6.6.8, §6.6.18, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

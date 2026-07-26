@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/E-ENGINE-EFFECT-AMBIGUOUS — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-ENGINE-EFFECT-AMBIGUOUS
+//
+// Reference page for E-ENGINE-EFFECT-AMBIGUOUS. `effect=` on a state-child whose `rule=` has multiple targets.
+//
+// SPEC anchors: §51.0.H, §55.15, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,90 @@
                 E-ENGINE-EFFECT-AMBIGUOUS
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                &lt;onTransition&gt; filter would attach to multiple states; sharpen the from=/to= filter.
+                <code>effect=</code> on a state-child whose <code>rule=</code> has multiple targets.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#51"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §51.0.H (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            <code>effect=</code> attaches one side effect to one transition. When <code>rule=</code> names several possible targets, the compiler cannot tell which transition the effect belongs to — running it on all of them and running it on one are both defensible readings, so it refuses to choose. Single-target rules keep <code>effect=</code> unambiguous.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>E-ENGINE-EFFECT-AMBIGUOUS</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    type Phase:enum = &#123; Idle, Busy, Done &#125;
+    function ping() &#123; return 1 &#125;
+    &lt;engine for=Phase initial=.Idle&gt;
+        &lt;Idle rule=(.Busy | .Done) effect=$&#123;ping()&#125;&gt;idle&lt;/&gt;
+        &lt;Busy rule=(.Done)&gt;busy&lt;/&gt;
+        &lt;Done rule=(.Idle)&gt;done&lt;/&gt;
+    &lt;/&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Use <code>&lt;onTransition to=…&gt;</code> children.</strong>
+                This is the canonical multi-target form: one child per transition, each with its own body. Explicit about which effect belongs to which edge.
+            </li>
+            <li>
+                <strong>Narrow the rule to a single target.</strong>
+                If the state really only transitions one way, <code>effect=</code> is fine once <code>rule=</code> reflects that.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-ONTRANSITION-NO-TARGET" class="text-rose-700 hover:text-rose-900 underline">E-ONTRANSITION-NO-TARGET</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§51.0.H, §55.15, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

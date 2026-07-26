@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/W-PROGRAM-SPA-INFERRED — Day-30 placeholder stub
+// scrml.dev /reference/errors/W-PROGRAM-SPA-INFERRED
+//
+// Reference page for W-PROGRAM-SPA-INFERRED. The compiler inferred single-page-application shape from the filesystem.
+//
+// SPEC anchors: §40.8, §40.8.1, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,88 @@
                 W-PROGRAM-SPA-INFERRED
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                &lt;program&gt; SPA mode was inferred from missing &lt;page&gt; children.
+                The compiler inferred single-page-application shape from the filesystem.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-amber-50 text-amber-700 rounded font-semibold">
                     Warning
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#40"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §40.8 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
+        <div class="rounded-lg border border-sky-300 bg-sky-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
+                This lint fires on a correct single-file app, so it appears in the reproducer output for many other codes on this site. That is expected, not a second defect.
             </p>
         </div>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Three signals together mean SPA: the entry file declares a top-level <code>&lt;program&gt;</code>, that body contains zero <code>&lt;page&gt;</code> siblings, and no <code>pages/</code> directory exists at the project root. The lint states the inference out loud so a multi-page app that is <em>accidentally</em> compiling as an SPA — usually a missing or misplaced <code>pages/</code> directory — is caught immediately rather than at deploy.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>W-PROGRAM-SPA-INFERRED</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    &lt;count&gt; = 0
+    &lt;p&gt;$&#123;@count&#125;&lt;/p&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Nothing, if SPA is the intent.</strong>
+                This lint is informational. A genuine single-page app should expect it on every build.
+            </li>
+            <li>
+                <strong>Add <code>pages/</code> or <code>&lt;page&gt;</code> siblings for a multi-page app.</strong>
+                The inference flips as soon as either signal is present.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/program" class="text-blue-700 hover:text-blue-900 underline">&lt;program&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/elements/page" class="text-blue-700 hover:text-blue-900 underline">&lt;page&gt;</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§40.8, §40.8.1, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

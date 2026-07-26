@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/I-AUTH-REDIRECT-UNRESOLVED — Day-30 placeholder stub
+// scrml.dev /reference/errors/I-AUTH-REDIRECT-UNRESOLVED
+//
+// Reference page for I-AUTH-REDIRECT-UNRESOLVED. A gate's redirect target does not match any page URL in the route map.
+//
+// SPEC anchors: §40.1.1, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -25,39 +33,93 @@
             <div class="text-xs font-mono text-slate-500 mb-2">
                 Reference &rsaquo; Errors
             </div>
-            <h1 class="text-4xl font-bold tracking-tight text-blue-700 font-mono">
+            <h1 class="text-4xl font-bold tracking-tight text-sky-700 font-mono">
                 I-AUTH-REDIRECT-UNRESOLVED
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                &lt;auth&gt; redirect target could not be statically resolved; runtime fallback in effect.
+                A gate's redirect target does not match any page URL in the route map.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
-                <span class="px-2 py-1 bg-blue-50 text-blue-700 rounded font-semibold">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
+                <span class="px-2 py-1 bg-sky-50 text-sky-700 rounded font-semibold">
                     Info
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#40"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §40.1.1 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            An auth gate may name a redirect target for visitors who fail the check. This lint fires, per gate, when that path matches no page in the compilation unit — almost always a typo or a page that has not been written yet. It is <strong>informational only</strong>: the gate stays legal and the redirect still happens at runtime, it just lands on a 404.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>I-AUTH-REDIRECT-UNRESOLVED</code>.
+        </p>
+
+        <p class="text-xs font-mono text-slate-500 mt-4 mb-1">app.scrml</p>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p" auth="required"&gt;
+    &lt;outlet/&gt;
+&lt;/&gt;</code></pre>
+        <p class="text-xs font-mono text-slate-500 mt-4 mb-1">pages/index.scrml</p>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;page&gt;
+    type Role:enum = &#123; Admin, Member &#125;
+    &lt;auth role="Admin" redirect="/nowhere"&gt;
+        &lt;p&gt;admin&lt;/p&gt;
+    &lt;/&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Author the page at that path.</strong>
+                Usually the login page the redirect was pointing at.
+            </li>
+            <li>
+                <strong>Correct the redirect target.</strong>
+                Match an existing route exactly.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/auth" class="text-blue-700 hover:text-blue-900 underline">&lt;auth&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/errors/W-AUTH-LOGIN-MISSING" class="text-amber-700 hover:text-amber-900 underline">W-AUTH-LOGIN-MISSING</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§40.1.1, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

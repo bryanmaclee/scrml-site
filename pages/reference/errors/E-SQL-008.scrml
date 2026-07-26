@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/E-SQL-008 — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-SQL-008
+//
+// Reference page for E-SQL-008. A `?{` SQL block has no matching `}`.
+//
+// SPEC anchors: §8.6, §44.7, §44.8, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,91 @@
                 E-SQL-008
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                Bracket-matched <code>?&#123;</code> scanner caught an unmatched brace.
+                A <code>?{</code> SQL block has no matching <code>}</code>.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#8"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §8.6 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
+        <div class="rounded-lg border border-rose-300 bg-rose-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
+                <strong>Verified behaviour, 2026-07-26 against v0.7.1.</strong> In practice you will usually see a <em>structural</em> error instead. An unterminated <code>?{</code> swallows the rest of the file, including the closing tags, so the block splitter reports <code>E-CTX-003: Unclosed 'program'</code> first and the build stops before the SQL-specific diagnostic is reached. The probe below produces <code>E-CTX-003</code>, not <code>E-SQL-008</code>. If you get an unexplained unclosed-element error, suspect an unterminated SQL block.
             </p>
         </div>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            The SQL template is unterminated. The compiler names the three usual causes: a missing closing brace, an unterminated backtick template literal inside the SQL body, or an unmatched <code>${</code> interpolation.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler to establish the behaviour described above. Read the callout at the top of this page before using it &mdash; it does <strong>not</strong> produce <code>E-SQL-008</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program db="./app.db" title="p"&gt;
+    &lt;db src="./app.db" tables="users"/&gt;
+    function load() &#123;
+        return ?&#123; SELECT * FROM users WHERE id = $&#123;uid &#125;.all()
+    &#125;
+    &lt;button onclick=load()&gt;load&lt;/button&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Close the SQL block.</strong>
+                Check for a stray <code>${</code> inside the query — an interpolation opened and not closed swallows the block's own terminator.
+            </li>
+            <li>
+                <strong>Check backticks inside the body.</strong>
+                An unclosed backtick template makes everything after it part of the string.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/contexts/sql" class="text-blue-700 hover:text-blue-900 underline">SQL context</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-SQL-006" class="text-rose-700 hover:text-rose-900 underline">E-SQL-006</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§8.6, §44.7, §44.8, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

@@ -1,4 +1,12 @@
-// scrml.dev /reference/elements/db — Day-30 placeholder stub
+// scrml.dev /reference/elements/db
+//
+// Reference page for the <db> element — the database binding state block.
+//
+// SPEC anchors: §4.2 (state-block classification) · §8 (SQL context) ·
+// §44.7 (connection resolution) · §14.8 (protected origins) · §34 catalogue.
+//
+// Written 2026-07-26. The worked example below was compiled against the
+// linked compiler (exit 0) before being published.
 
 <page>
 
@@ -29,8 +37,7 @@
                 &lt;db&gt;
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                Database binding element. The compile-time anchor that
-                connects a
+                Database binding element. The compile-time anchor that connects a
                 <a href="/reference/elements/schema"
                    class="text-blue-700 hover:text-blue-900 underline font-mono">
                     &lt;schema&gt;
@@ -38,19 +45,161 @@
                 to a concrete database under
                 <code class="font-mono text-base">?&#123; &hellip; &#125;</code>.
             </p>
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded font-semibold">
+                    Built-in state type
+                </span>
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Block element
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#8"
+                   class="text-blue-700 hover:text-blue-900 underline">
+                    SPEC §8 (normative)
+                </a>
+            </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full 8-section reference (summary, syntax, worked
-                example, semantics, edge cases, related, availability,
-                spec link) is on the immediate roadmap. Until then the
-                authoritative source is SPEC.md.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it is
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            <code>&lt;db&gt;</code> is a <strong>state block</strong>, not an
+            HTML element. The opener resolves against the unified state-type
+            registry at name resolution: <code>db</code> is a built-in state
+            type, so <code>&lt;db &hellip;&gt;</code> opens a first-class
+            context rather than emitting a tag. Its body is ordinary markup
+            context with the database connection in scope throughout &mdash;
+            which is what gives every <code>?&#123; &hellip; &#125;</code>
+            block inside it something concrete to run against.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Attributes
+        </h2>
+
+        <ul class="space-y-2 text-slate-700">
+            <li>
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">src=</code>
+                &mdash; the database file this block binds to.
+            </li>
+            <li>
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">tables=</code>
+                &mdash; which tables the block brings into scope.
+                <strong>Required.</strong> Omitting it, or giving it an empty
+                value, fires <code>E-PA-005</code> from the protect analyzer.
+            </li>
+            <li>
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">protect=</code>
+                &mdash; names a protected column, for example
+                <code>protect="password"</code>. Optional; drives the
+                protected-origin analysis that keeps a protected value from
+                reaching the client.
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Worked example
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            Compiled against the linked compiler and verified to build with
+            exit 0.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program db="./app.db" title="Posts"&gt;
+
+    &lt;schema&gt;
+        posts &#123;
+            id:        integer primary key
+            title:     text not null
+            author_id: integer not null
+        &#125;
+    &lt;/&gt;
+
+    &lt;db src="./app.db" tables="posts"&gt;
+        $&#123;
+            function loadPosts(authorId) &#123;
+                return ?&#123;`SELECT title FROM posts WHERE author_id = $&#123;authorId&#125;`&#125;.all()
+            &#125;
+        &#125;
+        &lt;button onclick=loadPosts(1)&gt;Load&lt;/button&gt;
+    &lt;/&gt;
+
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            <code>&lt;db&gt;</code> vs <code>&lt;program db=&gt;</code>
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            These are two different things, and an app commonly needs both
+            pointing at the same file.
+            <code>&lt;program db="&hellip;"&gt;</code> tells the compiler which
+            database
+            <a href="/reference/elements/schema" class="text-blue-700 hover:text-blue-900 underline">&lt;schema&gt;</a>
+            should migrate &mdash; it is the migration target.
+            <code>&lt;db src="&hellip;"&gt;</code> establishes the SQL
+            <em>context</em> that <code>?&#123; &hellip; &#125;</code> blocks
+            execute in. A <code>&lt;schema&gt;</code> requires the former; a
+            query requires the latter. Declaring the schema but forgetting
+            <code>db=</code> on <code>&lt;program&gt;</code> leaves the write
+            with no database, and the row is silently dropped.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Placement and server inference
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            A function whose body contains a <code>?&#123; &hellip; &#125;</code>
+            query is escalated to the server by placement inference &mdash; SQL
+            is one of the escalation triggers. You do not annotate this, and you
+            should not try to. The consequence worth knowing is that such a
+            function is no longer client-side, so it cannot assign to a reactive
+            cell. That is
+            <a href="/reference/errors/E-RI-002" class="text-rose-700 hover:text-rose-900 underline">E-RI-002</a>.
+            Return the value and let a client-side caller write the cell.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/schema" class="text-blue-700 hover:text-blue-900 underline">&lt;schema&gt;</a>
+                &mdash; declares the shape <code>scrml migrate</code> creates.
+            </li>
+            <li>
+                <a href="/reference/contexts/sql" class="text-blue-700 hover:text-blue-900 underline">SQL context</a>
+                &mdash; what <code>?&#123; &hellip; &#125;</code> accepts and returns.
+            </li>
+            <li>
+                <a href="/reference/errors/E-RI-002" class="text-rose-700 hover:text-rose-900 underline">E-RI-002</a>
+                &mdash; a server-escalated function assigning a reactive cell.
+            </li>
+            <li>
+                <a href="/reference/errors/E-SQL-006" class="text-rose-700 hover:text-rose-900 underline">E-SQL-006</a>
+                &mdash; <code>.prepare()</code> is removed in Bun.SQL.
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§4.2</strong> (state-block classification
+            and the deprecated whitespace opener form), <strong>§8</strong>
+            (SQL context and the query API), <strong>§44.7</strong>
+            (connection resolution), <strong>§14.8</strong> (protected
+            origins). Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

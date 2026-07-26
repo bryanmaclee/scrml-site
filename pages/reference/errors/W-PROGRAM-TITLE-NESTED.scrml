@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/W-PROGRAM-TITLE-NESTED — Day-30 placeholder stub
+// scrml.dev /reference/errors/W-PROGRAM-TITLE-NESTED
+//
+// Reference page for W-PROGRAM-TITLE-NESTED. A documentary attribute on a nested `<program>` has no effect.
+//
+// SPEC anchors: §4.12.9, §40.7, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,81 @@
                 W-PROGRAM-TITLE-NESTED
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                &lt;title&gt; appears nested inside &lt;program&gt; body in a placement that should sit at root.
+                A documentary attribute on a nested <code>&lt;program&gt;</code> has no effect.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-amber-50 text-amber-700 rounded font-semibold">
                     Warning
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#4"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §4.12.9 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            A nested <code>&lt;program&gt;</code> declares a <strong>worker</strong>. Workers have no DOM and therefore no <code>&lt;head&gt;</code>, so documentary attributes like <code>title=</code> have nowhere to land. The attribute is silently inert at runtime, which is exactly the kind of thing worth a warning — the author clearly expected it to do something.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>W-PROGRAM-TITLE-NESTED</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="outer"&gt;
+    &lt;program title="inner" #compute&gt;
+        when message(data) &#123; send(data) &#125;
+    &lt;/&gt;
+    &lt;p&gt;x&lt;/p&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Move the attribute to the top-level <code>&lt;program&gt;</code>.</strong>
+                That is the one with a document head.
+            </li>
+            <li>
+                <strong>Remove it.</strong>
+                If the nested program is a worker and needed no title, the attribute was a copy-paste artefact.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/program" class="text-blue-700 hover:text-blue-900 underline">&lt;program&gt;</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§4.12.9, §40.7, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

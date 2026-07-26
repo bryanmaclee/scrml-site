@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/E-SCOPE-001 — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-SCOPE-001
+//
+// Reference page for E-SCOPE-001. An identifier is not declared in scope — commonly a reactive read missing its `@`.
+//
+// SPEC anchors: §5.2, §6.2, §23.3, §55.10, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,83 @@
                 E-SCOPE-001
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                Scope diagnostic.
+                An identifier is not declared in scope — commonly a reactive read missing its <code>@</code>.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#5"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §5.2 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            The most frequent cause is a reactive cell read without its sigil. Reactive reads <strong>must</strong> be written <code>@name</code>: the sigil is what tells the compiler to wire a dependency edge, and without it the emitted code references an undefined local rather than the cell. The compiler recognises this specific shape and names the cell you probably meant. The code also covers genuinely undeclared identifiers.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>E-SCOPE-001</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    &lt;count&gt; = 0
+    const &lt;double&gt; = count * 2
+    &lt;p&gt;$&#123;@double&#125;&lt;/p&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Add the <code>@</code> sigil.</strong>
+                <code>count * 2</code> becomes <code>@count * 2</code>. Reactivity is opt-in by notation — there is no implicit capture.
+            </li>
+            <li>
+                <strong>Declare the identifier if it really is missing.</strong>
+                A local needs <code>const</code>&#47;<code>let</code>; a reactive cell needs a <code>&lt;name&gt; = init</code> declaration.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/contexts/logic" class="text-blue-700 hover:text-blue-900 underline">logic context</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-NAME-COLLIDES-STATE" class="text-rose-700 hover:text-rose-900 underline">E-NAME-COLLIDES-STATE</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§5.2, §6.2, §23.3, §55.10, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

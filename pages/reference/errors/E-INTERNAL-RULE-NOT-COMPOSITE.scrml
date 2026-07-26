@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/E-INTERNAL-RULE-NOT-COMPOSITE — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-INTERNAL-RULE-NOT-COMPOSITE
+//
+// Reference page for E-INTERNAL-RULE-NOT-COMPOSITE. `internal:rule=` on a state-child with no inner `<engine>`.
+//
+// SPEC anchors: §51.0.O, §51.0.Q, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,85 @@
                 E-INTERNAL-RULE-NOT-COMPOSITE
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                Internal rule-composition invariant violated.
+                <code>internal:rule=</code> on a state-child with no inner <code>&lt;engine&gt;</code>.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#51"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §51.0.O (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            <code>internal:rule=</code> governs which <em>inner-engine</em> variants are reachable from within a composite state. Like <code>history</code>, it is composite-only — on a leaf state-child there is no inner machine for it to constrain, so the attribute is inert and the compiler rejects it rather than letting a reader believe it constrains something.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>E-INTERNAL-RULE-NOT-COMPOSITE</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    type Phase:enum = &#123; Idle, Busy &#125;
+    &lt;engine for=Phase initial=.Idle&gt;
+        &lt;Idle rule=(.Busy) internal:rule=(.Busy)&gt;idle&lt;/&gt;
+        &lt;Busy rule=(.Idle)&gt;busy&lt;/&gt;
+    &lt;/&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Add an inner <code>&lt;engine&gt;</code>.</strong>
+                The attribute then constrains that machine's reachable variants.
+            </li>
+            <li>
+                <strong>Remove <code>internal:rule=</code>.</strong>
+                For a leaf state, the outer <code>rule=</code> is the only transition contract that applies.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-HISTORY-NO-INNER-ENGINE" class="text-rose-700 hover:text-rose-900 underline">E-HISTORY-NO-INNER-ENGINE</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§51.0.O, §51.0.Q, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

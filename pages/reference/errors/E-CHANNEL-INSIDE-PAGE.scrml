@@ -1,4 +1,12 @@
-// scrml.dev /reference/errors/E-CHANNEL-INSIDE-PAGE — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-CHANNEL-INSIDE-PAGE
+//
+// Reference page for E-CHANNEL-INSIDE-PAGE. `<channel>` is not permitted inside `<page>`.
+//
+// SPEC anchors: §38.1, §38.4.1, §38.9, §40.8, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -29,35 +37,98 @@
                 E-CHANNEL-INSIDE-PAGE
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                &lt;channel&gt; placed inside a &lt;page&gt; body. &lt;channel&gt; must sit at &lt;program&gt; root.
+                <code>&lt;channel&gt;</code> is not permitted inside <code>&lt;page&gt;</code>.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#38"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34 (catalogue)
+                    SPEC §38.1 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
+        <div class="rounded-lg border border-rose-300 bg-rose-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§34"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
+                <strong>NOT CURRENTLY EMITTED — verified 2026-07-26 against v0.7.1.</strong> This code is registered in the §34 catalogue but <strong>no walker fires it</strong>. The compiler source says so directly (<code>symbol-table.ts</code>: <em>"the error code is registered in §34 now but no walker fires it yet"</em>) and the probe below confirms it: a <code>&lt;channel&gt;</code> inside a <code>&lt;page&gt;</code> compiles clean and the build reports <em>"WebSocket channels: 1 channel(s) wired"</em>. The rule above is the specified behaviour and the shape you should write; it is simply not enforced today, so nothing will stop you getting it wrong. Reported upstream.
             </p>
         </div>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Channels are program-scoped: they own a WebSocket route for the whole application, not for one route within it. Declaring one inside a <code>&lt;page&gt;</code> implies a per-page channel lifetime the runtime does not provide. The canonical placements are inside <code>&lt;program&gt;</code>, or at file top in a pure-channel module file.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler to establish the behaviour described above. Read the callout at the top of this page before using it &mdash; it does <strong>not</strong> produce <code>E-CHANNEL-INSIDE-PAGE</code>.
+        </p>
+
+        <p class="text-xs font-mono text-slate-500 mt-4 mb-1">app.scrml</p>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    &lt;outlet/&gt;
+&lt;/&gt;</code></pre>
+        <p class="text-xs font-mono text-slate-500 mt-4 mb-1">pages/index.scrml</p>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;page&gt;
+    &lt;channel name="chat"&gt;
+        &lt;messages&gt; = []
+    &lt;/&gt;
+    &lt;p&gt;$&#123;@messages.length&#125;&lt;/p&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Move the channel into <code>&lt;program&gt;</code>.</strong>
+                Declare it once at program scope and read its cells from any page.
+            </li>
+            <li>
+                <strong>Use a pure-channel module file.</strong>
+                A file with no <code>&lt;program&gt;</code> element may declare a <code>&lt;channel&gt;</code> at file top and export it.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/elements/channel" class="text-blue-700 hover:text-blue-900 underline">&lt;channel&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/elements/page" class="text-blue-700 hover:text-blue-900 underline">&lt;page&gt;</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-CHANNEL-OUTSIDE-PROGRAM" class="text-rose-700 hover:text-rose-900 underline">E-CHANNEL-OUTSIDE-PROGRAM</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§38.1, §38.4.1, §38.9, §40.8, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">

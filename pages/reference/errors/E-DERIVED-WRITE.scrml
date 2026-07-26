@@ -1,6 +1,12 @@
-// scrml.dev /reference/errors/E-DERIVED-WRITE — Day-30 placeholder stub
+// scrml.dev /reference/errors/E-DERIVED-WRITE
 //
-// Real reference page queued. SPEC anchor: §6.6.8 + §34 catalog.
+// Reference page for E-DERIVED-WRITE. Assignment to a derived reactive value.
+//
+// SPEC anchors: §6.6.8, §6.6.16, §6.6.17, §6.6.18, §34.
+//
+// Written 2026-07-26. Prose derived from the compiler's own emission message in
+// compiler/src; the reproducer below is the exact source compiled against the
+// linked compiler to verify what this code does.
 
 <page>
 
@@ -31,42 +37,87 @@
                 E-DERIVED-WRITE
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                Direct reassignment to a derived cell. Derived cells
-                are read-only; mutate the upstream input instead.
+                Assignment to a derived reactive value.
             </p>
-            <div class="flex gap-3 mt-4 text-xs">
+            <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
                     Error
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§6"
+                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
+                    Compile-time
+                </span>
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#6"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC &sect;6.6.8 / &sect;34
+                    SPEC §6.6.8 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                E-DERIVED-WRITE fires when a const-declared derived
-                cell appears on the LHS of an assignment. The
-                companion error
-                <a href="/reference/errors/E-DERIVED-VALUE-MUTATE"
-                   class="text-rose-700 hover:text-rose-900 underline">
-                    E-DERIVED-VALUE-MUTATE
-                </a>
-                fires for in-place mutation through the cell
-                reference. Distinct from
-                <a href="/reference/errors/E-SYNTHESIZED-WRITE"
-                   class="text-rose-700 hover:text-rose-900 underline">
-                    E-SYNTHESIZED-WRITE
-                </a>
-                &mdash; that one is writes to auto-synthesised
-                validity-surface properties.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What it means
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            A derived cell (<code>const &lt;name&gt; = expr</code>) is defined entirely by its expression. Its value is recomputed whenever a dependency changes, so any value you assign to it directly would be discarded at the next recomputation. Rather than let that silently happen, the compiler rejects the write. The same code also fires for <code>default=</code> on a derived cell, which is the declaration-time form of the same mistake.
+        </p>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Minimal reproducer
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed mb-4">
+            This is the exact source compiled against the linked compiler and verified to produce <code>E-DERIVED-WRITE</code>.
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    &lt;count&gt; = 1
+    const &lt;double&gt; = @count * 2
+    function bump() &#123; @double = 9 &#125;
+    &lt;button onclick=bump()&gt;go&lt;/button&gt;
+&lt;/&gt;</code></pre>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            How to fix
+        </h2>
+
+        <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
+            <li>
+                <strong>Write the <em>source</em> cell instead.</strong>
+                Assign to whichever plain cell the derived expression reads. The derived value updates on its own — that is the entire point of declaring it derived.
+            </li>
+            <li>
+                <strong>Make it a plain cell if it genuinely needs writing.</strong>
+                If a value is sometimes computed and sometimes set by hand, it is not derived. Declare it as <code>&lt;name&gt; = init</code> and compute it explicitly.
+            </li>
+        </ol>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Related
+        </h2>
+
+        <ul class="space-y-1 text-slate-700">
+            <li>
+                <a href="/reference/keywords/derived" class="text-blue-700 hover:text-blue-900 underline">derived</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-DERIVED-VALUE-MUTATE" class="text-rose-700 hover:text-rose-900 underline">E-DERIVED-VALUE-MUTATE</a>
+            </li>
+            <li>
+                <a href="/reference/errors/E-SYNTHESIZED-WRITE" class="text-rose-700 hover:text-rose-900 underline">E-SYNTHESIZED-WRITE</a>
+            </li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            Specification
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Normative text: <strong>§6.6.8, §6.6.16, §6.6.17, §6.6.18, §34</strong>. Spec lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
+               class="text-blue-700 hover:text-blue-900 underline">
+                compiler/SPEC.md
+            </a>.
+        </p>
 
         <p class="mt-10 text-sm">
             <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">
