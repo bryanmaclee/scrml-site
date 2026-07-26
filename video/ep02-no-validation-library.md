@@ -1,7 +1,7 @@
 # Ep. 02 — "Your form doesn't need a validation library"
 
-**Format:** short (No Boilerplate register) · **Measured runtime:** ~4:35
-**Narration:** 690 words @ 170 wpm (4:04 speech + ~30s frame beats)
+**Format:** short (No Boilerplate register) · **Measured runtime:** ~5:30
+**Narration:** 853 words @ 170 wpm (5:01 speech + ~30s frame beats)
 **Cold open, no intro card, no sign-off**
 
 **Source:** `scrml/examples/30-validated-form.scrml` — the compiler's own test
@@ -32,7 +32,15 @@ viewer will try `req("must be at least ${n} characters")` within ten minutes of
 picking this up. Saying it first costs 20 seconds and buys the whole video's
 credibility.
 
-**4. Do not show the browser.** The pull is to demo the form filling in and
+**4. The sixth-field story is an archetype, not a citation.** It is written in
+second person for exactly that reason — it describes a failure mode that is
+true of a great many codebases, and it is not an account of a specific incident
+at a specific company. **Do not add a company name, a dollar figure, or an
+outage date to it.** The moment it sounds like a cited case study, someone will
+ask for the source, and there isn't one. As written it's honest: this is the
+shape of the bug, and every viewer has met it.
+
+**5. Do not show the browser.** The pull is to demo the form filling in and
 errors appearing. It's a worse video — the argument is about what is *absent
 from the source*, and cutting to a browser changes the subject to UI polish.
 Bank live demo for the long-form episodes.
@@ -77,18 +85,35 @@ Bank live demo for the long-form episodes.
 > And whenever you run it, the answer is a snapshot. It was true when the
 > function returned. It is not necessarily true now.
 
-### [1:18] The one that actually bites
+### [1:18] The one that actually bites — F3b
 
-> Then, six months later, you add a sixth field.
+> Then, six months later, someone asks for a sixth field. "How did you hear
+> about us?" Required, obviously — marketing wants the attribution data.
 >
-> You add the cell. You add the input. You forget to add the branch to
-> `validate`.
+> So you add the cell. You add the input. You put an asterisk on the label,
+> because it's required. You ship it.
+>
+> And you forget to add the branch to `validate`.
 >
 > Nothing tells you. Not the compiler, not the type system, not the tests you
-> wrote for the other five. The form just quietly accepts a blank field,
-> forever. That is a bug that ships.
+> wrote for the other five fields. QA doesn't catch it either, because QA fills
+> the form in — the happy path always passes.
+>
+> So the field is required in the ticket. Required in the design. Required on
+> the label, with a little red star. And optional in the only place that
+> decides anything.
+>
+> Three months later someone opens a dashboard and asks why forty percent of
+> the attribution data is null. And the hunt starts in the analytics pipeline,
+> because that's where the nulls are.
+>
+> It isn't in the pipeline. It's four lines in a form component, and one
+> function that was never told they existed.
+>
+> That's the whole bug: the field and its contract live in two different
+> places, and only one of them is enforced.
 
-### [1:41] The turn — F4
+### [2:29] The turn — F4
 
 > So stop running a pass.
 
@@ -99,8 +124,11 @@ Bank live demo for the long-form episodes.
 >
 > There is no `validate` function in this file. There is no error cell. There
 > is no `isValid` boolean. Not hidden somewhere else — they do not exist.
+>
+> And that sixth field? You cannot add it without its contract, because the
+> contract is part of the declaration. There is no second place to forget.
 
-### [2:01] The surface you didn't write — F5
+### [2:58] The surface you didn't write — F5
 
 > Because the compiler synthesises all of it, from those attributes.
 >
@@ -114,7 +142,7 @@ Bank live demo for the long-form episodes.
 > And you can't write to it either. Try, and the compiler stops you — that's a
 > synthesised surface, not your state.
 
-### [2:31] Cross-field — F6
+### [3:28] Cross-field — F6
 
 > Here's the one that always breaks when it's hand-rolled.
 
@@ -130,7 +158,7 @@ Bank live demo for the long-form episodes.
 > re-validate. You didn't wire it up. More to the point, you couldn't forget
 > to.
 
-### [3:01] Rendering — F7
+### [3:58] Rendering — F7
 
 > And displaying the errors.
 
@@ -142,7 +170,7 @@ Bank live demo for the long-form episodes.
 > the array is empty. A valid field renders nothing at all, because there's
 > nothing to render.
 
-### [3:18] The button — F8
+### [4:16] The button — F8
 
 > The submit button reads the rollup — disabled until the form is valid.
 >
@@ -151,7 +179,7 @@ Bank live demo for the long-form episodes.
 >
 > It doesn't have to. It cannot be reached with bad data.
 
-### [3:34] The honest part — F9
+### [4:32] The honest part — F9
 
 > Two things to be straight about.
 >
@@ -165,7 +193,7 @@ Bank live demo for the long-form episodes.
 > error tags instead. That's a real limitation and you'll hit it in your first
 > hour.
 
-### [4:07] The landing — F10
+### [5:05] The landing — F10
 
 > The shape of this is the same as the boolean episode.
 >
@@ -176,7 +204,7 @@ Bank live demo for the long-form episodes.
 > Both are the same move. Put the guarantee in the shape, and stop defending it
 > by hand.
 
-### [4:31] CTA — F11
+### [5:29] CTA — F11
 
 > ⟨PLACEHOLDER — do not record until `bun add -g scrml` resolves.⟩
 > Docs and the full example: **scrml.dev**
@@ -218,7 +246,7 @@ Text only, built one line at a time, then a multiply:
     4  ×  5 fields  =  20
 ```
 
-### F3 — the timing problem `[0:42–1:41]`
+### F3 — the timing problem `[0:42–1:18]`
 
 Three call sites, each appearing then greying out as it's dismissed:
 
@@ -228,10 +256,51 @@ onBlur={validate}     // too late for some, too early for others
 onSubmit={validate}   // way too late
 ```
 
-Hold all three greyed. Then, for the sixth-field beat, add a line to the form
-and **do not** add it to `validate()` — leave the omission on screen, silent.
+Hold all three greyed.
 
-### F4 — the declaration `[1:41–2:01]`
+### F3b — the sixth field `[1:18–2:29]`
+
+Split screen, held for the whole beat. **Left:** the form gains a field. Type
+it live, including the asterisk — the viewer should watch it being added
+correctly.
+
+```jsx
+<label>How did you hear about us? <span className="req">*</span></label>
+<input value={source} onChange={e => setSource(e.target.value)} />
+```
+
+**Right:** `validate()`, unchanged and dimmed. Nothing happens to it. Let the
+silence sit — the omission is the whole frame.
+
+```js
+function validate() {
+  @usernameError = ""
+  if (@username.length < 3) { @usernameError = "..." }
+  @isValid = (@username.length >= 3 && ...)
+}
+```
+
+On "required in the ticket / design / label / and optional where it counts":
+stamp four lines over the split, the last one red.
+
+```
+ticket    required ✓
+design    required ✓
+label     required ✓
+validate  —
+```
+
+On the analytics line, cut to a single dimmed stat, no chrome:
+
+```
+attribution.source   null   41%
+```
+
+Then cut straight back to the red `validate —` line. Do not animate a
+connection between them; the point is that nobody made that connection for
+three months.
+
+### F4 — the declaration `[2:29–2:58]`
 
 Hard cut from F3. Source lines 60–66, verbatim.
 
@@ -248,7 +317,7 @@ Hard cut from F3. Source lines 60–66, verbatim.
 Highlight only the bare attributes — `req`, `length(>=2)`, `pattern(…)`,
 `eq(…)` — leaving the rest dimmed.
 
-### F5 — the synthesised surface `[2:01–2:31]`
+### F5 — the synthesised surface `[2:58–3:28]`
 
 From the header comment (lines 7–12). Reveal line by line; the point is the
 accumulation.
@@ -268,7 +337,7 @@ Then stamp across it, held for the "you wrote none of it" line:
                  read-only · reactive · zero lines authored
 ```
 
-### F6 — cross-field `[2:31–3:01]`
+### F6 — cross-field `[3:28–3:58]`
 
 One line from F4, isolated and enlarged:
 
@@ -279,7 +348,7 @@ One line from F4, isolated and enlarged:
 On "change either cell": animate a dependency edge between `confirm` and
 `password`, both directions.
 
-### F7 — the error element `[3:01–3:18]`
+### F7 — the error element `[3:58–4:16]`
 
 Source line 95, alone on screen:
 
@@ -294,7 +363,7 @@ Optionally split against the hand-rolled equivalent from the header comment
 ${ if (@usernameError.length > 0) { lift <span>${@usernameError}</> } }
 ```
 
-### F8 — the button and the empty function `[3:18–3:34]`
+### F8 — the button and the empty function `[4:16–4:32]`
 
 Source line 128, then lines 74–78. The empty body is the punchline — hold on
 it, don't cut early.
@@ -311,7 +380,7 @@ function submit() {
 }
 ```
 
-### F9 — the honest part `[3:34–4:07]`
+### F9 — the honest part `[4:32–5:05]`
 
 ```
 14 built-in predicates
@@ -322,7 +391,7 @@ req("static string only")     ← no ${} interpolation
 
 Red-underline the last line as it's narrated.
 
-### F10 — the landing `[4:07–4:31]`
+### F10 — the landing `[5:05–5:29]`
 
 Two lines, ep. 01 above ep. 02:
 
@@ -333,7 +402,7 @@ ep 02 — the declaration carries its own contract
 
 Then both dissolve into: `put the guarantee in the shape`
 
-### F11 — CTA `[4:31–end]`
+### F11 — CTA `[5:29–end]`
 
 `scrml.dev` only. Install line withheld pending the install path.
 
@@ -341,11 +410,19 @@ Then both dissolve into: `put the guarantee in the shape`
 
 ## Cut points if over-length
 
-1. **[3:01] the rendering beat** (~20s). `<errors of=>` is nice but the
+At 5:30 this is the longest short so far and is comfortably inside the format.
+Only cut if you need it under 5:00.
+
+1. **[3:58] the rendering beat** (~18s). `<errors of=>` is elegant but the
    cross-field beat already carries the argument.
 2. The F7 split-screen against the hand-rolled version (~8s).
-3. **[1:18] the sixth-field beat** (~23s) — cut only under protest; it's the
-   most concrete bug in the episode.
+3. Inside the sixth-field story, the analytics-dashboard turn (~20s) can go —
+   keep the four-line "required / required / required / —" stamp, which is the
+   part that lands.
 
-Do **not** cut the honest beat [3:34]. The static-message limitation is what makes the rest
+Do **not** cut [4:32]. The static-message limitation is what makes the rest
 believable.
+
+Do **not** cut the sixth-field beat wholesale. It is the only concrete failure
+in the episode, and the turn at [2:29] now answers it directly ("no second
+place to forget") — losing the story orphans that line.
