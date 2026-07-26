@@ -37,7 +37,7 @@
                 E-SQL-008
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                A <code>?{</code> SQL block has no matching <code>}</code>.
+                A <code>?&#123;</code> SQL block has no matching <code>}</code>.
             </p>
             <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
@@ -55,7 +55,7 @@
 
         <div class="rounded-lg border border-rose-300 bg-rose-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                <strong>Verified behaviour, 2026-07-26 against v0.7.1.</strong> In practice you will usually see a <em>structural</em> error instead. An unterminated <code>?{</code> swallows the rest of the file, including the closing tags, so the block splitter reports <code>E-CTX-003: Unclosed 'program'</code> first and the build stops before the SQL-specific diagnostic is reached. The probe below produces <code>E-CTX-003</code>, not <code>E-SQL-008</code>. If you get an unexplained unclosed-element error, suspect an unterminated SQL block.
+                <strong>Verified behaviour, 2026-07-26 against v0.7.1.</strong> In practice you will usually see a <em>structural</em> error instead. An unterminated <code>?&#123;</code> swallows the rest of the file, including the closing tags, so the block splitter reports <code>E-CTX-003: Unclosed 'program'</code> first and the build stops before the SQL-specific diagnostic is reached. The probe below produces <code>E-CTX-003</code>, not <code>E-SQL-008</code>. If you get an unexplained unclosed-element error, suspect an unterminated SQL block.
             </p>
         </div>
 

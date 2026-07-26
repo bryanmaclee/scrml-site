@@ -58,7 +58,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            Reactive state is <strong>client-side</strong>. When a function is escalated to the server — because its body contains <code>?{}</code> SQL, a broadcast, or another server trigger — it no longer has a client-reactive referent, so an assignment to <code>@cell</code> has nothing to write to. This is one of the places the whole-stack compiler's placement inference becomes visible: the function moved, and the write no longer means what it meant.
+            Reactive state is <strong>client-side</strong>. When a function is escalated to the server — because its body contains <code>?&#123;&#125;</code> SQL, a broadcast, or another server trigger — it no longer has a client-reactive referent, so an assignment to <code>@cell</code> has nothing to write to. This is one of the places the whole-stack compiler's placement inference becomes visible: the function moved, and the write no longer means what it meant.
         </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">

@@ -1,0 +1,135 @@
+name: Deploy scrml.dev
+
+# Builds the wiki with the real scrml compiler and publishes the static output
+# to GitHub Pages.
+#
+# WHY THE COMPILER IS CHECKED OUT RATHER THAN INSTALLED
+# -----------------------------------------------------
+# `scrml` is not published to npm. Locally this repo consumes it as a linked
+# dependency (`node_modules/scrml -> ../../scrml`), which dogfoods the adopter
+# install path but is a symlink into a live working tree. CI therefore checks
+# the compiler out explicitly and invokes its entry point directly — no
+# `bun link`, no `bun install` needed for a build.
+#
+# WHY THE COMPILER REF IS PINNED TO A SHA
+# ---------------------------------------
+# The linked-dependency setup means the compiler you build against is whatever
+# the sibling checkout happens to be on. That is not reproducible: this repo's
+# committed `data/` artifacts were once baked from an unmerged feature branch
+# and nobody could tell, because nothing recorded which compiler produced them.
+# So CI pins.
+#
+# SCRML_REF below is a commit this repo's full gate suite was actually run
+# against (wiki 6/6 · showcase 11/11 · `scrml build` exit 0 · static artifact
+# 6/6 + 11/11), on 2026-07-26.
+#
+# TO BUMP IT: re-run the local gate against the new compiler, and only then
+# change this SHA. Bumping it blind defeats the point of pinning — the emitted
+# `.js.map` drives the showcase's hover-provenance, so a compiler move can
+# break that pane silently.
+#
+# WHAT THIS WORKFLOW DOES NOT DO
+# ------------------------------
+# It does not run the runtime gate. Those scripts need Chromium via the
+# compiler repo's Playwright install, which is a much heavier CI job. The
+# ratified discipline is serve-before-push, run locally by the PA before the
+# push that triggers this workflow. The build exiting 0 is the shape-gate only.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; let a newer push supersede an in-flight one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  SCRML_REPO: bryanmaclee/scrml
+  SCRML_REF: 50478f0ee674d198bc69119c525b60493ce151a1  # S287 — gated 2026-07-26
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+        with:
+          path: scrml-site
+
+      - name: Checkout scrml compiler (pinned)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SCRML_REPO }}
+          ref: ${{ env.SCRML_REF }}
+          path: scrml
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Report compiler provenance
+        run: |
+          cd scrml
+          echo "compiler commit: $(git rev-parse HEAD)"
+          echo "compiler version: $(node -p "require('./package.json').version")"
+
+      - name: Build static site
+        run: |
+          bun scrml/compiler/bin/scrml.js build scrml-site \
+            --target static \
+            --output "$GITHUB_WORKSPACE/_site"
+
+      - name: Stage flagship artifacts
+        # `data/` holds the precomputed flagship outputs the /showcase page
+        # fetches at runtime. Locally serve.sh symlinks dist/data -> ../data;
+        # a static host needs them as real files.
+        run: cp -r scrml-site/data "$GITHUB_WORKSPACE/_site/data"
+
+      - name: Disable Jekyll
+        # Pages runs Jekyll by default, which drops paths beginning with `_`.
+        run: touch "$GITHUB_WORKSPACE/_site/.nojekyll"
+
+      - name: Sanity-check the artifact
+        # Cheap guard against the failure that actually bit us: a page whose
+        # route collides with a directory of the same name emits `X.html`
+        # beside a directory `X/` with no index, and static hosts 404 on `/X`
+        # even though the dev server serves it fine.
+        run: |
+          cd "$GITHUB_WORKSPACE/_site"
+          fail=0
+          for d in */ ; do
+            n="${d%/}"
+            if [ -f "$n.html" ] && [ ! -f "$n/index.html" ]; then
+              echo "::error::route/directory collision: $n.html exists beside $n/ with no index.html — /$n will 404 on a static host"
+              fail=1
+            fi
+          done
+          for must in index.html showcase.html reference/index.html; do
+            [ -f "$must" ] || { echo "::error::missing $must"; fail=1; }
+          done
+          echo "pages: $(find . -name '*.html' | wc -l)"
+          exit $fail
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

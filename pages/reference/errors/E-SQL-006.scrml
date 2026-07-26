@@ -55,7 +55,7 @@
 
         <div class="rounded-lg border border-rose-300 bg-rose-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                <strong>Verified behaviour, 2026-07-26 against v0.7.1.</strong> This code does <em>not</em> reliably surface as a compile-time error. The compile-time diagnostic is raised only from the SQL-rewrite path that matches the backtick form <code>?{`…`}.prepare()</code>; on the bare form the build <strong>exits 0</strong> and the compiler instead emits a runtime <code>throw</code> carrying this message into the generated JavaScript. In the probe below the build succeeded and the error text was found in the emitted bundle. Treat <code>.prepare()</code> as a runtime failure you must catch by running the code, not by compiling it. Reported upstream.
+                <strong>Verified behaviour, 2026-07-26 against v0.7.1.</strong> This code does <em>not</em> reliably surface as a compile-time error. The compile-time diagnostic is raised only from the SQL-rewrite path that matches the backtick form <code>?&#123;`…`&#125;.prepare()</code>; on the bare form the build <strong>exits 0</strong> and the compiler instead emits a runtime <code>throw</code> carrying this message into the generated JavaScript. In the probe below the build succeeded and the error text was found in the emitted bundle. Treat <code>.prepare()</code> as a runtime failure you must catch by running the code, not by compiling it. Reported upstream.
             </p>
         </div>
 
@@ -64,7 +64,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            Bun.SQL caches prepared statements internally, so an explicit <code>.prepare()</code> step has no purpose and was removed. Queries run as a bare <code>?{…}</code> block or through <code>.all()</code> &#47; <code>.get()</code> &#47; <code>.run()</code>.
+            Bun.SQL caches prepared statements internally, so an explicit <code>.prepare()</code> step has no purpose and was removed. Queries run as a bare <code>?&#123;…&#125;</code> block or through <code>.all()</code> &#47; <code>.get()</code> &#47; <code>.run()</code>.
         </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
@@ -96,7 +96,7 @@
         <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
             <li>
                 <strong>Drop <code>.prepare()</code>.</strong>
-                Use the bare <code>?{…}</code> form, or the terminal method matching the shape you want — <code>.all()</code> for rows, <code>.get()</code> for one, <code>.run()</code> for a write.
+                Use the bare <code>?&#123;…&#125;</code> form, or the terminal method matching the shape you want — <code>.all()</code> for rows, <code>.get()</code> for one, <code>.run()</code> for a write.
             </li>
             <li>
                 <strong>Do not add caching of your own.</strong>
