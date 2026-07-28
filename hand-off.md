@@ -1,5 +1,137 @@
 # scrml-site — hand-off
 
+## ⇢ SESSION 10 CLOSE 2026-07-27 — video series started · **SHOWCASE GATE IS RED**
+
+**READ FIRST — two things, in this order.**
+
+### 🔴 1. THE SHOWCASE GATE IS 9/11. DO NOT BUMP THE CI PIN.
+
+`node scripts/gold-verify.mjs` fails two assertions against the **current**
+sibling compiler. **Our source did not change** — the only variable is
+`../scrml` moving `50478f0e` (S287) → `ac527675` (S291), which touched 15
+`compiler/src` files / +2053 lines.
+
+What broke: the nested `${ for … lift }` that emits one `<span>` per sub-line
+JS cell now emits **nothing**. Measured in Chromium:
+
+```
+.code-line                  ->  574     (outer list — fine)
+.code-line > span:not(.ln)  ->    0     (inner cells — WAS 287)
+first .code-line innerHTML  ->  <span class="ln">1</span>// Example 14: …
+```
+
+The line text is a bare text node now. That kills **column-precision hover
+provenance** — inc2 #1, and the entire point of `/showcase`. Outer list fine,
+inner emission gone: the same nested-lift path that already carries the
+load-bearing `selectFlagship()` `[]`-clear workaround.
+
+**WHY THE SITE IS STILL FINE:** `.github/workflows/deploy.yml` pins
+`SCRML_REF: 50478f0e` (S287) — the commit that passed 11/11. scrml.dev is built
+by that compiler and is unaffected (verified 200 at close). **Advancing that pin
+ships the regression.** Do not bump it until the reply lands. Cost of holding:
+we stop receiving their compiler fixes on the live site.
+
+Reported: `../scrml/handOffs/incoming/2026-07-27-0730-…-showcase-subline-cells-
+regression-S291.md`.
+
+### 🔴 2. THE CROSS-PA INBOX IS PER-CLONE — and half the fix is ours
+
+Their S291 wrap (`ac527675`) diagnosed why **four** of our notes sat unread:
+`handOffs/incoming/` is git-tracked, but **a dropped message is an untracked
+file until someone commits it.** scrml-site is colocated with their XPS clone,
+so every ASUS session since S284 read an inbox that was clean only on its own
+disk. This is the S154 wrong-inbox trap in a new costume.
+
+**We drop message files and never commit them.** That is our half. The fix is
+one line in our send procedure — commit-on-arrival — and it is **not taken**,
+because committing into their repo is the operator's call and their `main` is
+protected with a full pre-commit gate. Offered to them in the S291 note;
+**pending an operator ruling here.**
+
+They have *seen* the notes and compiled our blocking SQL claim against
+`0d95c364`, but have **not replied**. Their words: *"scrml-site remains blocked
+and unacknowledged; recorded as an accepted cost, not smoothed over."*
+
+### What landed this session
+
+**The video series thread opened** (operator-raised, so Rule 1 marketing
+exclusion does not apply). Format ruled **6 short / 4 long**; maturity ruled
+**ship an install path before producing**. Three shorts scripted, each with
+frame-by-frame code states, production notes and ranked cut points:
+
+- `video/ep01-three-booleans.md` — 4:56 — `29-engine-vs-flags`
+- `video/ep02-no-validation-library.md` — 5:30 — `30-validated-form`
+- `video/ep03-orm-trap.md` — 5:15 — the `orm-trap` article, **rewritten against
+  probed behaviour**
+- `video/measure.mjs` — derives timecodes from real word counts. Exists because
+  ep01's hand-estimate was wrong by 90 seconds. **Re-run after editing a beat.**
+
+**Every code frame is verified.** Sources compiled `exit 0` before scripting;
+emitted-output frames are copied from real `app.server.js`.
+
+### ⚠ scrml.dev is serving a page we have DISPROVED
+
+`pages/articles/orm-trap.scrml` claims six compile-time refusals. We probed all
+six against S287:
+
+| claim | reality |
+|---|---|
+| `E-PA-007` protect typo | ✅ as documented |
+| `E-SQL-004` no `db` in scope | ✅ as documented |
+| bound params mandatory | ✅ **verified in emitted artifact** |
+| `E-PA-004` bad table name | refused, but code is **`E-PA-002`** |
+| `E-SQL-002` invalid SQL caught | ❌ **never fires** |
+| `E-SQL-003` runtime SQL refused | ❌ **never fires** |
+
+`SELCT usrnme FRM users WHERE` builds exit 0 and ships verbatim. `?{q}` with a
+local const emits `` _scrml_sql`q` `` — **the identifier compiled as literal SQL
+text.** Operator ruled this unacceptable; note escalated to `needs: reply`,
+`blocking: true`.
+
+**Ruled OUT deliberately: not an injection vector.** Probed Bun.SQL directly —
+it binds every interpolation (`near "?": syntax error`, table intact). The
+"`${expr}` SHALL be a bound parameter" guarantee **holds absolutely**. Do not
+let the escalation imply otherwise; the defects are correctness + diagnostics.
+
+Third defect found while ruling that out: **dynamic identifiers are a dead end
+that compiles clean.** `?{`… FROM ${tbl}`}` builds exit 0 and fails 100% at
+runtime for every input, with no `.raw()` escape hatch by design.
+
+**OPEN OPERATOR CALL:** correct the article prose to today's behaviour, or leave
+it as target state pending a compiler fix? A live docs page that overclaims is
+worse than a modest one — recommend correcting now, restore when checks land.
+
+### GATES AT CLOSE — honest
+
+| gate | result |
+|---|---|
+| `scrml build` (types) | **exit 0** |
+| `wiki-verify` | **6/6** |
+| `gold-verify` | **🔴 9/11** — see item 1 |
+| `build:artifacts` | exit 0; `data/` drifts vs S291 (reverted, not committed) |
+| scrml.dev live | 200 |
+
+**Changelog:** this repo has no `docs/changelog.md`; per `.pa-base/profile` it is
+folded into this hand-off. **Delta-log:** none by profile design. Neither
+skipped — both by prior ruling.
+**Maps:** module dropped at `/flobase`; scope is now medium and this is the
+third session it has been worth revisiting. Not run.
+**Worktrees:** main checkout only. **Generated docs:** `gen-reference-nav.mjs`
+re-run at close — no-op, nav current (73/73, 0 stubs).
+
+### NEXT
+
+1. **Operator ruling: commit-on-arrival for cross-PA notes?** Cheapest fix to a
+   two-day comms failure.
+2. **Operator ruling: correct `orm-trap.scrml` now?**
+3. Await scrml PA on the SQL escalation + the S291 showcase regression. **Hold
+   the CI pin at S287 until then.**
+4. Install path (`bun add -g scrml`) — gates video *production*, not scripting.
+   Three blockers scoped in the npm note; `handOffs/` leak is the urgent one.
+5. Ep. 04 — `css-without-build-step` or `34-value-native-set`.
+6. Page titles: all 99 render `<title>` as the filename. Fix verified (authored
+   `<title>` per page; `<program title=>` does NOT cover routed pages).
+
 ## ⇢ SESSION 9 CLOSE 2026-07-26 — **scrml.dev IS LIVE, SERVING THIS REPO**
 
 **READ FIRST.** The deploy landed. `scrml.dev` now serves the scrml-built wiki
