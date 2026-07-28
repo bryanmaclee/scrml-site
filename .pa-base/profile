@@ -57,7 +57,10 @@ GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only
   - SECONDARY: `bun run build:artifacts` must exit 0. BYTE-IDENTITY IS DELIBERATELY NOT BLOCKING —
     data/ tracks a MOVING sibling compiler, so drift is expected, not a defect.
     POST-REWIRE 2026-07-22: exit 0 AND byte-identical on re-run — reproducibility against v0.7.1 is
-    RESTORED, so a data/ diff after `build:artifacts` now genuinely means the compiler moved.
+    RESTORED. **CORRECTED 2026-07-27: a data/ diff does NOT reliably mean "the compiler moved."**
+    The dep is a SYMLINK to a live working tree, so data/ reflects whichever BRANCH the sibling has
+    checked out. Our committed artifacts were once baked from `feat/wave1c-nav`, never merged to
+    main, and nothing recorded it. Nothing pins build-artifacts.mjs; CI pins, the precompute does not.
     The .js.map DRIVES hover-provenance: any compiler bump REQUIRES a full re-run of the PRIMARY
     gate, never a rubber stamp.
   - TYPES gate (added 2026-07-22): `node_modules/.bin/scrml build . --output <tmp>` must EXIT 0.
@@ -85,6 +88,19 @@ GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only
       W-STYLE-CONFLICT-POSSIBLE x21 = advisory. Fires on the .tok-* classes, which are mutually
         exclusive by construction (lineClass() returns exactly one) but not provably so. Accepted.
       Both false-positive classes reported to ../scrml 2026-07-22.
+
+DEPLOY (added 2026-07-28; the profile predates it):
+  scrml.dev is SERVED BY THIS REPO — GitHub Actions -> Pages, `.github/workflows/deploy.yml`.
+  Apex-only by construction: nav links are ABSOLUTE and the compiler has NO base-path flag, so a
+    project-Pages path prefix breaks navigation. Do not try to host it under a subpath.
+  BOTH the compiler ref AND the toolchain are PINNED (SCRML_REF + bun-version). An unpinned `latest`
+    broke the deploy on 2026-07-28. The compiler arrives from git with NO node_modules — CI installs
+    explicitly (TWICE: acorn/astring live only in the stray nested compiler/package.json). Never rely
+    on bun auto-install.
+  BUMPING SCRML_REF REQUIRES A FULL LOCAL GATE RUN FIRST. As of 2026-07-28 the pin is HELD at
+    50478f0e (S287) because gold-verify is 9/11 against S291 — advancing it ships that regression.
+  Route/directory collisions 404 on static hosts: a page emitting `X.html` beside a directory `X/`
+    with no index is fine under `scrml dev` and dead on Pages. GATE THE ARTIFACT, NOT THE DEV SERVER.
 
 MODULES:
   loaded:    CORE (~/.claude/CLAUDE.md) · stack-pack-scrml · role-pa · continuity · cross-pa-notify
@@ -114,6 +130,14 @@ CONTINUITY store:
 
 CROSS-PA (dropbox protocol; hook = .flobase/hooks/notify-inbox.sh via .claude/settings.json UserPromptSubmit):
   filename YYYY-MM-DD-HHMM-<from>-to-<target>-<slug>.md ; frontmatter from/to/date/subject/needs/status.
+  **COMMIT-ON-ARRIVAL (operator-ruled 2026-07-28) — THE INBOX IS PER-CLONE.** `handOffs/incoming/` is
+    git-TRACKED, but a dropped file is UNTRACKED until someone commits it, so a message written to one
+    clone is invisible to every other. Four of ours sat unread for two days on exactly this. **Writing
+    the file is not delivering it — COMMIT it.** Their main is protected (required check `gate`, 0
+    approvals, enforce_admins) so delivery goes via branch+PR. If their checkout is mid-session (ours
+    was, on `wrap/s291-xps` with an unpushed commit), use a DETACHED WORKTREE — never switch their HEAD
+    — then remove the worktree and delete the now-redundant untracked copies (verify byte-identical
+    first; they block the sibling's next rebase).
   needs: reply|action -> surfaced at the TURN boundary. needs: fyi -> boot-time inbox read only.
   LIVE CHANNELS:
     scrml  (../scrml/handOffs/incoming/) — THE compiler PA. Codegen output-shape changes land a notice

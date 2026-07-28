@@ -1,5 +1,36 @@
 # scrml-site — Primary Agent Directives
 
+> ## ⚠ CURRENCY NOTICE — added 2026-07-28. READ BEFORE THE BODY.
+>
+> **The body of this file was last revised 2026-06-02 and is substantially
+> superseded.** It is preserved because it records ratified decisions (S148–S154)
+> that still bind; it is *not* an accurate description of the repo today. Where
+> this file and the sources below disagree, **this file loses**.
+>
+> Current sources, in precedence order:
+> `.pa-base/profile` (boot manifest) → `.claude/CLAUDE.md` (assembled region) →
+> `hand-off.md` (live session state).
+>
+> Four things in the body are now wrong:
+>
+> 1. **"the scrml self-demo / showcase website"** — no. Since 2026-07-22 this is
+>    **the wiki of scrml**: ~99 routes of reference, learn, and articles. The
+>    compile-transparent viewer is **one page** of it, `/showcase`, and the old
+>    `pages/index.scrml` was `git mv`'d to `pages/showcase.scrml`.
+> 2. **Every reference to `scrmlTS`** (14 of them) — **that repo is DEAD**, last
+>    commit 2026-06-07, and its PA is not running. The compiler is **`../scrml`**.
+>    Do not route messages to scrmlTS; do not read it for current truth.
+> 3. **"Watch that inbox"** — necessary but not sufficient. `handOffs/incoming/`
+>    is git-tracked, but a dropped file is **untracked until committed**, so the
+>    inbox is **per-clone**. Four of our messages were invisible for two days on
+>    exactly this. We now **commit on arrival**; see `.pa-base/profile`.
+> 4. **Deploy is unmentioned** — **scrml.dev has served this repo since
+>    2026-07-26** via GitHub Actions → Pages, with the compiler ref and bun
+>    toolchain pinned in `.github/workflows/deploy.yml`.
+>
+> The **Serve it**, **Coordination / messaging** format, and **Remote** (SSH,
+> never HTTPS) sections below remain accurate.
+
 ## What is this repo?
 
 **scrml-site** is the scrml self-demo / showcase website — **an application built with scrml**, not compiler internals. It was extracted from `scrmlTS/docs/website-viewer/` on **2026-06-02 (S154)** into its own sibling repo under `scrmlMaster` so that:

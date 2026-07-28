@@ -34,7 +34,59 @@ we stop receiving their compiler fixes on the live site.
 Reported: `../scrml/handOffs/incoming/2026-07-27-0730-…-showcase-subline-cells-
 regression-S291.md`.
 
+### ✅ POST-WRAP ADDENDUM 2026-07-28 — three operator rulings landed
+
+Work after the `85ee7ee` wrap commit. Items 2 and the orm-trap call below are
+now **closed**; read this before acting on them.
+
+**a. `orm-trap.scrml` CORRECTED and LIVE.** (`414694a`) Operator ruled: correct
+the prose now. Five sites fixed; both unenforced refusals marked **NOT ENFORCED
+TODAY** with the failing evidence inline; `E-PA-004`→`E-PA-002`; dated
+accuracy-note callout added. The bound-parameter claim was deliberately **not**
+weakened — it was tested against the driver and holds. Verified live on
+scrml.dev.
+
+**b. COMMIT-ON-ARRIVAL IS NOW STANDING PRACTICE.** (their PR #230, merged)
+Operator ruled it. All four notes are now tracked on their `origin/main` and
+survive clone boundaries. **From now on: every message we drop into a sibling
+inbox gets committed, not just written.**
+*How it was done, because it matters:* their clone was on branch
+`wrap/s291-xps` with an **unpushed commit** — mid-session. Their checkout was
+never touched; a detached worktree was used, then removed. The four untracked
+duplicates were verified byte-identical to what landed and deleted, because
+they would have blocked their next rebase. **Do the same next time.**
+
+**c. THE DEPLOY WAS BROKEN AND IS FIXED.** (`798c7ce`) The orm-trap deploy
+failed: `ENOENT while resolving package 'acorn'`. Two latent defects in the
+workflow, both introduced with it:
+- The compiler is checked out from git with **no `node_modules`**, and nothing
+  installed them. The first two deploys only worked because bun **auto-installed
+  bare specifiers on demand**. That is not a property to depend on and it
+  stopped holding. Now an explicit install — **two calls**, because `acorn` and
+  `astring` are declared only in the stray nested `compiler/package.json`
+  (the same second manifest reported to them as an npm blocker).
+- **`bun-version: latest` was unpinned**, which defeats the point of pinning
+  `SCRML_REF`. It moved to 1.3.14 and took the build with it. Now pinned.
+
+Verified by reproducing the CI environment locally — fresh clone at the pinned
+SHA, no `node_modules`, run the install steps, build → exit 0, 106 files —
+**before** pushing. The live site was never down; a failed deploy leaves the
+previous artifact serving.
+
+**Standing rule this establishes: pin the toolchain, not just the ref, and
+never rely on implicit dependency resolution in CI.**
+
+**d. STILL OPEN — gate-scoping for message-only commits.** Proposed in PR #230
+but **not implemented**: a path-scoped early exit inside their `gate` job so the
+required check still reports but does no work when the merge-base diff is
+entirely under `handOffs/**`. `--no-verify` is not the lever (there are no local
+hooks on this clone) and `paths-ignore` is the trap (the required context never
+reports → PR unmergeable). It is a real if tiny weakening and it is **their**
+gate, so it awaits their ruling. Data point: **2m53s of compiler CI to land four
+markdown files.**
+
 ### 🔴 2. THE CROSS-PA INBOX IS PER-CLONE — and half the fix is ours
+### *(root cause; the fix is ruled and adopted — see addendum b above)*
 
 Their S291 wrap (`ac527675`) diagnosed why **four** of our notes sat unread:
 `handOffs/incoming/` is git-tracked, but **a dropped message is an untracked
@@ -97,9 +149,9 @@ Third defect found while ruling that out: **dynamic identifiers are a dead end
 that compiles clean.** `?{`… FROM ${tbl}`}` builds exit 0 and fails 100% at
 runtime for every input, with no `.raw()` escape hatch by design.
 
-**OPEN OPERATOR CALL:** correct the article prose to today's behaviour, or leave
-it as target state pending a compiler fix? A live docs page that overclaims is
-worse than a modest one — recommend correcting now, restore when checks land.
+**RULED + DONE 2026-07-28** (`414694a`) — prose corrected to today's behaviour
+and live on scrml.dev. Restore the original claims when the checks land. See
+post-wrap addendum (a).
 
 ### GATES AT CLOSE — honest
 
@@ -109,7 +161,7 @@ worse than a modest one — recommend correcting now, restore when checks land.
 | `wiki-verify` | **6/6** |
 | `gold-verify` | **🔴 9/11** — see item 1 |
 | `build:artifacts` | exit 0; `data/` drifts vs S291 (reverted, not committed) |
-| scrml.dev live | 200 |
+| scrml.dev live | 200 (deploy fixed post-wrap — see addendum c) |
 
 **Changelog:** this repo has no `docs/changelog.md`; per `.pa-base/profile` it is
 folded into this hand-off. **Delta-log:** none by profile design. Neither
@@ -121,16 +173,23 @@ re-run at close — no-op, nav current (73/73, 0 stubs).
 
 ### NEXT
 
-1. **Operator ruling: commit-on-arrival for cross-PA notes?** Cheapest fix to a
-   two-day comms failure.
-2. **Operator ruling: correct `orm-trap.scrml` now?**
-3. Await scrml PA on the SQL escalation + the S291 showcase regression. **Hold
-   the CI pin at S287 until then.**
-4. Install path (`bun add -g scrml`) — gates video *production*, not scripting.
-   Three blockers scoped in the npm note; `handOffs/` leak is the urgent one.
-5. Ep. 04 — `css-without-build-step` or `34-value-native-set`.
-6. Page titles: all 99 render `<title>` as the filename. Fix verified (authored
+1. **Await scrml PA** on the SQL escalation + the S291 showcase regression.
+   **HOLD THE CI PIN AT S287 UNTIL THEN** — advancing it ships the regression.
+   All four notes are now tracked on their `origin/main`, so the per-clone
+   excuse is gone; if this stays unanswered it is a queue problem, not a
+   delivery one.
+2. **Their ruling** on gate-scoping for message-only commits (addendum d).
+3. Install path (`bun add -g scrml`) — gates video *production*, not scripting.
+   Three blockers scoped in the npm note; the `handOffs/` npm leak is the urgent
+   one and is now MORE urgent, since those notes are tracked content that would
+   ship in a publish.
+4. Ep. 04 — `css-without-build-step` or `34-value-native-set`.
+5. Page titles: all 99 render `<title>` as the filename. Fix verified (authored
    `<title>` per page; `<program title=>` does NOT cover routed pages).
+6. `/dashboard` still ships a 212-word "coming soon" page — build or de-nav.
+
+**CLOSED since the wrap:** orm-trap correction (a) · commit-on-arrival (b) ·
+the broken deploy (c).
 
 ## ⇢ SESSION 9 CLOSE 2026-07-26 — **scrml.dev IS LIVE, SERVING THIS REPO**
 

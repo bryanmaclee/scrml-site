@@ -23,6 +23,13 @@ The wiki was migrated in from `scrml/docs/website/` on 2026-07-22, where it had 
 never built or deployed. `scrml/docs/build.ts` still says *"interim tooling … once scrml v0.2.0
 ships, the site will be built with scrml itself"* — we are at v0.7.1, and this repo is that.
 
+**DEPLOYED 2026-07-26: scrml.dev now serves THIS repo**, built by the real compiler in GitHub
+Actions and published to Pages. The domain was released from `bryanmaclee/scrml` (their PR #187).
+The site is **apex-only by construction** — nav links are absolute and the compiler has no
+base-path flag. Both the compiler ref and the bun toolchain are **pinned** in
+`.github/workflows/deploy.yml`; bumping `SCRML_REF` requires a full local gate run first, and the
+pin is currently **held at S287** because `gold-verify` is 9/11 against S291.
+
 The normative project contract is **`pa.md`** (repo root) — read it, it is not superseded by this
 region. `hand-off.md` is the live session state.
 
@@ -109,9 +116,14 @@ call, never the PA's.
 committed artifacts is **deliberately not merge-blocking**: `data/` tracks a *moving sibling compiler*,
 so drift is expected, not a defect.
 
-> Post-rewire 2026-07-22: exit 0 **and byte-identical on re-run** — reproducibility against v0.7.1
-> is restored, so a `data/` diff after `build:artifacts` now genuinely means the compiler moved. The
-> `.js.map` drives hover-provenance, so any compiler bump REQUIRES a full re-run of the primary gate.
+> Post-rewire 2026-07-22: exit 0 **and byte-identical on re-run**. The `.js.map` drives
+> hover-provenance, so any compiler bump REQUIRES a full re-run of the primary gate.
+>
+> **CORRECTED 2026-07-27 — a `data/` diff does NOT reliably mean "the compiler moved."** The dep is a
+> symlink to a live working tree, so `data/` reflects whichever **branch** the sibling has checked
+> out. The committed artifacts were once baked from `feat/wave1c-nav` — never merged to main — and
+> nothing recorded which compiler produced them. CI pins its compiler ref; `build-artifacts.mjs` does
+> not. Treat a `data/` diff as "the sibling's working tree changed," nothing more.
 
 **TYPES gate** (added 2026-07-22) — `node_modules/.bin/scrml build . --output <tmp>` must **exit 0**.
 This is *not* redundant with the serve gate: `scrml dev` emits **leniently** (it emitted despite 9
