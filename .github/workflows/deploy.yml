@@ -73,13 +73,32 @@ jobs:
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          # PINNED, not `latest`. An unpinned toolchain defeats the point of
+          # pinning SCRML_REF: on 2026-07-28 `latest` moved to 1.3.14 and the
+          # build broke on dependency resolution that had silently been relying
+          # on bun's auto-install. scrml's own `engines` requires >=1.3.13.
+          bun-version: 1.3.14
+
+      - name: Install compiler dependencies
+        # REQUIRED. The compiler is checked out from git, so it arrives with no
+        # node_modules. Earlier runs only worked because bun auto-installed bare
+        # specifiers on demand; that is not something to depend on.
+        #
+        # Two installs on purpose: `acorn` and `astring` are declared in the
+        # nested `compiler/package.json`, not the root manifest. The second call
+        # is usually a no-op once the root install has resolved them — it is
+        # cheap insurance against that hoisting changing.
+        run: |
+          cd scrml
+          bun install --production
+          cd compiler && bun install --production
 
       - name: Report compiler provenance
         run: |
           cd scrml
           echo "compiler commit: $(git rev-parse HEAD)"
           echo "compiler version: $(node -p "require('./package.json').version")"
+          echo "bun: $(bun --version)"
 
       - name: Build static site
         run: |
