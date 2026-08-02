@@ -195,14 +195,14 @@
         </ul>
 
         <div class="mt-12 p-4 bg-slate-50 border border-slate-200 rounded-md text-sm text-slate-600">
-            <strong>Day-1 content depth note.</strong> Article pages on
-            scrml.dev are at day-1 scaffold; only
-            <em>Why programming for the browser…</em> is a full inline body.
-            Others link to the source markdown until the day-30 migration
-            pass folds in inline content + the live-compile
-            <code class="font-mono text-sm">&lt;CodeExample&gt;</code>
-            component. Per the architecture DD at
-            <code class="font-mono text-sm">scrml-support/docs/deep-dives/scrml-dev-mdn-style-architecture-2026-05-17.md</code>.
+            <strong>On the version-numbered articles.</strong> The
+            <em>v0.2.0</em> and <em>v0.3.0</em> announcements are period
+            records &mdash; they describe the language as it stood at
+            that cut and are deliberately not rewritten to current
+            semantics. scrml is at v0.7.1; read those two as history,
+            and the
+            <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">reference</a>
+            for what is true now.
         </div>
 
     </article>

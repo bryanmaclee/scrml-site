@@ -40,7 +40,8 @@
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>curl -fsSL https://bun.sh/install | bash</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
-            Verify the install:
+            Verify the install. The compiler requires
+            <strong>Bun 1.3.13 or newer</strong>:
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>bun --version</code></pre>
@@ -54,12 +55,17 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-3">
-            Until the npm package lands, install from source:
+            Until the npm package lands, install from source. Two
+            installs, not one &mdash; a couple of the compiler's
+            dependencies are declared in the nested
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">compiler/</code>
+            manifest rather than the root one:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>git clone https://github.com/bryanmaclee/scrmlTS
-cd scrmlTS
-bun install</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>git clone https://github.com/bryanmaclee/scrml
+cd scrml
+bun install
+cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Link the

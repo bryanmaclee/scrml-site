@@ -42,7 +42,7 @@
                 layer. The server boundary disappears.
             </p>
             <div class="flex gap-4 mt-4 text-xs">
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§8"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#§8"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §8 (normative)
                 </a>
@@ -93,17 +93,21 @@ function deleteContact(id) &#123;
 
         <p class="text-slate-700 leading-relaxed mt-4">
             The full runnable example lives at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/examples/03-contact-book.scrml"
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/examples/03-contact-book.scrml"
                class="font-mono text-blue-700 hover:text-blue-900 underline">examples/03-contact-book.scrml</a>
-            in the scrmlTS repository. Pre-compiled live demo (Option A
-            per the scrml.dev architecture DD) is queued for day-30 once
-            the chunk-splitter dogfood pass settles.
+            in the scrml repository. For a compiled example you can pull
+            apart in the browser &mdash; real source beside the real
+            emitted JS, HTML and CSS &mdash; see
+            <a href="/showcase" class="text-blue-700 hover:text-blue-900 underline">the showcase</a>.
         </p>
 
         <div class="mt-3 text-xs text-slate-500 italic">
-            The
-            <code class="font-mono">server function</code>
-            keyword pins the function to server-side execution. Calls from
+            Note there is no <code class="font-mono">server</code> keyword
+            above. A function containing
+            <code class="font-mono">?&#123;&#125;</code> is inferred as
+            server-side — you do not pin it by hand, and the
+            <code class="font-mono">server</code> modifier on a function is
+            deprecated in favour of that inference. Calls from
             client-side markup auto-await and auto-fetch via the
             compiler's wire format (SPEC §57). Parameter binding is
             prepared-statement-safe — interpolations bind, they don't
@@ -323,7 +327,7 @@ function deleteContact(id) &#123;
             <strong>§44</strong> (multi-DB adaptation),
             <strong>§57</strong> (wire format). The normative text lives
             at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md"
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md
             </a>.

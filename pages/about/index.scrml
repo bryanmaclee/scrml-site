@@ -1,7 +1,9 @@
-// scrml.dev /about — Day-30 placeholder stub
+// scrml.dev /about — thin, but accurate (currency-audited 2026-08-02)
 //
 // Top-bar nav target. The /about index will be the language's
 // public "what is scrml, who built it, why does it exist" page.
+// Still short — but do not reintroduce a "Day-N build-out" promise,
+// and do not point the source link at scrmlTS (retired 2026-06-07).
 
 <page>
 
@@ -22,16 +24,18 @@
 
         <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
             <p class="font-semibold text-slate-900 mb-2">
-                Full page queued for the Day-30 build-out.
+                This page is still short. What is here is accurate.
             </p>
             <p class="leading-relaxed">
-                For now: scrml is an in-development full-stack language
-                for the browser. The compiler is implemented in
-                TypeScript today and will be self-hosted in scrml after
-                v1.0. MIT-licensed; source at
-                <a href="https://github.com/bryanmaclee/scrmlTS"
+                scrml is an in-development full-stack language for the
+                browser, currently at <strong>v0.7.1</strong>. The
+                compiler is written in TypeScript; rewriting it in scrml
+                is underway rather than promised &mdash; two
+                implementations exist in the tree today. MIT-licensed;
+                source at
+                <a href="https://github.com/bryanmaclee/scrml"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    github.com/bryanmaclee/scrmlTS
+                    github.com/bryanmaclee/scrml
                 </a>.
             </p>
         </div>

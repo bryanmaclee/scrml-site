@@ -7,6 +7,17 @@
 // What this page does NOT do: marketing-flagship "three big claims with
 // worked examples." That's Option (a). The user picked (b) — honest
 // current-state. Read the Articles section for the why behind any claim.
+//
+// CURRENCY AUDIT 2026-08-02. This page had gone 4 minor versions stale: it
+// described v0.3.0 as the newest cut while the header pill read v0.7.1, and
+// it claimed the reference was "day-1" when it is 73/73 written, 0 stubs.
+// Every claim below was re-verified against ../scrml (changelog + SPEC +
+// tree) on that date.
+//
+// RULE FOR EDITORS — prefer claims that cannot rot. "v0.7.1 was cut on
+// 2026-06-28" stays true forever; "we're at day-1" was false within a week.
+// Do not reintroduce day-N targets, "as of today", or a version peg that
+// has to be hand-bumped to stay honest.
 
 <page>
 
@@ -28,19 +39,39 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <strong>v0.3.0</strong> ships per-route per-role chunks,
+                <strong>v0.7.1</strong> is the current cut (2026-06-28). It
+                bundles roughly a month of fixes on top of v0.7.0, which
+                closed the last of the high-severity bug board.
+            </li>
+            <li>
+                <strong>v0.4.0 &ndash; v0.6.0</strong> added generation from
+                types &mdash; <code>formFor(StructType)</code> builds a form,
+                its state cell, its validity surface and its submit path;
+                <code>schemaFor(StructType)</code> builds the SQL DDL, and
+                enum fields carry their variants across the database
+                boundary. The same arc replaced the compiler's own front end
+                with the native parser and expanded the built-in Tailwind
+                surface.
+            </li>
+            <li>
+                <strong>v0.3.0</strong> shipped per-route per-role chunks,
                 content-addressing, and auth as a compile-time visibility
                 constraint (not a runtime check).
             </li>
             <li>
-                <strong>v0.2.x</strong> covers the foundational reactive
+                <strong>v0.2.x</strong> laid the foundational reactive
                 surface: V5-strict state, validators, the auto-synthesized
                 validity surface, and the pattern-matching ladder.
             </li>
             <li>
-                <strong>scrml is post-v0.next.</strong> Engines are the UI
-                centerpiece. Markup is a first-class value type. The server
-                boundary disappears.
+                Engines are the UI centerpiece. Markup is a first-class
+                value type (a stated pillar of the spec, not a library
+                trick). The server boundary disappears.
+            </li>
+            <li>
+                The reference in these docs is <strong>fully written</strong>
+                &mdash; 73 of 73 pages across elements, keywords, contexts
+                and error codes, with no stubs.
             </li>
         </ul>
 
@@ -50,19 +81,28 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                Self-host. The scrml compiler will eventually be written in
-                scrml. That's a post-v1.0 effort.
+                Self-host &mdash; the compiler written in scrml. This is in
+                flight, not hypothetical: two implementations live in the
+                tree, and the second one's lexer is token-complete and
+                verified token-for-token against the first. It is a long
+                way from a compiler, and it is no longer a someday.
             </li>
             <li>
-                The full reference surface in these docs. We're at day-1.
-                Day-30 target is every Tier 1 + Tier 2 surface
-                documented at MDN-rigor.
+                The <strong>v0.8</strong> milestone target is open. The
+                native-parser peg it used to carry is retired; the
+                server-render-time and dynamic-deployment work is the
+                current candidate.
+            </li>
+            <li>
+                Depth, not coverage, in these docs. Every reference page is
+                written; not every one of them is yet written to the depth
+                MDN sets as the bar.
             </li>
         </ul>
 
         <div class="mt-12 p-6 border border-slate-200 rounded-lg bg-slate-50">
             <h3 class="font-semibold text-slate-900 mb-2">
-                Three flagship pages are live as of today:
+                Three pages that show the shape of the language:
             </h3>
             <ul class="space-y-1">
                 <li>

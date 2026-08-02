@@ -1,8 +1,9 @@
-// scrml.dev /learn — Day-30 placeholder stub
+// scrml.dev /learn — tutorial index (currency-audited 2026-08-02)
 //
-// Top-bar nav target. The /learn index will eventually enumerate
-// the tutorial track (5 narrative tutorials per the architecture
-// DD §6 day-30 plan). For now this is a holding page.
+// Top-bar nav target. 2 of the 5 planned narrative tutorials are
+// written (server-boundary, validators — both full-length, not
+// outlines). Keep the counts here honest when a tutorial lands; do
+// not reintroduce a "Day-N build-out" promise.
 
 <page>
 
@@ -23,19 +24,19 @@
 
         <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
             <p class="font-semibold text-slate-900 mb-2">
-                Tutorial track queued for the Day-30 build-out.
+                Two of five tutorials are written.
             </p>
             <p class="leading-relaxed">
-                Five narrative tutorials are planned (server-boundary,
-                validators, engines-end-to-end, channels-realtime,
-                schema-and-migrations). Until then the reference and the
-                long-form articles cover the same surface area in shorter
-                form.
+                Server boundary and validators are complete and linked
+                below. Three more are planned &mdash; engines
+                end-to-end, channels and realtime, schema and
+                migrations. For those, the reference and the long-form
+                articles cover the same surface in shorter form.
             </p>
         </div>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
-            Tutorial outlines (drafted, not yet written)
+            Written
         </h2>
 
         <ul class="space-y-3 text-slate-700">

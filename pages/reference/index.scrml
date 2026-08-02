@@ -140,11 +140,15 @@
                     ?&#123; ... &#125;
                 </a> &mdash; SQL. Per-handler coalescing, N+1 loop hoist, multi-database adaptation.
             </li>
+            <li>
+                <a href="/reference/contexts/meta" class="font-mono text-blue-700 hover:text-blue-900 underline">
+                    ^&#123; ... &#125;
+                </a> &mdash; Meta. Compiler-directed annotation on a declaration.
+            </li>
             <li class="text-slate-500">
                 <span class="font-mono">#&#123; ... &#125;</span> &mdash; CSS.
-                <span class="font-mono">^&#123; ... &#125;</span> &mdash; meta.
                 <span class="font-mono">_&#123; ... &#125;</span> &mdash; foreign code.
-                &mdash; queued for the Day-30 build-out.
+                &mdash; not yet documented here.
             </li>
         </ul>
 
@@ -157,15 +161,39 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-4">
-            Reserved words with normative semantics. Each gets its own
-            reference page during the Day-30 build-out.
+            Reserved words with normative semantics. Four have their own
+            reference page; the rest are documented in context on the
+            pages that use them.
         </p>
+
+        <ul class="space-y-1 text-slate-700 text-sm mb-3">
+            <li>
+                <a href="/reference/keywords/derived" class="font-mono text-blue-700 hover:text-blue-900 underline">derived</a>
+                &middot;
+                <a href="/reference/keywords/is-some" class="font-mono text-blue-700 hover:text-blue-900 underline">is some</a>
+                &middot;
+                <a href="/reference/keywords/lift" class="font-mono text-blue-700 hover:text-blue-900 underline">lift</a>
+                &middot;
+                <a href="/reference/keywords/req" class="font-mono text-blue-700 hover:text-blue-900 underline">req</a>
+            </li>
+        </ul>
 
         <ul class="space-y-1 text-slate-700 font-mono text-sm">
             <li class="text-slate-500">
-                fn, function, lift, lin, pinned, is, not, req, pure, &tilde;, reset, fail, server, default
+                fn, function, lin, pinned, is, not, &tilde;, reset, fail, default
             </li>
         </ul>
+
+        <p class="text-slate-600 leading-relaxed mt-3 text-sm">
+            Two are deprecated and should not be reached for in new code:
+            <span class="font-mono">pure</span> is superseded language-wide
+            by <span class="font-mono">fn</span>, and the
+            <span class="font-mono">server</span> modifier on a function is
+            deprecated in favour of placement inference. (<span
+            class="font-mono">server fn</span> is a different construct and
+            is <em>not</em> deprecated &mdash; it stays, for server-pinned
+            helpers.)
+        </p>
 
         // ───────────────────────────────────────────────────────────
         // Error codes (queued)
@@ -177,10 +205,11 @@
 
         <p class="text-slate-700 leading-relaxed">
             Every error code the compiler can emit has a definition in
-            SPEC &sect;34. Per-code pages with the full message, fire
-            conditions, and minimal repro are queued for Day-30; the
-            full catalog lives at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md"
+            SPEC &sect;34. <strong>54 codes have their own page here</strong>,
+            grouped into families in the sidebar &mdash; each with the full
+            message, when it fires, and a minimal repro. The normative
+            catalog lives at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md
             </a>
