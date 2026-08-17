@@ -1,5 +1,133 @@
 # scrml-site — hand-off
 
+## ⇢ SESSION 11 CLOSE 2026-08-16 — Maidensail badge landed · **SHOWCASE GATE DECAYED 9/11 → 6/11**
+
+Thin session, two asks: *where is the compiled output* and *add the Maidensail
+badge*. Both done and live. But the wrap turned up two things worth more than
+the badge — read §2 and §3.
+
+### 1. WHAT LANDED
+
+**`6df6038` — the Maidensail listing badge**, in the **shell** footer
+(`app.scrml:505`), sharing a flex row with the `built in scrml` pill. Operator
+asked for "front page, footer is fine"; the fork (shell footer = all ~99 routes
+vs. appending to `pages/index.scrml` = `/` only) was surfaced and the operator
+chose **site-wide**. So it is one outbound `dofollow` link × 99 pages.
+
+First `<img>` anywhere in this repo. Checked before writing it: `img` is in the
+compiler's `VOID_ELEMENTS` (`block-splitter.js:73`), and all five layout classes
+on the new wrapper (`flex-wrap` · `items-center` · `justify-center` · `gap-3` ·
+`flex-col`) already resolve out of `app.css` — no new Tailwind-shim entry was
+needed. Emits as `<img … height="36" />` on 100/100 pages.
+
+`rel="dofollow"` is **not a real rel value** — dofollow is merely the absence of
+`nofollow`. Kept verbatim because it is what Maidensail's snippet ships and they
+may scrape for it. Operator was told; no objection. Do not "fix" it silently.
+
+Verified live, not merely deployed: `scrml.dev/` serves the markup, the badge
+SVG returns **200 `image/svg+xml`**, the listing page returns **200**. Deploy run
+`31961189656` green (build 22s, deploy 1m14s).
+
+### 2. 🔴 THE SHOWCASE GATE HAS DECAYED FURTHER — 9/11 → **6/11**
+
+Session 10 recorded `gold-verify` at **9/11** against `../scrml` `ac527675`
+(S291). It is now **6/11**. **Our source is not implicated** — I re-ran the whole
+gate against pre-badge `HEAD~1` on a clean `dist` and got the *identical* 6/11
+with the identical five failures. The only moving part is the sibling, now on
+branch **`maps/s346`** at **`b35bfe0d`** — far past both S291 and the pin.
+
+Now failing (was 2, now 5):
+
+```
+FAIL  flagship iframe mounted            — 1 frames
+FAIL  JS output cells rendered           — 0 cell nodes
+FAIL  FORWARD hover lights JS cells      — no source line lit any cell
+FAIL  REVERSE hover activates source line
+FAIL  FORWARD hover works on flagship 2
+```
+
+Still passing: source pane (177 nodes), selector, unhover-clears, flagship
+switch, active-button, **and assertion 11 (nested engine pane)**.
+
+`/showcase` also throws one uncaught `TypeError: Cannot set properties of null
+(setting 'innerHTML')` — I isolated it to `/showcase` alone; the other five
+sampled routes are clean. That is the single `wiki-verify` FAIL too (5/6),
+likewise reproduced on pre-badge HEAD.
+
+**The operator has confirmed the scrml repo already knows about this regression.**
+No new outbound note was filed — do not re-report it.
+
+**`SCRML_REF` stays pinned at `50478f0e` (S287).** scrml.dev is built by that
+compiler and is unaffected; the failures are local-only. The holding cost is now
+higher than session 10 recorded: we are three named regressions deep and still
+not receiving any of their compiler fixes on the live site.
+
+### 3. ⚠️ A COMPLETED AUDIT SAT UNPUSHED FOR 14 DAYS
+
+`f74f9cd` — *"currency audit — front page + every page it links to"*, 9 wiki
+pages, +157/−71 — was committed **2026-08-02** and **never pushed**. It reached
+scrml.dev today only because it rode along on the badge push. For two weeks the
+live wiki served exactly the stale prose that commit was written to fix.
+
+**Committing is not shipping.** This is the same failure shape as the
+COMMIT-ON-ARRIVAL ruling (§10b: *writing the file is not delivering it*), one
+layer out. A wrap that ends without `git push` leaves work that looks done in
+`git log` and is invisible to every reader of the actual site. Nothing in the
+gate catches this — the gate tests `localhost:8787`, never the origin.
+
+Pairs with the standing `prose-currency-is-ungated` finding: no gate checks
+whether a sentence is still true, **and** no gate checks whether a true sentence
+was ever deployed.
+
+### 4. GATE RESULTS AT CLOSE
+
+| gate | result | note |
+|---|---|---|
+| `scrml build` (TYPES) | **exit 0** | 106 files, 306 outputs |
+| `wiki-verify.mjs` | **5/6** | the one FAIL = `/showcase`, pre-existing, §2 |
+| `gold-verify.mjs` | **6/11** | pre-existing, §2 — baselined against `HEAD~1` |
+| CI deploy `31961189656` | **success** | built against the S287 pin |
+
+Lint surface unchanged from the triaged set in `.pa-base/profile` (the
+`E-ROUTE-001` ×7 and `W-STYLE-CONFLICT-POSSIBLE` false positives) — nothing new.
+
+### 5. PROCESS NOTE — I ALMOST SHIPPED A FALSE "NO REGRESSION"
+
+My first `wiki-verify` run leaned on the dev-server watcher after an `app.scrml`
+edit. The profile is explicit that **shell edits do not recompose already-emitted
+page HTML** — so that run may well have measured the *old* footer twice, and the
+"5/6 before and after, no regression" claim rested on it. Caught it at wrap and
+re-ran properly: `rm -rf dist` → restart `serve.sh` → re-verify. Conclusion held,
+but it held by luck, not by method.
+
+**`rm -rf dist` + restart after ANY `app.scrml` edit. There is no exception, and
+the stale result looks exactly like a passing one.**
+
+### 6. HOUSEKEEPING
+
+Inbox **empty** (`handOffs/incoming/` — only `read/`). No outbound notices filed.
+One worktree (main checkout only) — nothing to prune. `.claude/maps` **not
+applicable**, the `maps` module is dropped (`.pa-base/profile` still flags it as
+worth reconsidering at medium scope — unchanged, still open). No delta-log by
+design. `gen-reference-nav.mjs` re-run → exit 0, **zero diff**, generated nav is
+current. No `docs/changelog.md` in this repo — per profile, the changelog is
+folded into this hand-off, and §1 is that entry.
+
+### 7. OPEN / FOR THE NEXT PA
+
+- **Do not bump `SCRML_REF`** until the showcase regression is fixed upstream.
+  Re-run `gold-verify` against any candidate ref *before* touching the pin; 6/11
+  is the current floor to beat.
+- The `maps` module reconsideration is still open (medium scope, `showcase.scrml`
+  is a ~730 LOC god-file).
+- GitHub is warning that `actions/checkout@v4` / `actions/upload-artifact@v4`
+  target deprecated Node 20 and are being force-run on Node 24. Not urgent,
+  nothing broken today, but a `@v5` bump is queued work.
+- Push is part of the wrap now. Verify `git log origin/main..HEAD` is **empty**
+  before declaring a session closed — see §3.
+
+---
+
 ## ⇢ SESSION 10 CLOSE 2026-07-27 — video series started · **SHOWCASE GATE IS RED**
 
 **READ FIRST — two things, in this order.**
