@@ -41,7 +41,7 @@
 
         <ul class="space-y-3 text-slate-700">
             <li>
-                <a href="/articles/v0.3.0-announce"
+                <a hard href="/articles/v0.3.0-announce"
                    class="text-blue-700 hover:text-blue-900 underline">
                     v0.3.0 announce
                 </a>
@@ -49,14 +49,14 @@
                 auth-as-visibility.
             </li>
             <li>
-                <a href="/articles/v0.2.0-announce"
+                <a hard href="/articles/v0.2.0-announce"
                    class="text-blue-700 hover:text-blue-900 underline">
                     v0.2.0 announce
                 </a>
                 &mdash; V5-strict state, validators, validity surface.
             </li>
             <li>
-                <a href="/articles/roadmap-2026-05-14"
+                <a hard href="/articles/roadmap-2026-05-14"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Roadmap (post-v0.3)
                 </a>
@@ -65,7 +65,7 @@
         </ul>
 
         <p class="mt-10 text-sm">
-            <a href="/about" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/about" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; About
             </a>
         </p>

@@ -171,14 +171,14 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/channel"
+                <a hard href="/reference/elements/channel"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;channel&gt;
                 </a>
                 &mdash; element reference.
             </li>
             <li>
-                <a href="/reference/errors/E-CHANNEL-INSIDE-PAGE"
+                <a hard href="/reference/errors/E-CHANNEL-INSIDE-PAGE"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-CHANNEL-INSIDE-PAGE
                 </a>
@@ -189,7 +189,7 @@
                 scope.
             </li>
             <li>
-                <a href="/reference/errors/E-CHANNEL-SHARED-MODIFIER"
+                <a hard href="/reference/errors/E-CHANNEL-SHARED-MODIFIER"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-CHANNEL-SHARED-MODIFIER
                 </a>

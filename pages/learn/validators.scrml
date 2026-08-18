@@ -337,7 +337,7 @@
                 <strong>Derived cells.</strong> Per &sect;55.14, a
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">const &lt;x&gt; = expr</code>
                 cell carrying validators fires
-                <a href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
+                <a hard href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-DERIVED-WITH-VALIDATORS
                 </a>.
@@ -366,7 +366,7 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <a href="/reference/elements/errors"
+                <a hard href="/reference/elements/errors"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;errors of=&hellip;/&gt;
                 </a>
@@ -374,19 +374,19 @@
                 every step.
             </li>
             <li>
-                <a href="/reference/keywords/req"
+                <a hard href="/reference/keywords/req"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     req
                 </a>
                 &#47;
-                <a href="/reference/keywords/is-some"
+                <a hard href="/reference/keywords/is-some"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     is some
                 </a>
                 &mdash; the two predicates this tutorial leans on.
             </li>
             <li>
-                <a href="/learn/server-boundary"
+                <a hard href="/learn/server-boundary"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Server-boundary tutorial
                 </a>
@@ -395,7 +395,7 @@
         </ul>
 
         <p class="mt-10 text-sm">
-            <a href="/learn" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/learn" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Learn
             </a>
         </p>

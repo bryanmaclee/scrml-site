@@ -71,7 +71,7 @@
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Pairs with
-            <a href="/reference/keywords/req"
+            <a hard href="/reference/keywords/req"
                class="font-mono text-blue-700 hover:text-blue-900 underline">req</a>
             (meaningful-value).
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">""</code>
@@ -283,7 +283,7 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <a href="/reference/keywords/req"
+                <a hard href="/reference/keywords/req"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     req
                 </a>
@@ -296,7 +296,7 @@
                 rejects.
             </li>
             <li>
-                <a href="/reference/elements/errors"
+                <a hard href="/reference/elements/errors"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;errors of=&hellip;/&gt;
                 </a>
@@ -305,7 +305,7 @@
                 participates in.
             </li>
             <li>
-                <a href="/learn/validators"
+                <a hard href="/learn/validators"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Learn: Validators
                 </a>

@@ -188,16 +188,16 @@ component LoadCard &#123;
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 &mdash; element reference. Singleton lifecycle + declaration scope rules.
             </li>
             <li>
-                <a href="/reference/errors/E-IDLE-MISPLACED"
+                <a hard href="/reference/errors/E-IDLE-MISPLACED"
                    class="text-rose-700 hover:text-rose-900 underline">E-IDLE-MISPLACED</a>
                 &mdash; sibling error class (structural-element placement).
             </li>
             <li>
-                <a href="/reference/errors/E-STRUCTURAL-ELEMENT-MISPLACED"
+                <a hard href="/reference/errors/E-STRUCTURAL-ELEMENT-MISPLACED"
                    class="text-rose-700 hover:text-rose-900 underline">E-STRUCTURAL-ELEMENT-MISPLACED</a>
                 &mdash; generic structural-element-misuse error.
             </li>

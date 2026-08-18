@@ -40,7 +40,7 @@
 
         <p class="text-slate-700 leading-relaxed my-4">
             Pre-req: you've finished
-            <a href="/getting-started" class="text-blue-700 hover:text-blue-900 underline">Getting started</a>
+            <a hard href="/getting-started" class="text-blue-700 hover:text-blue-900 underline">Getting started</a>
             and have
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml dev</code>
             running.
@@ -315,7 +315,7 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <a href="/learn/validators"
+                <a hard href="/learn/validators"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Validators tutorial
                 </a>
@@ -326,7 +326,7 @@
                 surface this tutorial touched on lightly.
             </li>
             <li>
-                <a href="/reference/contexts/sql"
+                <a hard href="/reference/contexts/sql"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     ?&#123; &#125; reference
                 </a>
@@ -334,7 +334,7 @@
                 methods, multi-database adaptation, error handling.
             </li>
             <li>
-                <a href="/articles/orm-trap"
+                <a hard href="/articles/orm-trap"
                    class="text-blue-700 hover:text-blue-900 underline">
                     The ORM trap
                 </a>
@@ -343,7 +343,7 @@
         </ul>
 
         <p class="mt-10 text-sm">
-            <a href="/learn" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/learn" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Learn
             </a>
         </p>

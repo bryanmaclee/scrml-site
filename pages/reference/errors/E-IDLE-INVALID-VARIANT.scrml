@@ -65,7 +65,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            <a href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>&apos;s
+            <a hard href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>&apos;s
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">to=</code>
             target MUST be a variant of the engine&apos;s
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">for=</code>
@@ -130,7 +130,7 @@
                 <strong>Add the missing
                     <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">to=</code>.</strong>
                 Unlike
-                <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>&apos;s
+                <a hard href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>&apos;s
                 from / to filter pair (where either may be omitted),
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onIdle&gt;</code>
                 is a transition-fire (not a handler), so
@@ -163,7 +163,7 @@
             permits the target (which is dynamic — the current state at
             watchdog fire time depends on runtime). That check is deferred
             to runtime:
-            <a href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
+            <a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
                class="text-rose-700 hover:text-rose-900 underline">E-ENGINE-INVALID-TRANSITION</a>
             fires at runtime if the current state forbids the target.
         </p>
@@ -174,21 +174,21 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
+                <a hard href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
                 — element reference.
             </li>
             <li>
-                <a href="/reference/errors/E-IDLE-DUPLICATE"
+                <a hard href="/reference/errors/E-IDLE-DUPLICATE"
                    class="text-rose-700 hover:text-rose-900 underline">E-IDLE-DUPLICATE</a>
                 — sibling error for multiple &lt;onIdle&gt; in one engine.
             </li>
             <li>
-                <a href="/reference/errors/E-IDLE-MISPLACED"
+                <a hard href="/reference/errors/E-IDLE-MISPLACED"
                    class="text-rose-700 hover:text-rose-900 underline">E-IDLE-MISPLACED</a>
                 — sibling error for &lt;onIdle&gt; inside a state-child body.
             </li>
             <li>
-                <a href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
+                <a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
                    class="text-rose-700 hover:text-rose-900 underline">E-ENGINE-INVALID-TRANSITION</a>
                 — runtime fire when the current state&apos;s rule= forbids the watchdog target.
             </li>

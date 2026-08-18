@@ -75,8 +75,8 @@
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">Related</h2>
         <ul class="space-y-1 text-slate-700">
-            <li><a href="/reference/elements/auth" class="text-blue-700 hover:text-blue-900 underline">&lt;auth&gt; element</a></li>
-            <li><a href="/reference/errors/W-AUTH-RUNTIME-FALLBACK" class="text-amber-700 underline">W-AUTH-RUNTIME-FALLBACK</a></li>
+            <li><a hard href="/reference/elements/auth" class="text-blue-700 hover:text-blue-900 underline">&lt;auth&gt; element</a></li>
+            <li><a hard href="/reference/errors/W-AUTH-RUNTIME-FALLBACK" class="text-amber-700 underline">W-AUTH-RUNTIME-FALLBACK</a></li>
         </ul>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">Specification</h2>

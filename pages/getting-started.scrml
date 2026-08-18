@@ -268,7 +268,7 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
 
         <ul class="space-y-3 text-slate-700">
             <li>
-                <a href="/reference/elements/engine"
+                <a hard href="/reference/elements/engine"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;engine&gt;
                 </a>
@@ -276,7 +276,7 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
                 Tier 2 form of "UI as a fully-handled state machine."
             </li>
             <li>
-                <a href="/reference/contexts/sql"
+                <a hard href="/reference/contexts/sql"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     ?&#123; &hellip; &#125;
                 </a>
@@ -284,7 +284,7 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
                 disappears.
             </li>
             <li>
-                <a href="/reference/elements/errors"
+                <a hard href="/reference/elements/errors"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;errors of=&hellip;/&gt;
                 </a>
@@ -293,14 +293,14 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
                 style schema.
             </li>
             <li>
-                <a href="/reference"
+                <a hard href="/reference"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Reference
                 </a>
                 &mdash; every element, keyword, context, and error code.
             </li>
             <li>
-                <a href="/articles"
+                <a hard href="/articles"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Articles
                 </a>

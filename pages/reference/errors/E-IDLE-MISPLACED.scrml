@@ -79,7 +79,7 @@
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onIdle&gt;</code>
             element nested inside a state-child body, E-IDLE-MISPLACED
             fires. The error message directs the developer to
-            <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>,
+            <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>,
             which IS the per-state alternative.
         </p>
 
@@ -123,7 +123,7 @@
         <p class="text-slate-700 leading-relaxed mb-2">
             If you want the timer to apply only when the engine is in
             <em>this specific state</em>, you want
-            <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
+            <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
             instead. Same syntax, different semantics: armed on entry,
             cleared on exit.
         </p>
@@ -194,29 +194,29 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
+                <a hard href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
                 &mdash; element reference.
             </li>
             <li>
-                <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
+                <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
                 &mdash; the per-state alternative this error redirects to.
             </li>
             <li>
-                <a href="/reference/errors/E-IDLE-DUPLICATE"
+                <a hard href="/reference/errors/E-IDLE-DUPLICATE"
                    class="text-rose-700 hover:text-rose-900 underline">E-IDLE-DUPLICATE</a>
                 &mdash; companion error when more than one
                 <code class="font-mono text-xs">&lt;onIdle&gt;</code>
                 appears in one engine.
             </li>
             <li>
-                <a href="/reference/errors/E-IDLE-INVALID-VARIANT"
+                <a hard href="/reference/errors/E-IDLE-INVALID-VARIANT"
                    class="text-rose-700 hover:text-rose-900 underline">E-IDLE-INVALID-VARIANT</a>
                 &mdash; companion error when
                 <code class="font-mono text-xs">to=</code>
                 references a non-enum variant.
             </li>
             <li>
-                <a href="/reference/errors/E-STRUCTURAL-ELEMENT-MISPLACED"
+                <a hard href="/reference/errors/E-STRUCTURAL-ELEMENT-MISPLACED"
                    class="text-rose-700 hover:text-rose-900 underline">E-STRUCTURAL-ELEMENT-MISPLACED</a>
                 &mdash; generic structural-element-misuse error;
                 E-IDLE-MISPLACED is the sharper variant.

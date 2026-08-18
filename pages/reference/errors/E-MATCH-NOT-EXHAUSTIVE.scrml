@@ -120,11 +120,11 @@
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;match&gt;</code>
             is Tier 1 of the case-analysis ladder. State-children carry
             forward verbatim to Tier 2
-            <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+            <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
             &mdash; the wrapper swap is the commitment moment. Same
             exhaustiveness check, plus active rules + transition handlers.
             See
-            <a href="/reference/errors/I-MATCH-PROMOTABLE"
+            <a hard href="/reference/errors/I-MATCH-PROMOTABLE"
                class="text-blue-700 hover:text-blue-900 underline">I-MATCH-PROMOTABLE</a>
             for the lint that nudges the promotion + SPEC §56 promotion
             ergonomics.
@@ -136,20 +136,20 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
+                <a hard href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
                 &mdash; element reference. Block-form Tier 1 shape.
             </li>
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 &mdash; Tier 2 promotion target. Same exhaustiveness; adds active rules.
             </li>
             <li>
-                <a href="/reference/errors/W-MATCH-RULE-INERT"
+                <a hard href="/reference/errors/W-MATCH-RULE-INERT"
                    class="text-amber-700 hover:text-amber-900 underline">W-MATCH-RULE-INERT</a>
                 &mdash; rule= legal-but-inert in match.
             </li>
             <li>
-                <a href="/reference/errors/E-VARIANT-AMBIGUOUS"
+                <a hard href="/reference/errors/E-VARIANT-AMBIGUOUS"
                    class="text-rose-700 hover:text-rose-900 underline">E-VARIANT-AMBIGUOUS</a>
                 &mdash; arm pattern can&apos;t resolve to a unique enum context.
             </li>

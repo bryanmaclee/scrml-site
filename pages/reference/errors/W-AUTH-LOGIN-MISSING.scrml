@@ -58,7 +58,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            This is the whole-app counterpart to <a href="/reference/errors/I-AUTH-REDIRECT-UNRESOLVED" class="text-blue-700 hover:text-blue-900 underline">I-AUTH-REDIRECT-UNRESOLVED</a>. That code fires per gate at info when one specific redirect is unresolved; this one fires at warning when <strong>none</strong> of the targets any gate names exists — meaning there is no login page at all and every failed auth check will 302 into a 404. The severity difference reflects that: one broken redirect is probably a typo, zero working redirects is a missing feature.
+            This is the whole-app counterpart to <a hard href="/reference/errors/I-AUTH-REDIRECT-UNRESOLVED" class="text-blue-700 hover:text-blue-900 underline">I-AUTH-REDIRECT-UNRESOLVED</a>. That code fires per gate at info when one specific redirect is unresolved; this one fires at warning when <strong>none</strong> of the targets any gate names exists — meaning there is no login page at all and every failed auth check will 302 into a 404. The severity difference reflects that: one broken redirect is probably a typo, zero working redirects is a missing feature.
         </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
@@ -102,10 +102,10 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/auth" class="text-blue-700 hover:text-blue-900 underline">&lt;auth&gt;</a>
+                <a hard href="/reference/elements/auth" class="text-blue-700 hover:text-blue-900 underline">&lt;auth&gt;</a>
             </li>
             <li>
-                <a href="/reference/errors/I-AUTH-REDIRECT-UNRESOLVED" class="text-sky-700 hover:text-sky-900 underline">I-AUTH-REDIRECT-UNRESOLVED</a>
+                <a hard href="/reference/errors/I-AUTH-REDIRECT-UNRESOLVED" class="text-sky-700 hover:text-sky-900 underline">I-AUTH-REDIRECT-UNRESOLVED</a>
             </li>
         </ul>
 
@@ -122,7 +122,7 @@
         </p>
 
         <p class="mt-10 text-sm">
-            <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/reference" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Reference
             </a>
         </p>

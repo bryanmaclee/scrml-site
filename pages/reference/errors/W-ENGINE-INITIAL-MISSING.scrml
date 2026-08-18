@@ -130,7 +130,7 @@
             Providing
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">initial=</code>
             on a derived engine fires
-            <a href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL"
+            <a hard href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL"
                class="text-rose-700 hover:text-rose-900 underline">E-DERIVED-ENGINE-NO-INITIAL</a>
             (error, not warning).
         </p>
@@ -141,11 +141,11 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 — element reference.
             </li>
             <li>
-                <a href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL"
+                <a hard href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL"
                    class="text-rose-700 hover:text-rose-900 underline">E-DERIVED-ENGINE-NO-INITIAL</a>
                 — error for the opposite case (initial= on derived engine).
             </li>

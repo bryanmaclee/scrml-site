@@ -74,14 +74,14 @@
             <li>
                 <strong>Derived cells are write-forbidden.</strong>
                 Assigning into a derived cell fires
-                <a href="/reference/errors/E-DERIVED-WRITE"
+                <a hard href="/reference/errors/E-DERIVED-WRITE"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-DERIVED-WRITE
                 </a>
                 (&sect;6.6.8) at compile time. In-place mutation
                 (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@derivedArr.push(x)</code>)
                 fires the sibling error
-                <a href="/reference/errors/E-DERIVED-VALUE-MUTATE"
+                <a hard href="/reference/errors/E-DERIVED-VALUE-MUTATE"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-DERIVED-VALUE-MUTATE
                 </a>
@@ -93,7 +93,7 @@
                 don't have an independent validity surface. Adding
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">req</code>
                 to a derived cell fires
-                <a href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
+                <a hard href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-DERIVED-WITH-VALIDATORS
                 </a>.
@@ -150,7 +150,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
             Derived engines never carry
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">initial=</code>
             (fires
-            <a href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL"
+            <a hard href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL"
                class="text-rose-700 hover:text-rose-900 underline">
                 E-DERIVED-ENGINE-NO-INITIAL
             </a>)
@@ -322,7 +322,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <a href="/reference/errors/E-DERIVED-WRITE"
+                <a hard href="/reference/errors/E-DERIVED-WRITE"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-DERIVED-WRITE
                 </a>
@@ -330,7 +330,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
                 (&sect;6.6.8).
             </li>
             <li>
-                <a href="/reference/errors/E-DERIVED-VALUE-MUTATE"
+                <a hard href="/reference/errors/E-DERIVED-VALUE-MUTATE"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-DERIVED-VALUE-MUTATE
                 </a>
@@ -339,7 +339,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
                 &sect;6.6.18).
             </li>
             <li>
-                <a href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
+                <a hard href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-DERIVED-WITH-VALIDATORS
                 </a>
@@ -347,7 +347,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
                 on a derived cell.
             </li>
             <li>
-                <a href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL"
+                <a hard href="/reference/errors/E-DERIVED-ENGINE-NO-INITIAL"
                    class="text-rose-700 hover:text-rose-900 underline">
                     E-DERIVED-ENGINE-NO-INITIAL
                 </a>
@@ -355,7 +355,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">initial=</code>.
             </li>
             <li>
-                <a href="/reference/elements/engine"
+                <a hard href="/reference/elements/engine"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;engine&gt;
                 </a>

@@ -15,11 +15,11 @@ ${
     // Plain nav — exported presentational component. No props: it is the same
     // static anchor list on every viewer page.
     export const NavSkeleton = <nav class="viewer-nav">
-        <a href="/" class="viewer-nav-brand">scrml.dev</a>
+        <a hard href="/" class="viewer-nav-brand">scrml.dev</a>
         <span class="viewer-nav-sep">/</span>
-        <a href="/">Showcase</a>
-        <a href="/reference">Reference</a>
-        <a href="/dashboard">Dashboard</a>
+        <a hard href="/">Showcase</a>
+        <a hard href="/reference">Reference</a>
+        <a hard href="/dashboard">Dashboard</a>
         <a href="https://github.com/bryanmaclee/scrml">GitHub</a>
     </>
 }

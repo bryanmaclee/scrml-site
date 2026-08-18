@@ -101,7 +101,7 @@
             ability to declare transition handlers. State-children carry
             forward verbatim &mdash; the wrapper swap is the commitment
             moment. The compiler emits
-            <a href="/reference/errors/I-MATCH-PROMOTABLE"
+            <a hard href="/reference/errors/I-MATCH-PROMOTABLE"
                class="text-blue-700 hover:text-blue-900 underline">I-MATCH-PROMOTABLE</a>
             on the original site when transition-shape intent is detected.
         </p>
@@ -157,24 +157,24 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
+                <a hard href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
                 &mdash; rules-inert Tier 1; the locus where this error fires.
             </li>
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 &mdash; Tier 2 promotion target; full transition surface.
             </li>
             <li>
-                <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
+                <a hard href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
                 &mdash; element reference. Legal only inside &lt;engine&gt;.
             </li>
             <li>
-                <a href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN"
+                <a hard href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN"
                    class="text-rose-700 hover:text-rose-900 underline">E-MATCH-EFFECT-FORBIDDEN</a>
                 &mdash; companion error for effect= attribute (also engine-only).
             </li>
             <li>
-                <a href="/reference/errors/W-MATCH-RULE-INERT"
+                <a hard href="/reference/errors/W-MATCH-RULE-INERT"
                    class="text-amber-700 hover:text-amber-900 underline">W-MATCH-RULE-INERT</a>
                 &mdash; rule= warning (legal but inert; promote to engine to activate).
             </li>

@@ -63,7 +63,7 @@
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">effect=</code>
             attribute is the per-rule inline form of a transition effect
             &mdash; sibling to
-            <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>.
+            <a hard href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>.
             Effects presuppose that a transition occurs. Block-form match
             is rules-inert: nothing transitions inside it (the matched-on
             value either is or isn&apos;t a given variant). So
@@ -117,7 +117,7 @@
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">effect=</code>
             is the shorter form for single-target rules. Multi-target
             rules fire
-            <a href="/reference/errors/E-ENGINE-EFFECT-AMBIGUOUS"
+            <a hard href="/reference/errors/E-ENGINE-EFFECT-AMBIGUOUS"
                class="text-rose-700 hover:text-rose-900 underline">E-ENGINE-EFFECT-AMBIGUOUS</a>
             because the destination is ambiguous &mdash; use
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onTransition&gt;</code>
@@ -130,25 +130,25 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
+                <a hard href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
                 &mdash; element reference. Rules-inert Tier 1.
             </li>
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 &mdash; Tier 2 promotion target. effect= becomes legal here.
             </li>
             <li>
-                <a href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
+                <a hard href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
                    class="text-rose-700 hover:text-rose-900 underline">E-MATCH-ONTRANSITION-FORBIDDEN</a>
                 &mdash; sibling error for the &lt;onTransition&gt; long form.
             </li>
             <li>
-                <a href="/reference/errors/W-MATCH-RULE-INERT"
+                <a hard href="/reference/errors/W-MATCH-RULE-INERT"
                    class="text-amber-700 hover:text-amber-900 underline">W-MATCH-RULE-INERT</a>
                 &mdash; companion warning for rule= (legal but inert).
             </li>
             <li>
-                <a href="/reference/errors/E-ENGINE-EFFECT-AMBIGUOUS"
+                <a hard href="/reference/errors/E-ENGINE-EFFECT-AMBIGUOUS"
                    class="text-rose-700 hover:text-rose-900 underline">E-ENGINE-EFFECT-AMBIGUOUS</a>
                 &mdash; effect= on a multi-target rule inside an engine.
             </li>

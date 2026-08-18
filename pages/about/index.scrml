@@ -46,14 +46,14 @@
 
         <ul class="space-y-3 text-slate-700">
             <li>
-                <a href="/about/philosophy"
+                <a hard href="/about/philosophy"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Philosophy
                 </a>
                 &mdash; the design rules the project operates under.
             </li>
             <li>
-                <a href="/about/changelog"
+                <a hard href="/about/changelog"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Changelog
                 </a>
@@ -62,7 +62,7 @@
         </ul>
 
         <p class="mt-10 text-sm">
-            <a href="/" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Home
             </a>
         </p>

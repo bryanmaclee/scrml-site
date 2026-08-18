@@ -66,7 +66,7 @@
             is one of the fourteen universal-core predicates
             (&sect;55.1) &mdash; the validation vocabulary that comes
             built into every scrml type without import. Where
-            <a href="/reference/keywords/is-some"
+            <a hard href="/reference/keywords/is-some"
                class="font-mono text-blue-700 hover:text-blue-900 underline">is some</a>
             checks for <em>existence</em>
             (an empty string IS some &mdash; it's a defined value),
@@ -188,7 +188,7 @@
                     renders the active failure messages.
                 </strong>
                 See
-                <a href="/reference/elements/errors"
+                <a hard href="/reference/elements/errors"
                    class="text-blue-700 hover:text-blue-900 underline">
                     &lt;errors&gt;
                 </a>
@@ -319,7 +319,7 @@
             on a
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">derived</code>
             cell is a compile error &mdash; see
-            <a href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
+            <a hard href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
                class="text-rose-700 hover:text-rose-900 underline">
                 E-DERIVED-WITH-VALIDATORS
             </a>.
@@ -335,7 +335,7 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <a href="/reference/keywords/is-some"
+                <a hard href="/reference/keywords/is-some"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     is some
                 </a>
@@ -356,7 +356,7 @@
                 in scrml.
             </li>
             <li>
-                <a href="/reference/elements/errors"
+                <a hard href="/reference/elements/errors"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;errors of=&hellip;/&gt;
                 </a>
@@ -364,7 +364,7 @@
                 participates in.
             </li>
             <li>
-                <a href="/reference/elements/schema"
+                <a hard href="/reference/elements/schema"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;schema&gt;
                 </a>
@@ -374,7 +374,7 @@
                 rule.
             </li>
             <li>
-                <a href="/learn/validators"
+                <a hard href="/learn/validators"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Learn: Validators
                 </a>

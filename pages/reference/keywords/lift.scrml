@@ -330,7 +330,7 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <a href="/reference/keywords/derived"
+                <a hard href="/reference/keywords/derived"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     derived
                 </a>
@@ -341,7 +341,7 @@
                 involved.
             </li>
             <li>
-                <a href="/reference/elements/program"
+                <a hard href="/reference/elements/program"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;program&gt;
                 </a>

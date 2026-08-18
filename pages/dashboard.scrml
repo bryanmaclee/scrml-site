@@ -35,7 +35,7 @@
             </p>
             <p class="dash-stub-note">
                 inc1 embed STUB — the live server-side dashboard drops into this
-                slot in increment 2. <a href="/showcase">Back to the showcase</a>.
+                slot in increment 2. <a hard href="/showcase">Back to the showcase</a>.
             </p>
         </section>
     </div>

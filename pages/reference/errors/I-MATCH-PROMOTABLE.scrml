@@ -233,7 +233,7 @@ ${
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Sibling shape:
-            <a href="/reference/errors/W-MATCH-RULE-INERT"
+            <a hard href="/reference/errors/W-MATCH-RULE-INERT"
                class="text-amber-700 hover:text-amber-900 underline">W-MATCH-RULE-INERT</a>
             is the next tier&apos;s analog &mdash; warning-level when a
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">rule=</code>
@@ -250,20 +250,20 @@ ${
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
+                <a hard href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
                 &mdash; Tier-1 element. Structural exhaustiveness over an enum.
             </li>
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 &mdash; Tier-2 element. Full state-machine surface.
             </li>
             <li>
-                <a href="/reference/errors/W-MATCH-RULE-INERT"
+                <a hard href="/reference/errors/W-MATCH-RULE-INERT"
                    class="text-amber-700 hover:text-amber-900 underline">W-MATCH-RULE-INERT</a>
                 &mdash; warning surfacing the next-rung lift (match &rarr; engine).
             </li>
             <li>
-                <a href="/reference/errors/E-MATCH-NOT-EXHAUSTIVE"
+                <a hard href="/reference/errors/E-MATCH-NOT-EXHAUSTIVE"
                    class="text-rose-700 hover:text-rose-900 underline">E-MATCH-NOT-EXHAUSTIVE</a>
                 &mdash; the error you&apos;d hit if a promoted
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;match&gt;</code>

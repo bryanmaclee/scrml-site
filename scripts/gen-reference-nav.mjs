@@ -30,7 +30,10 @@ const list = (d) => readdirSync(`pages/reference/${d}`).filter((f) => f.endsWith
 
 const link = (slug, label, mono) => {
   const stub = isStub(slug);
-  return `        <a href="/reference/${slug}" data-ref="${slug}"`
+  // `hard` (SPEC §20.8.3) opts this link OUT of soft navigation. It is
+  // LOAD-BEARING — see the SOFT-NAV OPT-OUT block in app.scrml. Removing it
+  // here silently re-breaks 73 sidebar links on the next regeneration.
+  return `        <a hard href="/reference/${slug}" data-ref="${slug}"`
     + ` class="refnav-link${mono ? " font-mono" : ""}${stub ? " refnav-stub" : ""}"`
     + (stub ? ` title="stub — not yet written"` : "")
     + `>${esc(label)}${stub ? `<span class="refnav-stubdot" aria-label="stub">·</span>` : ""}</a>`;

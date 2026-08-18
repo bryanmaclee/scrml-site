@@ -68,7 +68,7 @@
             where the target equals the engine&apos;s currently-active
             variant. The v0.3 Option-d ratification (2026-05-12) carves out
             self-writes as runtime no-ops rather than
-            <a href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
+            <a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
                class="text-rose-700 hover:text-rose-900 underline">E-ENGINE-INVALID-TRANSITION</a>
             violations (the pre-Option-d behavior). The W- prefix is
             legacy naming; the severity is Info &mdash; informational only.
@@ -108,7 +108,7 @@
         <ul class="space-y-2 text-slate-700 mt-3">
             <li>
                 No
-                <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
+                <a hard href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
                 handlers fire.
             </li>
             <li>
@@ -123,13 +123,13 @@
             </li>
             <li>
                 No
-                <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
+                <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
                 rearm (per §51.0.M, a self-write does NOT re-enter the
                 state-child).
             </li>
             <li>
                 No
-                <a href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
+                <a hard href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
                 watchdog reset (per §51.0.R).
             </li>
             <li>
@@ -220,20 +220,20 @@ function refresh() &#123;
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 &mdash; element reference.
             </li>
             <li>
-                <a href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
+                <a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
                    class="text-rose-700 hover:text-rose-900 underline">E-ENGINE-INVALID-TRANSITION</a>
                 &mdash; the pre-Option-d error that v0.3 carved out for self-writes.
             </li>
             <li>
-                <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
+                <a hard href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
                 &mdash; does NOT fire on self-writes.
             </li>
             <li>
-                <a href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
+                <a hard href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
                 &mdash; watchdog does NOT reset on self-writes.
             </li>
         </ul>

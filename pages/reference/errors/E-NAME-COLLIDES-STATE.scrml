@@ -99,10 +99,10 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/errors/E-SCOPE-001" class="text-rose-700 hover:text-rose-900 underline">E-SCOPE-001</a>
+                <a hard href="/reference/errors/E-SCOPE-001" class="text-rose-700 hover:text-rose-900 underline">E-SCOPE-001</a>
             </li>
             <li>
-                <a href="/reference/errors/E-NAME-COLLIDES-RESERVED" class="text-rose-700 hover:text-rose-900 underline">E-NAME-COLLIDES-RESERVED</a>
+                <a hard href="/reference/errors/E-NAME-COLLIDES-RESERVED" class="text-rose-700 hover:text-rose-900 underline">E-NAME-COLLIDES-RESERVED</a>
             </li>
         </ul>
 
@@ -119,7 +119,7 @@
         </p>
 
         <p class="mt-10 text-sm">
-            <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/reference" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Reference
             </a>
         </p>

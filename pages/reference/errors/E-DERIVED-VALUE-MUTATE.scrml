@@ -58,7 +58,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            This is the mutation counterpart to <a href="/reference/errors/E-DERIVED-WRITE" class="text-blue-700 hover:text-blue-900 underline">E-DERIVED-WRITE</a>. Rebinding a derived cell with <code>=</code> is caught as a write; reaching <em>into</em> it and mutating the value it currently holds — <code>.push()</code>, <code>.sort()</code>, an indexed assignment — is caught here. Both are the same underlying error: the next recomputation rebuilds the value from the expression and the mutation vanishes.
+            This is the mutation counterpart to <a hard href="/reference/errors/E-DERIVED-WRITE" class="text-blue-700 hover:text-blue-900 underline">E-DERIVED-WRITE</a>. Rebinding a derived cell with <code>=</code> is caught as a write; reaching <em>into</em> it and mutating the value it currently holds — <code>.push()</code>, <code>.sort()</code>, an indexed assignment — is caught here. Both are the same underlying error: the next recomputation rebuilds the value from the expression and the mutation vanishes.
         </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
@@ -97,10 +97,10 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/keywords/derived" class="text-blue-700 hover:text-blue-900 underline">derived</a>
+                <a hard href="/reference/keywords/derived" class="text-blue-700 hover:text-blue-900 underline">derived</a>
             </li>
             <li>
-                <a href="/reference/errors/E-DERIVED-WRITE" class="text-rose-700 hover:text-rose-900 underline">E-DERIVED-WRITE</a>
+                <a hard href="/reference/errors/E-DERIVED-WRITE" class="text-rose-700 hover:text-rose-900 underline">E-DERIVED-WRITE</a>
             </li>
         </ul>
 
@@ -117,7 +117,7 @@
         </p>
 
         <p class="mt-10 text-sm">
-            <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/reference" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Reference
             </a>
         </p>

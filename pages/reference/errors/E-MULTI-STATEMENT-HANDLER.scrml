@@ -97,10 +97,10 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/contexts/logic" class="text-blue-700 hover:text-blue-900 underline">logic context</a>
+                <a hard href="/reference/contexts/logic" class="text-blue-700 hover:text-blue-900 underline">logic context</a>
             </li>
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
             </li>
         </ul>
 
@@ -117,7 +117,7 @@
         </p>
 
         <p class="mt-10 text-sm">
-            <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/reference" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Reference
             </a>
         </p>

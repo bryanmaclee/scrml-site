@@ -5,7 +5,7 @@
 //
 // gold-verify.mjs gates ONE page (the /showcase dissector and its provenance).
 // This gates the wiki as a whole: every emitted route resolves, the shell
-// renders on each, soft navigation actually works, and no page throws.
+// renders on each, navigation lands correctly-styled pages, and no page throws.
 //
 // Route list is DERIVED from dist/ rather than hardcoded, so a new page is
 // covered the moment it compiles — a hardcoded list would silently stop
@@ -19,7 +19,7 @@
 const PW = process.env.PLAYWRIGHT
   || new URL("../node_modules/scrml/node_modules/playwright/index.js", import.meta.url).pathname;
 const pw = (await import(PW)).default;
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, statSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 const { chromium } = pw;
 
@@ -75,17 +75,73 @@ for (const r of sample) {
 ok("shell + outlet render on every sampled page", noShell.length === 0,
    noShell.length ? noShell.join(" ") : `${sample.length} pages`);
 
-// 3. SOFT NAV — clicking an in-site nav link must not reload the document.
-// Stamp the window; a full document load wipes the stamp.
-await page.goto(ORIGIN + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
-await page.waitForTimeout(600);
-await page.evaluate(() => { window.__softNavProbe = "alive"; });
-await page.locator('header a[href="/reference"]').first().click();
-await page.waitForTimeout(1200);
-const url = page.url();
-const survived = await page.evaluate(() => window.__softNavProbe === "alive");
-ok("soft nav: in-site link does NOT reload the document", survived && /\/reference$/.test(url),
-   `url=${url.replace(ORIGIN, "")} stamp=${survived ? "survived" : "WIPED (full load)"}`);
+// 3. NAVIGATION LANDS A CORRECTLY-STYLED PAGE.
+//
+// This assertion REPLACED a soft-nav mechanism check (2026-08-18). The old one
+// stamped `window` and asserted the stamp SURVIVED a click — i.e. it verified
+// that soft navigation *happened*. It never checked what the reader then saw,
+// so it passed 6/6 for three weeks while every in-site click on scrml.dev
+// rendered the destination with the PREVIOUS page's stylesheet: the compiler
+// runtime's _scrml_nav_sync_head() syncs <title>/description/canonical across a
+// soft nav but NOT <link rel=stylesheet>, and every page carries its own
+// ~11KB emitted utility CSS. /showcase collapsed to unstyled text on one click.
+//
+// The old assertion also clicked `header a[href="/reference"]`, which 301s to
+// /reference/ on static hosting and therefore HARD-navigates in production
+// while soft-navigating under `scrml dev` — it measured different behaviour
+// than the live site. Gate the OUTCOME, not the mechanism (S9's lesson again).
+//
+// This check is mechanism-agnostic: it holds whether the link hard-navigates
+// (today, via the `hard` opt-out — see app.scrml) or soft-navigates (once the
+// compiler syncs stylesheets), so it does not need rewriting to re-enable soft
+// nav; it is exactly what must stay true when we do.
+const navTargets = ["/showcase", "/getting-started"].filter((x) => routes.includes(x));
+const styleFails = [];
+for (const target of navTargets) {
+  // What a cold load of the target legitimately carries.
+  await page.goto(ORIGIN + target, { waitUntil: "domcontentloaded", timeout: 60000 });
+  await page.waitForTimeout(500);
+  const want = await page.evaluate(() =>
+    [...document.querySelectorAll("link[rel=stylesheet]")].map((l) => l.href).sort());
+  // What you actually get by clicking there from the landing page.
+  await page.goto(ORIGIN + "/", { waitUntil: "domcontentloaded", timeout: 60000 });
+  await page.waitForTimeout(500);
+  const link = page.locator(`a[href="${target}"]`).first();
+  if (!(await link.count())) continue;
+  await link.click();
+  await page.waitForTimeout(1500);
+  const got = await page.evaluate(() =>
+    [...document.querySelectorAll("link[rel=stylesheet]")].map((l) => l.href).sort());
+  const missing = want.filter((h) => !got.includes(h));
+  if (!page.url().includes(target)) styleFails.push(`${target}: did not arrive (${page.url()})`);
+  else if (missing.length) styleFails.push(`${target}: missing ${missing.map((m) => m.split("/").pop()).join(",")}`);
+}
+ok("navigation lands a page carrying its OWN stylesheet (no stale CSS)",
+   navTargets.length > 0 && styleFails.length === 0,
+   styleFails.length ? styleFails.join(" | ") : `${navTargets.length} targets clean`);
+
+// 3a. EVERY internal link carries the `hard` opt-out.
+//
+// Assertion 3 samples two routes; this one is exhaustive and static. The stale
+// -CSS defect above is per-LINK, not per-page: one internal <a> authored without
+// `hard` soft-navigates and lands the reader on a page wearing the previous
+// page's stylesheet. Sampling cannot see a single bad link on page 74, so scan
+// the whole emitted artifact. Delete this the same day the `hard` sweep is
+// reverted — see the SOFT-NAV OPT-OUT block in app.scrml — and not before.
+// (Escaped links inside documented <pre>/<code> samples read as `&lt;a` and do
+// not match, so documentation examples are correctly ignored.)
+const softLinks = [];
+for (const f of walk(DIST)) {
+  const html = readFileSync(f, "utf8");
+  for (const m of html.matchAll(/<a\s[^>]*href="\/[^"]*"[^>]*>/g)) {
+    if (!/(^|\s)hard(\s|=|>)/.test(m[0])) {
+      softLinks.push(`${relative(DIST, f)}: ${m[0].slice(0, 60)}`);
+    }
+  }
+}
+ok("every internal link carries the `hard` soft-nav opt-out",
+   softLinks.length === 0,
+   softLinks.length ? `${softLinks.length} unguarded — ${softLinks.slice(0, 3).join(" | ")}` : "all internal <a> guarded");
 
 // 3b. CODE-BLOCK CONTRAST — the reference pages ARE code samples. The
 // typography layer ships `.prose-slate :where(code){color:#0f172a}`, a

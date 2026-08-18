@@ -720,7 +720,7 @@
         <p class="dash-stub-summary">Last-known posture (hardcoded stub). The live dashboard reads examples/.verification.json via scrml:fs.</p>
         <p class="dash-stub-note">
             inc1 embed STUB — the live server-side dashboard drops into this slot
-            in increment 2. <a href="/dashboard">Dashboard route</a>.
+            in increment 2. <a hard href="/dashboard">Dashboard route</a>.
         </p>
     </section>
 

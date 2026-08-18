@@ -189,7 +189,7 @@
                 block (§18.0.2),
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onTransition&gt;</code>
                 fires the more specific
-                <a href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
+                <a hard href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
                    class="font-mono text-xs text-rose-700 underline">E-MATCH-ONTRANSITION-FORBIDDEN</a>
                 instead. Promote the match to an engine if you need
                 transition effects.
@@ -213,7 +213,7 @@
             <li>
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onIdle&gt;</code>
                 inside a state-child body &rarr;
-                <a href="/reference/errors/E-IDLE-MISPLACED"
+                <a hard href="/reference/errors/E-IDLE-MISPLACED"
                    class="font-mono text-xs text-rose-700 underline">E-IDLE-MISPLACED</a>
                 (more specific than E-STRUCTURAL-ELEMENT-MISPLACED;
                 directs to <code class="font-mono text-xs">&lt;onTimeout&gt;</code>
@@ -223,7 +223,7 @@
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onTransition&gt;</code>
                 inside a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;match&gt;</code>
                 block &rarr;
-                <a href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
+                <a hard href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
                    class="font-mono text-xs text-rose-700 underline">E-MATCH-ONTRANSITION-FORBIDDEN</a>.
             </li>
             <li>
@@ -231,7 +231,7 @@
                 attribute on a state-child inside
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;match&gt;</code>
                 &rarr;
-                <a href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN"
+                <a hard href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN"
                    class="font-mono text-xs text-rose-700 underline">E-MATCH-EFFECT-FORBIDDEN</a>.
             </li>
         </ul>
@@ -251,19 +251,19 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 &mdash; the canonical owner of onTransition &#47; onTimeout &#47; onIdle.
             </li>
             <li>
-                <a href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
+                <a hard href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
                 &mdash; rules-inert; effect=/onTransition forbidden here. Promote to engine instead.
             </li>
             <li>
-                <a href="/reference/elements/errors" class="text-blue-700 hover:text-blue-900 underline">&lt;errors&gt;</a>
+                <a hard href="/reference/elements/errors" class="text-blue-700 hover:text-blue-900 underline">&lt;errors&gt;</a>
                 &mdash; renders the auto-synthesized validity surface; needs a parent context with validators.
             </li>
             <li>
-                <a href="/reference/errors/E-NAME-COLLIDES-RESERVED"
+                <a hard href="/reference/errors/E-NAME-COLLIDES-RESERVED"
                    class="text-rose-700 hover:text-rose-900 underline">E-NAME-COLLIDES-RESERVED</a>
                 &mdash; companion error when a user component name collides with a reserved structural-element identifier.
             </li>

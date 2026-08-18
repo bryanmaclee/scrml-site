@@ -38,7 +38,7 @@
             </h1>
             <p class="text-lg text-slate-600 mt-2">
                 Database binding element. The compile-time anchor that connects a
-                <a href="/reference/elements/schema"
+                <a hard href="/reference/elements/schema"
                    class="text-blue-700 hover:text-blue-900 underline font-mono">
                     &lt;schema&gt;
                 </a>
@@ -137,7 +137,7 @@
             pointing at the same file.
             <code>&lt;program db="&hellip;"&gt;</code> tells the compiler which
             database
-            <a href="/reference/elements/schema" class="text-blue-700 hover:text-blue-900 underline">&lt;schema&gt;</a>
+            <a hard href="/reference/elements/schema" class="text-blue-700 hover:text-blue-900 underline">&lt;schema&gt;</a>
             should migrate &mdash; it is the migration target.
             <code>&lt;db src="&hellip;"&gt;</code> establishes the SQL
             <em>context</em> that <code>?&#123; &hellip; &#125;</code> blocks
@@ -158,7 +158,7 @@
             should not try to. The consequence worth knowing is that such a
             function is no longer client-side, so it cannot assign to a reactive
             cell. That is
-            <a href="/reference/errors/E-RI-002" class="text-rose-700 hover:text-rose-900 underline">E-RI-002</a>.
+            <a hard href="/reference/errors/E-RI-002" class="text-rose-700 hover:text-rose-900 underline">E-RI-002</a>.
             Return the value and let a client-side caller write the cell.
         </p>
 
@@ -168,19 +168,19 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/schema" class="text-blue-700 hover:text-blue-900 underline">&lt;schema&gt;</a>
+                <a hard href="/reference/elements/schema" class="text-blue-700 hover:text-blue-900 underline">&lt;schema&gt;</a>
                 &mdash; declares the shape <code>scrml migrate</code> creates.
             </li>
             <li>
-                <a href="/reference/contexts/sql" class="text-blue-700 hover:text-blue-900 underline">SQL context</a>
+                <a hard href="/reference/contexts/sql" class="text-blue-700 hover:text-blue-900 underline">SQL context</a>
                 &mdash; what <code>?&#123; &hellip; &#125;</code> accepts and returns.
             </li>
             <li>
-                <a href="/reference/errors/E-RI-002" class="text-rose-700 hover:text-rose-900 underline">E-RI-002</a>
+                <a hard href="/reference/errors/E-RI-002" class="text-rose-700 hover:text-rose-900 underline">E-RI-002</a>
                 &mdash; a server-escalated function assigning a reactive cell.
             </li>
             <li>
-                <a href="/reference/errors/E-SQL-006" class="text-rose-700 hover:text-rose-900 underline">E-SQL-006</a>
+                <a hard href="/reference/errors/E-SQL-006" class="text-rose-700 hover:text-rose-900 underline">E-SQL-006</a>
                 &mdash; <code>.prepare()</code> is removed in Bun.SQL.
             </li>
         </ul>
@@ -202,7 +202,7 @@
         </p>
 
         <p class="mt-10 text-sm">
-            <a href="/reference" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/reference" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Reference
             </a>
         </p>

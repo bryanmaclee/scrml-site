@@ -1,5 +1,115 @@
 # scrml-site — hand-off
 
+## ⇢ SESSION 12 CLOSE 2026-08-18 — **soft nav was shipping the wrong stylesheet on every click**
+
+Operator report: *"go to the site, navigate away but end up back later, the
+layout comes in broken."* It is not about coming back and it is not
+intermittent. **Every in-site link click landed the reader on a page wearing the
+previous page's CSS.** Live since go-live 2026-07-26. Fixed here; root cause is
+upstream and reported.
+
+### 1. THE DEFECT
+
+The compiler runtime's `_scrml_nav_sync_head()` syncs exactly `<title>`,
+`<meta name=description>` and `<link rel=canonical>` across a soft nav. It does
+**not** sync `<link rel=stylesheet>` — its own comment calls fuller head-diffing
+*"a noted follow-on"*. Every page carries its own ~11KB emitted stylesheet (the
+Tailwind utility subset its markup needs), so the destination arrives with none
+of the utilities it depends on.
+
+Measured in Chromium against production: **7 of 7 navigations carried stale CSS.**
+
+| you do | you got |
+|---|---|
+| `/` → `/showcase` | **showcase collapsed to unstyled text** — no panes, no flagship |
+| reference page → `/` or `/showcase` | reference sidebar **sticks**, old entry still highlighted |
+| `/` → reference page | sidebar **missing** (`display:none`) |
+| `<auth>` → `<channel>` | wrong sidebar entry active |
+
+A hard reload always renders correctly — which is exactly why it reads as
+intermittent.
+
+**This is NOT the S313 lift-in-`<template>` regression.** Independent, older, and
+present in **S287 `50478f0e`** — the ref scrml.dev is pinned to and built from.
+So the pin was never protecting us from this one.
+
+**Second defect, smaller:** one click on a link whose target 301s (`/reference`,
+`/learn`, `/about`, `/articles`) burns **two** history entries —
+`_scrml_navigate_soft` pushes the URL *before* the fetch, then hard-navigates on
+`res.redirected` and leaves the pushed entry behind. First Back press appeared to
+do nothing. Measured `5 → 7` on one click.
+
+### 2. WHAT LANDED
+
+**`hard` (SPEC §20.8.3) on all 551 internal `<a>`** across `app.scrml`, 90 pages
+and `components/`, plus the emitter in `scripts/gen-reference-nav.mjs` so
+regeneration cannot silently undo 73 sidebar links. Soft nav is now off
+site-wide; every internal click is a full document load, which is the
+pre-session-3 behaviour and correct at every route.
+
+**Why not just remove `<outlet/>`** (the one-line lever that disables soft nav):
+**probed it, and it destroys the sidebar.** Without `<outlet/>`, `<main>` itself
+becomes the route slot and its authored children are **discarded** — the entire
+`.ref-shell` + generated `<nav class="refnav">` vanished from the emitted HTML.
+Do not reach for that lever. The rationale, the measurements and a **copy-paste
+revert script** are in the `⚑ SOFT-NAV OPT-OUT` block in `app.scrml`.
+
+**Two gate assertions, both proven non-hollow** (they FAIL against live
+production and PASS on the fix — verified, not assumed):
+- *navigation lands a page carrying its OWN stylesheet* — mechanism-agnostic, so
+  it stays valid when soft nav is re-enabled. It is exactly what must hold then.
+- *every internal `<a>` carries `hard`* — static scan of the whole `dist/`
+  artifact. The defect is per-LINK, not per-page: sampling two routes cannot see
+  one bad link on page 74. Against production it reports 94/94 unguarded on `/`
+  alone.
+
+### 3. ⚠ THE GATE WAS VALIDATING THE BUG
+
+The old assertion stamped `window` and asserted the stamp **survived** a click —
+i.e. it verified soft navigation *happened*. It never checked what the reader
+then saw. It reported **6/6 green for three weeks** while `/showcase` collapsed
+to unstyled text on one click.
+
+Worse: it clicked `header a[href="/reference"]`, which soft-navigates under
+`scrml dev` but **301s into a hard nav on static hosting** — so the one link the
+gate tested behaved differently in production than in dev. That is the S9
+`/about` 404 lesson recurring: **gate the artifact, not the dev server.** Both
+replacements are outcome-shaped.
+
+Third entry in the standing pattern with `prose-currency-is-ungated` and
+`committing-is-not-shipping`: **no gate asked whether the page a reader actually
+lands on is the page we built.**
+
+### 4. GATE RESULTS AT CLOSE
+
+| gate | result | note |
+|---|---|---|
+| `scrml build` (TYPES) | **exit 0** | 106 files, 306 outputs |
+| `wiki-verify.mjs` | **6/7** | now 7 assertions; the one FAIL is `/showcase`, pre-existing (S313) |
+| `gold-verify.mjs` | **6/11** | **identical** to S11 baseline, same five failures — no new regression |
+| nav matrix (7 pairs) | **7/7 clean** | was 0/7 |
+
+### 5. SENT — needs: action
+
+`../scrml/handOffs/incoming/2026-08-18-0720-scrml-site-to-scrml-soft-nav-drops-
+page-stylesheet.md` — mechanism, reproducer, inline Playwright probe, the
+history double-push, and a suggested fix shape (the relative hrefs are emitted at
+**differing depth** — `app.css` vs `../app.css` vs `../../app.css` — so a naive
+attribute copy resolves against the wrong base; that is why we did not shim it
+locally). Also told them the `<outlet/>`-discards-shell-markup finding.
+
+**Revert the `hard` sweep the day their fix lands.** Script is in `app.scrml`.
+
+### 6. OPEN / FOR THE NEXT PA
+
+- Unchanged and still open: page `<title>`s are filenames on all 99 routes (the
+  one reader-visible defect, recommended first item since S9 and still not done)
+  · `SCRML_REF` pinned at S287 · `maps` reconsideration · `actions/checkout@v5`
+  bump · `/dashboard` stub · 35 stub error pages + `E-FN-001…009` undocumented.
+- The sibling moved to `continuity/s350` (`23c05e83`) — three named regressions
+  now outstanding with them.
+
+
 ## ⇢ SESSION 11 CLOSE 2026-08-16 — Maidensail badge landed · **SHOWCASE GATE DECAYED 9/11 → 6/11**
 
 Thin session, two asks: *where is the compiled output* and *add the Maidensail

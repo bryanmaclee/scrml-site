@@ -164,12 +164,12 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/errors/E-SYNTHESIZED-WRITE"
+                <a hard href="/reference/errors/E-SYNTHESIZED-WRITE"
                    class="text-rose-700 hover:text-rose-900 underline">E-SYNTHESIZED-WRITE</a>
                 &mdash; companion error for writes to auto-synthesized validity properties.
             </li>
             <li>
-                <a href="/reference/elements/errors" class="text-blue-700 hover:text-blue-900 underline">&lt;errors&gt;</a>
+                <a hard href="/reference/elements/errors" class="text-blue-700 hover:text-blue-900 underline">&lt;errors&gt;</a>
                 &mdash; first-class element for rendering the validity surface.
             </li>
         </ul>

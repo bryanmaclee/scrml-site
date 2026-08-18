@@ -183,11 +183,11 @@ function forceSubmit() &#123;
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/errors" class="text-blue-700 hover:text-blue-900 underline">&lt;errors&gt;</a>
+                <a hard href="/reference/elements/errors" class="text-blue-700 hover:text-blue-900 underline">&lt;errors&gt;</a>
                 &mdash; first-class element for rendering the validity surface.
             </li>
             <li>
-                <a href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
+                <a hard href="/reference/errors/E-DERIVED-WITH-VALIDATORS"
                    class="text-rose-700 hover:text-rose-900 underline">E-DERIVED-WITH-VALIDATORS</a>
                 &mdash; companion error for validators on derived cells.
             </li>

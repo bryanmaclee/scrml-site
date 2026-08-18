@@ -55,7 +55,7 @@
             reason: scrml has near-zero adoption right now, and
             that's a known state, not a problem we're papering over
             (see the
-            <a href="/" class="text-blue-700 hover:text-blue-900 underline">honest landing
+            <a hard href="/" class="text-blue-700 hover:text-blue-900 underline">honest landing
             page</a>
             for the longer version).
         </p>
@@ -202,7 +202,7 @@
         <div class="mt-12 p-6 border border-slate-200 rounded-lg bg-slate-50">
             <p class="text-slate-700 leading-relaxed">
                 These rules are the
-                <a href="/about" class="text-blue-700 hover:text-blue-900 underline">about</a>
+                <a hard href="/about" class="text-blue-700 hover:text-blue-900 underline">about</a>
                 section's load-bearing claim. If the language
                 eventually has wide adoption, the test of these rules
                 will be whether the language has stayed structurally
@@ -213,7 +213,7 @@
         </div>
 
         <p class="mt-10 text-sm">
-            <a href="/about" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/about" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; About
             </a>
         </p>

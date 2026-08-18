@@ -112,7 +112,7 @@
             surrounding state-child's
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">rule=</code>
             set (single, multi, or wildcard). Strict-by-default. Violations fire
-            <a href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
+            <a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
                class="font-mono text-xs text-rose-700 underline">E-ENGINE-INVALID-TRANSITION</a>
             at compile time (the from-state is statically known &mdash; it IS
             the surrounding state-child).
@@ -221,10 +221,10 @@ function load() {
             Errors this feature can fire
         </h3>
         <ul class="space-y-1 text-sm text-slate-700 font-mono">
-            <li><a href="/reference/errors/E-ENGINE-INVALID-TRANSITION" class="text-rose-700 underline">E-ENGINE-INVALID-TRANSITION</a> &mdash; to= target not in surrounding state-child&apos;s rule= set</li>
-            <li><a href="/reference/errors/E-STRUCTURAL-ELEMENT-MISPLACED" class="text-rose-700 underline">E-STRUCTURAL-ELEMENT-MISPLACED</a> &mdash; outside an engine state-child body</li>
-            <li><a href="/reference/errors/E-TIMER-NAME-INVALID" class="text-rose-700 underline">E-TIMER-NAME-INVALID</a> &mdash; name= value is not a valid identifier (S79)</li>
-            <li><a href="/reference/errors/E-TIMER-NAME-DUPLICATE" class="text-rose-700 underline">E-TIMER-NAME-DUPLICATE</a> &mdash; two onTimeout elements in the same state-child share a name= (S79)</li>
+            <li><a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION" class="text-rose-700 underline">E-ENGINE-INVALID-TRANSITION</a> &mdash; to= target not in surrounding state-child&apos;s rule= set</li>
+            <li><a hard href="/reference/errors/E-STRUCTURAL-ELEMENT-MISPLACED" class="text-rose-700 underline">E-STRUCTURAL-ELEMENT-MISPLACED</a> &mdash; outside an engine state-child body</li>
+            <li><a hard href="/reference/errors/E-TIMER-NAME-INVALID" class="text-rose-700 underline">E-TIMER-NAME-INVALID</a> &mdash; name= value is not a valid identifier (S79)</li>
+            <li><a hard href="/reference/errors/E-TIMER-NAME-DUPLICATE" class="text-rose-700 underline">E-TIMER-NAME-DUPLICATE</a> &mdash; two onTimeout elements in the same state-child share a name= (S79)</li>
         </ul>
 
         // ───────────────────────────────────────────────────────────
@@ -295,7 +295,7 @@ function load() {
                 <strong>Engine state-child only.</strong>
                 Outside that scope &mdash; E-STRUCTURAL-ELEMENT-MISPLACED.
                 Inside a
-                <a href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
+                <a hard href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
                 block-form state-child &mdash; also misplaced (match is
                 rules-inert per §18.0.2).
             </li>
@@ -330,20 +330,20 @@ function load() {
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">
+                <a hard href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">
                     &lt;onIdle&gt;
                 </a> &mdash; engine-wide event-timeout watchdog. Distinct
                 from onTimeout: armed at module-init, reset on every
                 transition.
             </li>
             <li>
-                <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">
+                <a hard href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">
                     &lt;onTransition&gt;
                 </a> &mdash; sibling effect element; runs after a transition
                 commits.
             </li>
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">
                     &lt;engine&gt;
                 </a> &mdash; the container. onTimeout has no meaning outside
                 an engine state-child.

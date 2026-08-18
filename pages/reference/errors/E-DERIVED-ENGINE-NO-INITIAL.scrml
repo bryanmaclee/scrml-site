@@ -123,7 +123,7 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/engine"
+                <a hard href="/reference/elements/engine"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;engine&gt;
                 </a>
@@ -131,7 +131,7 @@
                 one of two flavours.
             </li>
             <li>
-                <a href="/reference/keywords/derived"
+                <a hard href="/reference/keywords/derived"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     derived
                 </a>

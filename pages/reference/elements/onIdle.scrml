@@ -76,7 +76,7 @@
         </h3>
         <p class="text-slate-700 leading-relaxed">
             Time of silence before the watchdog fires. Same shape as
-            <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">
                 <code class="font-mono text-sm">&lt;onTimeout&gt;</code>
             </a>
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">after=</code>:
@@ -97,7 +97,7 @@
             Target variant on watchdog fire. MUST be a variant of the engine&apos;s
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">for=</code>
             enum. Strict-by-default. Unknown variants fire
-            <a href="/reference/errors/E-IDLE-INVALID-VARIANT"
+            <a hard href="/reference/errors/E-IDLE-INVALID-VARIANT"
                class="font-mono text-xs text-rose-700 underline">E-IDLE-INVALID-VARIANT</a>
             at compile time.
         </p>
@@ -191,7 +191,7 @@
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">rule=</code>
                 validation applies per §51.0.F. If the current state&apos;s
                 rule= does not permit the target,
-                <a href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
+                <a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION"
                    class="font-mono text-xs text-rose-700 underline">E-ENGINE-INVALID-TRANSITION</a>
                 fires at runtime.
             </li>
@@ -200,7 +200,7 @@
                 Multiple
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onIdle&gt;</code>
                 declarations fire
-                <a href="/reference/errors/E-IDLE-DUPLICATE"
+                <a hard href="/reference/errors/E-IDLE-DUPLICATE"
                    class="font-mono text-xs text-rose-700 underline">E-IDLE-DUPLICATE</a>.
             </li>
             <li>
@@ -224,10 +224,10 @@
             Errors this feature can fire
         </h3>
         <ul class="space-y-1 text-sm text-slate-700 font-mono">
-            <li><a href="/reference/errors/E-IDLE-DUPLICATE" class="text-rose-700 underline">E-IDLE-DUPLICATE</a> &mdash; engine declares more than one &lt;onIdle&gt;</li>
-            <li><a href="/reference/errors/E-IDLE-INVALID-VARIANT" class="text-rose-700 underline">E-IDLE-INVALID-VARIANT</a> &mdash; to= references a variant not in the engine&apos;s for= enum, or to= is missing/malformed</li>
-            <li><a href="/reference/errors/E-IDLE-MISPLACED" class="text-rose-700 underline">E-IDLE-MISPLACED</a> &mdash; &lt;onIdle&gt; appears inside a state-child body</li>
-            <li><a href="/reference/errors/E-ENGINE-INVALID-TRANSITION" class="text-rose-700 underline">E-ENGINE-INVALID-TRANSITION</a> &mdash; runtime fire targets a variant the current state&apos;s rule= forbids</li>
+            <li><a hard href="/reference/errors/E-IDLE-DUPLICATE" class="text-rose-700 underline">E-IDLE-DUPLICATE</a> &mdash; engine declares more than one &lt;onIdle&gt;</li>
+            <li><a hard href="/reference/errors/E-IDLE-INVALID-VARIANT" class="text-rose-700 underline">E-IDLE-INVALID-VARIANT</a> &mdash; to= references a variant not in the engine&apos;s for= enum, or to= is missing/malformed</li>
+            <li><a hard href="/reference/errors/E-IDLE-MISPLACED" class="text-rose-700 underline">E-IDLE-MISPLACED</a> &mdash; &lt;onIdle&gt; appears inside a state-child body</li>
+            <li><a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION" class="text-rose-700 underline">E-ENGINE-INVALID-TRANSITION</a> &mdash; runtime fire targets a variant the current state&apos;s rule= forbids</li>
         </ul>
 
         // ───────────────────────────────────────────────────────────
@@ -322,14 +322,14 @@
                 <strong>Engine root only.</strong>
                 Inside a state-child body &mdash; E-IDLE-MISPLACED.
                 For per-state timer semantics, use
-                <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
+                <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
                 instead.
             </li>
             <li>
                 <strong>Composes with &lt;onTransition&gt;.</strong>
                 A watchdog-induced transition IS a legal transition event;
                 matching
-                <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
+                <a hard href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">&lt;onTransition&gt;</a>
                 handlers fire too. Same write-path semantics as direct
                 writes.
             </li>
@@ -353,19 +353,19 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">
+                <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">
                     &lt;onTimeout&gt;
                 </a> &mdash; per-state-child timer. Sibling temporal trigger
                 with distinct scope and timing.
             </li>
             <li>
-                <a href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">
+                <a hard href="/reference/elements/onTransition" class="text-blue-700 hover:text-blue-900 underline">
                     &lt;onTransition&gt;
                 </a> &mdash; engine effect element. Fires when a transition
                 commits (including watchdog-induced transitions).
             </li>
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">
                     &lt;engine&gt;
                 </a> &mdash; the container. onIdle has no meaning outside an
                 engine.

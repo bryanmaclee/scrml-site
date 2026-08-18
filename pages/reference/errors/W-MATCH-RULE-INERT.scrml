@@ -60,9 +60,9 @@
 
         <p class="text-slate-700 leading-relaxed">
             Unlike
-            <a href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN" class="text-rose-700 hover:text-rose-900 underline">effect=</a>
+            <a hard href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN" class="text-rose-700 hover:text-rose-900 underline">effect=</a>
             and
-            <a href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN" class="text-rose-700 hover:text-rose-900 underline">&lt;onTransition&gt;</a>
+            <a hard href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN" class="text-rose-700 hover:text-rose-900 underline">&lt;onTransition&gt;</a>
             (which are FORBIDDEN inside match), the
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">rule=</code>
             attribute is LEGAL on a match arm but does nothing at runtime.
@@ -108,7 +108,7 @@
                 activates rule= enforcement. The
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun scrml promote --match</code>
                 CLI automates this (per SPEC §56). Also see
-                <a href="/reference/errors/I-MATCH-PROMOTABLE"
+                <a hard href="/reference/errors/I-MATCH-PROMOTABLE"
                    class="text-blue-700 hover:text-blue-900 underline">I-MATCH-PROMOTABLE</a>
                 &mdash; the info-level lint that detects promotion shape.
             </li>
@@ -147,10 +147,10 @@
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Compare:
-            <a href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN"
+            <a hard href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN"
                class="text-rose-700 hover:text-rose-900 underline">E-MATCH-EFFECT-FORBIDDEN</a>
             and
-            <a href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
+            <a hard href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
                class="text-rose-700 hover:text-rose-900 underline">E-MATCH-ONTRANSITION-FORBIDDEN</a>
             are ERRORS, not warnings, because effect handlers and
             transition handlers ASSUME the transition actually runs.
@@ -166,26 +166,26 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
+                <a hard href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">&lt;match&gt;</a>
                 &mdash; element reference. Rules-inert Tier 1.
             </li>
             <li>
-                <a href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
+                <a hard href="/reference/elements/engine" class="text-blue-700 hover:text-blue-900 underline">&lt;engine&gt;</a>
                 &mdash; Tier 2 promotion target. rule= becomes active.
             </li>
             <li>
-                <a href="/reference/errors/I-MATCH-PROMOTABLE"
+                <a hard href="/reference/errors/I-MATCH-PROMOTABLE"
                    class="text-blue-700 hover:text-blue-900 underline">I-MATCH-PROMOTABLE</a>
                 &mdash; info-level lint that detects when match shape is
                 ready for engine promotion.
             </li>
             <li>
-                <a href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN"
+                <a hard href="/reference/errors/E-MATCH-EFFECT-FORBIDDEN"
                    class="text-rose-700 hover:text-rose-900 underline">E-MATCH-EFFECT-FORBIDDEN</a>
                 &mdash; sibling error for effect= attribute.
             </li>
             <li>
-                <a href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
+                <a hard href="/reference/errors/E-MATCH-ONTRANSITION-FORBIDDEN"
                    class="text-rose-700 hover:text-rose-900 underline">E-MATCH-ONTRANSITION-FORBIDDEN</a>
                 &mdash; sibling error for &lt;onTransition&gt;.
             </li>

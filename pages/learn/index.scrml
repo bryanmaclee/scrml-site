@@ -41,7 +41,7 @@
 
         <ul class="space-y-3 text-slate-700">
             <li>
-                <a href="/learn/server-boundary"
+                <a hard href="/learn/server-boundary"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Server boundary
                 </a>
@@ -50,7 +50,7 @@
                 erases the request/response shape from your code.
             </li>
             <li>
-                <a href="/learn/validators"
+                <a hard href="/learn/validators"
                    class="text-blue-700 hover:text-blue-900 underline">
                     Validators
                 </a>
@@ -61,7 +61,7 @@
         </ul>
 
         <p class="mt-10 text-sm">
-            <a href="/" class="text-blue-700 hover:text-blue-900 underline">
+            <a hard href="/" class="text-blue-700 hover:text-blue-900 underline">
                 &larr; Home
             </a>
         </p>

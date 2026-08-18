@@ -328,7 +328,7 @@ meta-body  ::= (any sequence of scrml statements and expressions)</code></pre>
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <a href="/reference/contexts/logic"
+                <a hard href="/reference/contexts/logic"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     $&#123; &hellip; &#125;
                 </a>
@@ -336,14 +336,14 @@ meta-body  ::= (any sequence of scrml statements and expressions)</code></pre>
                 control flow, inline writes.
             </li>
             <li>
-                <a href="/reference/contexts/sql"
+                <a hard href="/reference/contexts/sql"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     ?&#123; &hellip; &#125;
                 </a>
                 &mdash; the SQL context.
             </li>
             <li>
-                <a href="/reference/elements/errors"
+                <a hard href="/reference/elements/errors"
                    class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;errors&gt;
                 </a>

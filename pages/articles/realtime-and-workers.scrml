@@ -123,7 +123,7 @@
                 <strong>Server-authoritative writes.</strong> A channel cell that the server treats as authoritative rejects client-side writes the same way the
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">server</code>
                 modifier does on a regular state cell. (See the
-                <a href="/articles/mutability-contracts" class="text-blue-700 hover:text-blue-900 underline">mutability contracts article</a>
+                <a hard href="/articles/mutability-contracts" class="text-blue-700 hover:text-blue-900 underline">mutability contracts article</a>
                 for the five-layer authority model this fits into.)
             </li>
             <li>

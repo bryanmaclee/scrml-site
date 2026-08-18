@@ -63,7 +63,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            <a href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
+            <a hard href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
             is the engine-wide event-timeout watchdog. Per §51.0.R, every
             engine has AT MOST ONE watchdog &mdash; multiple onIdle
             declarations would race for the same runtime timer slot
@@ -108,7 +108,7 @@
                 that transitions to
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.Idle</code>,
                 plus an
-                <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
+                <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
                 on the
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.Idle</code>
                 state-child that transitions to
@@ -160,20 +160,20 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <a href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
+                <a hard href="/reference/elements/onIdle" class="text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>
                 &mdash; element reference. Engine-wide watchdog.
             </li>
             <li>
-                <a href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
+                <a hard href="/reference/elements/onTimeout" class="text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a>
                 &mdash; per-state timer; the composition partner for cascade patterns.
             </li>
             <li>
-                <a href="/reference/errors/E-IDLE-MISPLACED"
+                <a hard href="/reference/errors/E-IDLE-MISPLACED"
                    class="text-rose-700 hover:text-rose-900 underline">E-IDLE-MISPLACED</a>
                 &mdash; sibling error when &lt;onIdle&gt; sits inside a state-child body.
             </li>
             <li>
-                <a href="/reference/errors/E-IDLE-INVALID-VARIANT"
+                <a hard href="/reference/errors/E-IDLE-INVALID-VARIANT"
                    class="text-rose-700 hover:text-rose-900 underline">E-IDLE-INVALID-VARIANT</a>
                 &mdash; sibling error when to= references a non-enum variant.
             </li>
