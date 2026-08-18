@@ -39,10 +39,20 @@ GATE:   runtime-verify (PRIMARY, merge-blocking) + build (SECONDARY, exit-0 only
     link (machine-independent); env overrides PLAYWRIGHT / SCRML exist if the layout differs.
     NEVER re-hardcode an absolute /home/<user>/ path — that broke all three scripts until 2026-07-22.
   - PRIMARY, TWO SCRIPTS — both must exit 0. `bash scripts/serve.sh` (port 8787), then:
-      `node scripts/wiki-verify.mjs`  — SITE-WIDE (5 assertions): every emitted route resolves 200
+      `node scripts/wiki-verify.mjs`  — SITE-WIDE (7 assertions): every emitted route resolves 200
         (route list DERIVED from dist/, so a new page is covered the moment it compiles) · shell +
-        outlet render · SOFT NAV genuinely soft (window stamp survives an in-site click) ·
-        code-block contrast (fg/bg luminance separated) · no uncaught page errors.
+        outlet render · NAVIGATION LANDS A PAGE CARRYING ITS OWN STYLESHEET · EVERY internal <a>
+        carries the `hard` soft-nav opt-out · code-block contrast (fg/bg luminance separated) ·
+        reference sidebar shown in-section / hidden out / current link active · no uncaught errors.
+        CHANGED 2026-08-18: the two nav assertions REPLACED a "soft nav is genuinely soft" check
+        that stamped `window` and asserted the stamp SURVIVED a click. It verified the MECHANISM,
+        never the outcome, and reported 6/6 green for three weeks while every in-site click landed
+        the reader on a page wearing the PREVIOUS page's CSS (the runtime does not sync
+        <link rel=stylesheet> across a soft nav; /showcase collapsed to unstyled text on one click).
+        It also clicked header a[href="/reference"], which soft-navigates under `scrml dev` but
+        301s into a HARD nav on static hosting — measuring different behaviour than production.
+        The replacements are OUTCOME-shaped and mechanism-agnostic: they stay valid when soft nav
+        is re-enabled. GATE THE ARTIFACT, NOT THE DEV SERVER.
       `node scripts/gold-verify.mjs` — the /showcase provenance gate (11 assertions). GATE_BASE
         overrides the origin; it targets /showcase, NOT / (which is now the wiki landing).
     Real-browser Chromium

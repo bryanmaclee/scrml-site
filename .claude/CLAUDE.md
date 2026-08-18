@@ -87,10 +87,11 @@ the whole point. Do NOT vendor a compiler into this repo.
 **PRIMARY — runtime-verify (merge-blocking).** This repo has no test suite; the artifact is the truth.
 
 1. `bash scripts/serve.sh` (port 8787) — the canonical serve.
-2. `node scripts/wiki-verify.mjs` — **site-wide, exit 0 = green.** Every emitted route resolves 200
-   (route list **derived from `dist/`**, so a new page is gated the moment it compiles); shell +
-   outlet render; **soft nav is genuinely soft** (a `window` stamp survives an in-site click);
-   code-block contrast; no uncaught page errors.
+2. `node scripts/wiki-verify.mjs` — **site-wide, exit 0 = green.** 7 assertions: every emitted
+   route resolves 200 (route list **derived from `dist/`**, so a new page is gated the moment it
+   compiles); shell + outlet render; **navigation lands a page carrying its own stylesheet**;
+   **every internal `<a>` carries the `hard` soft-nav opt-out**; code-block contrast; reference
+   sidebar shown in-section and hidden out; no uncaught page errors.
 3. `node scripts/gold-verify.mjs` — **the `/showcase` provenance gate, exit 0 = green.** 11
    assertions in real Chromium (Playwright imported by absolute path from `../scrml/node_modules`;
    a bare specifier will not resolve): flagship iframe mounts and runs; forward hover lights the
