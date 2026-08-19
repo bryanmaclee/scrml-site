@@ -110,6 +110,68 @@ locally). Also told them the `<outlet/>`-discards-shell-markup finding.
   now outstanding with them.
 
 
+### ✅ POST-WRAP ADDENDUM 2026-08-19 — scrml replied; both defects filed; one delivery lesson
+
+**They received, verified and FILED both defects** — confirmed in their own source
+at `main` `e305216d`, not merely at the S287 ref we pin:
+- `g-soft-nav-head-sync-drops-stylesheet-links` (**HIGH**)
+- `g-soft-nav-redirect-leaves-orphan-history-entry` (**MED**)
+
+**A fix is dispatched and in flight**, carrying our suggested shape (resolve hrefs
+against the target URL — our depth-varying-relative-path warning is called out in
+their brief as the thing most likely to be got wrong — await the new sheet's
+`load` before the outlet swap, remove stale sheets after). **No date**: it goes
+through a mandatory adversarial review that has returned DO-NOT-LAND twice this
+week. **They will ping this inbox when it lands** and are treating our `hard`
+revert as theirs to unblock.
+
+They also folded our gate lesson into the fix brief as a constraint on their own
+tests: the dispatched agent must write outcome-shaped assertions and is
+**explicitly forbidden** from asserting that a sync function ran or a marker is
+present. Their words: *"That is a better finding than the bug."*
+
+### ⚠ OUR DELIVERY WAS WRONG — "committed" is not "delivered" either
+
+The S12 note was committed to a **branch** (`inbox/scrml-site-soft-nav-stylesheet`)
+and left unmerged. Their inbox checks read the working tree of whatever branch is
+checked out, so it was **invisible to every `main` checkout on every machine** —
+the operator had to tell them it existed.
+
+**COMMIT-ON-ARRIVAL was written for UNTRACKED drops. We satisfied its letter and
+invented a new way to strand a message.** The rule is now: **a message is
+delivered when it is MERGED TO `main`**, or when we explicitly name the branch.
+They have added an all-refs probe to their boot; we should not rely on it.
+
+Third variation of the same shape now: `committing-is-not-shipping` (S11, a
+14-day unpushed audit), the per-clone inbox (S10), and this. **The artifact a
+reader can reach is the only evidence of delivery.**
+
+### THE OWED PROBE — DELIVERED
+
+They declined to file the `<outlet/>` observation without a reproducer ("we do not
+file adopter observations we have not reproduced"). Fair. Built one — 12 lines, no
+dependencies, **verified against their current `main` `3b5eed44`**:
+
+| variant | `shell-authored-child` in emitted `index.html` |
+|---|---|
+| `<main>` holds an authored `<div>` **and** `<outlet/>` | **1** |
+| same `<main>`, **`<outlet/>` removed** | **0** — silently discarded |
+
+The sharp part: the sole diagnostic `W-OUTLET-ABSENT-SOFT-NAV-DISABLED` names
+**soft nav being disabled** as the consequence and says nothing about losing
+authored shell markup. An author reads it as a performance trade, not as "your
+header and sidebar will be deleted."
+
+**PR #559 is rebased onto their current `main` and carries BOTH notes.** Required
+check `gate` **SUCCESS**; `windows` SUCCESS; `tracking` FAILURE — a job explicitly
+labelled *"promotion candidates"*, failing in `serve-target-tool-r26.test.js`
+(compiler serve/SSE tests) on a **docs-only diff**, i.e. not ours and not the
+required check. **NOT MERGED — the merge was blocked by this session's permission
+classifier and awaits the operator.** Until it merges the notes are still only on
+a branch, which is the exact failure described above.
+
+---
+
 ## ⇢ SESSION 11 CLOSE 2026-08-16 — Maidensail badge landed · **SHOWCASE GATE DECAYED 9/11 → 6/11**
 
 Thin session, two asks: *where is the compiled output* and *add the Maidensail
