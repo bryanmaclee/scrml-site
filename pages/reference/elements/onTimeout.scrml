@@ -73,7 +73,7 @@
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">name=</code>
             attribute makes the timer cancellable via
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">cancelTimer("name")</code>
-            (S79; see Named timers below).
+            (see Named timers below).
         </p>
 
         <h3 class="text-lg font-semibold text-slate-900 mt-6 mb-2">
@@ -101,7 +101,7 @@
                 state-entry time. Example:
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">after=${@retryDelay}s</code>.
                 Computed-form rules opt out of multi-step JSON-encoded chained
-                auto-rearm (per SPEC §51.12.4 S77 amendment).
+                auto-rearm (per SPEC §51.12.4 amendment).
             </li>
         </ul>
 
@@ -229,8 +229,8 @@ function load() &#123;
         <ul class="space-y-1 text-sm text-slate-700 font-mono">
             <li><a hard href="/reference/errors/E-ENGINE-INVALID-TRANSITION" class="text-rose-700 underline">E-ENGINE-INVALID-TRANSITION</a> &mdash; to= target not in surrounding state-child&apos;s rule= set</li>
             <li><a hard href="/reference/errors/E-STRUCTURAL-ELEMENT-MISPLACED" class="text-rose-700 underline">E-STRUCTURAL-ELEMENT-MISPLACED</a> &mdash; outside an engine state-child body</li>
-            <li><a hard href="/reference/errors/E-TIMER-NAME-INVALID" class="text-rose-700 underline">E-TIMER-NAME-INVALID</a> &mdash; name= value is not a valid identifier (S79)</li>
-            <li><a hard href="/reference/errors/E-TIMER-NAME-DUPLICATE" class="text-rose-700 underline">E-TIMER-NAME-DUPLICATE</a> &mdash; two onTimeout elements in the same state-child share a name= (S79)</li>
+            <li><a hard href="/reference/errors/E-TIMER-NAME-INVALID" class="text-rose-700 underline">E-TIMER-NAME-INVALID</a> &mdash; name= value is not a valid identifier</li>
+            <li><a hard href="/reference/errors/E-TIMER-NAME-DUPLICATE" class="text-rose-700 underline">E-TIMER-NAME-DUPLICATE</a> &mdash; two onTimeout elements in the same state-child share a name= </li>
         </ul>
 
         // ───────────────────────────────────────────────────────────
@@ -243,7 +243,7 @@ function load() &#123;
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-3">
-            S79 added an optional
+            An optional
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">name=IDENT</code>
             attribute. Named timers are cancellable from within the state-child
             body via the
@@ -380,22 +380,22 @@ function load() &#123;
             <tbody class="text-slate-700">
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">&lt;onTimeout after=DURATION to=.V/&gt;</td>
-                    <td class="py-2 pr-4">S67 / S68</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">SPEC §51.0.M; literal DURATION; armed-on-entry semantics</td>
                 </tr>
                 <tr class="border-b border-slate-200">
-                    <td class="py-2 pr-4 font-mono text-xs">A5-4 codegen</td>
-                    <td class="py-2 pr-4">S77</td>
+                    <td class="py-2 pr-4 font-mono text-xs">Runtime emission</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">End-to-end runtime emission; tree-shake when zero onTimeout per engine</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">Computed-form after=&dollar;&lcub;expr&rcub;&lt;unit&gt;</td>
-                    <td class="py-2 pr-4">S67 / S77</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">SPEC §51.12.3.1; runtime applies negative/NaN → 0 clamp + Math.round</td>
                 </tr>
                 <tr>
                     <td class="py-2 pr-4 font-mono text-xs">name=IDENT + cancelTimer("name")</td>
-                    <td class="py-2 pr-4">S79</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">SPEC §51.0.M.1; identifier-shaped; scope-local to state-child</td>
                 </tr>
             </tbody>
@@ -412,7 +412,7 @@ function load() &#123;
         <p class="text-slate-700 leading-relaxed">
             This page summarizes <strong>SPEC §51.0.M</strong>
             (form / semantics / placement / composition) +
-            <strong>§51.0.M.1</strong> (name= and cancelTimer, S79) +
+            <strong>§51.0.M.1</strong> (name= and cancelTimer) +
             <strong>§51.12</strong> (runtime backbone, shared with legacy
             machine temporal) + <strong>§51.12.3 / §51.12.3.1</strong>
             (DURATION grammar). The normative text lives at

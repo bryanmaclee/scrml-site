@@ -318,8 +318,8 @@
             <tbody class="text-slate-700">
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">&lt;match for=Type&gt; block</td>
-                    <td class="py-2 pr-4">S57 D2.8 (2026-05-04)</td>
-                    <td class="py-2 text-xs">Spec §18.0.1; parser+typer A1b B15-style</td>
+                    <td class="py-2 pr-4">v0.2</td>
+                    <td class="py-2 text-xs">Spec §18.0.1; </td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">JS-style &#109;atch expr &#123; &#125;</td>
@@ -328,12 +328,12 @@
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">bun scrml promote --match</td>
-                    <td class="py-2 pr-4">S66 (Tier B SHIPPED 2026-05-07)</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">CLI subcommand; idempotent; --dry-run supported</td>
                 </tr>
                 <tr>
                     <td class="py-2 pr-4 font-mono text-xs">I-MATCH-PROMOTABLE info lint</td>
-                    <td class="py-2 pr-4">S66 (2026-05-07)</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">Predicate matrix supports == and is .V at the discrimination site</td>
                 </tr>
             </tbody>

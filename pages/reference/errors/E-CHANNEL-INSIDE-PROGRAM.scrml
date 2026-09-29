@@ -59,7 +59,7 @@
                 fired E-CHANNEL-INSIDE-PROGRAM.
             </p>
             <p class="leading-relaxed mt-2">
-                v0.3 onward (per S87 Insight 30): channels are
+                v0.3 onward: channels are
                 application-scoped, so the canonical placement is
                 INSIDE
                 <code class="font-mono text-sm">&lt;program&gt;</code>

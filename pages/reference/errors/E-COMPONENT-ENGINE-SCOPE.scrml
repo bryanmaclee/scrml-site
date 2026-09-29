@@ -167,7 +167,7 @@ const LoadCard = &lt;div class="card"&gt;
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            Per §51.0.K Machine Cohesion (sharpened S67), engines MAY be
+            Per §51.0.K Machine Cohesion, engines MAY be
             declared inside another engine&apos;s composite state-child
             body &mdash; per §51.0.Q.1. Outer × 1 = 1 inner instance, so
             the singleton invariant is preserved. Engines MAY NOT be

@@ -63,7 +63,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            Per &sect;38.1 (v0.3 Wave 1 / S87 Insight 30), the
+            Per &sect;38.1 (v0.3), the
             canonical placement for a
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;channel&gt;</code>
             is INSIDE the entry file's
@@ -95,7 +95,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            Per &sect;38.12.6 (S87, Insight 30), a file containing NO
+            Per &sect;38.12.6, a file containing NO
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;program&gt;</code>
             element MAY declare a
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;channel&gt;</code>
@@ -157,7 +157,7 @@
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-CHANNEL-INSIDE-PROGRAM</code>
             (now retired) fired when a channel was nested inside
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;program&gt;</code>.
-            The S87 Insight 30 closure (channel-architecture
+            The v0.3 decision (channel-architecture
             ratification) reversed this: channels are application-
             scoped shared-state vehicles, and the application is
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;program&gt;</code>,

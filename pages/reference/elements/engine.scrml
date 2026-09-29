@@ -307,17 +307,17 @@
             <tbody class="text-slate-700">
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">&lt;engine&gt; shape</td>
-                    <td class="py-2 pr-4">S57 D2.8 (2026-05-04)</td>
-                    <td class="py-2 text-xs">Spec ratified; parser S70 (A1c Wave 1 C12-C15 in flight)</td>
+                    <td class="py-2 pr-4">v0.2</td>
+                    <td class="py-2 text-xs">Spec §51</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">history= / internal:rule= / nested engines</td>
-                    <td class="py-2 pr-4">S67 (2026-05-08)</td>
-                    <td class="py-2 text-xs">Spec landed S68 1de05ef; parser+typer S70</td>
+                    <td class="py-2 pr-4">v0.2</td>
+                    <td class="py-2 text-xs">Spec §51</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">&lt;onTimeout&gt;</td>
-                    <td class="py-2 pr-4">S70 A5-2</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">Spec § 51.0.M; runtime rides § 51.12</td>
                 </tr>
                 <tr>

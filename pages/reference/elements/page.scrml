@@ -238,8 +238,8 @@ pages/
                 <strong>routes/ alias.</strong>
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">routes&#47;</code>
                 is recognized as a synonym of
-                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">pages&#47;</code>
-                (S94 D-RI-PAGES). Pick one; don't mix in the same
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">pages&#47;</code>.
+                Pick one; don't mix in the same
                 project.
             </li>
             <li>
@@ -307,12 +307,12 @@ pages/
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">pages&#47; canonical prefix</td>
-                    <td class="py-2 pr-4">S94 D-RI-PAGES (c0503c5)</td>
+                    <td class="py-2 pr-4">v0.3</td>
                     <td class="py-2 text-xs">buildPageRouteTree recognizes both pages&#47; and routes&#47;</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">Per-route artifact splitter</td>
-                    <td class="py-2 pr-4">v0.3.0 (Approach A — S91)</td>
+                    <td class="py-2 pr-4">v0.3</td>
                     <td class="py-2 text-xs">7 sub-phases; FNV-1a content-addressed chunks</td>
                 </tr>
                 <tr>

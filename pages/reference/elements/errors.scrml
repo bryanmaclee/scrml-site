@@ -285,27 +285,27 @@ function submit() &#123; console.log(@signup.name) &#125;
             <tbody class="text-slate-700">
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">&lt;errors of=…/&gt;</td>
-                    <td class="py-2 pr-4">S57 D2.8 (2026-05-04) Lock L13</td>
-                    <td class="py-2 text-xs">Spec §55.8; codegen A1c C11 shipped S73</td>
+                    <td class="py-2 pr-4">v0.2</td>
+                    <td class="py-2 text-xs">Spec §55.8; </td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">14 universal-core predicates</td>
-                    <td class="py-2 pr-4">S57 D2.8 Lock L4</td>
-                    <td class="py-2 text-xs">Spec §55.1; runtime catalog A1c C6 shipped S73</td>
+                    <td class="py-2 pr-4">v0.2</td>
+                    <td class="py-2 text-xs">Spec §55.1; runtime error catalog</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">Auto-synth validity surface</td>
-                    <td class="py-2 pr-4">S57 D2.8 Locks L11 + L13</td>
-                    <td class="py-2 text-xs">Spec §55.5-§55.8; codegen A1c C8 shipped S73</td>
+                    <td class="py-2 pr-4">v0.2</td>
+                    <td class="py-2 text-xs">Spec §55.5-§55.8; </td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">4-level message resolution</td>
-                    <td class="py-2 pr-4">S57 D2.8 Lock L12</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">Spec §55.5 + §41.12 registerMessages</td>
                 </tr>
                 <tr>
                     <td class="py-2 pr-4 font-mono text-xs">Cross-field validation</td>
-                    <td class="py-2 pr-4">S57 D2.8 Lock L14</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">Spec §55.11; predicate-arg dependency tracking §31.4</td>
                 </tr>
             </tbody>

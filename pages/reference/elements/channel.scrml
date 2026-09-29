@@ -135,7 +135,7 @@
                 channel-module files (no &lt;program&gt; in the file)
                 MAY declare channels at file top &mdash; the
                 cross-file inline-expansion pattern per &sect;38.12.6.
-                Per Insight 30 (S87 placement reversal).
+                
             </li>
             <li>
                 <strong>No &#64;shared modifier.</strong> Auto-sync is
@@ -241,7 +241,7 @@
                 <strong>Channel-reconnect default.</strong> Project-
                 level reconnect window via
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;program channel-reconnect=N&gt;</code>
-                (S81 &sect;38.3.1). Set to zero to disable
+                (&sect;38.3.1). Set to zero to disable
                 auto-reconnect on transient WS drops.
             </li>
         </ul>
@@ -303,12 +303,12 @@
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">Channels as &lt;program&gt; children</td>
-                    <td class="py-2 pr-4">Insight 30 (S87)</td>
+                    <td class="py-2 pr-4">v0.3</td>
                     <td class="py-2 pr-4 text-xs">Placement reversal — channels inside &lt;program&gt;, not file-level</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">channel-reconnect=N on &lt;program&gt;</td>
-                    <td class="py-2 pr-4">S81 (&sect;38.3.1)</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">Project-level reconnect window default</td>
                 </tr>
                 <tr>

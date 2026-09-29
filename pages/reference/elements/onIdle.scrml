@@ -392,17 +392,17 @@
             <tbody class="text-slate-700">
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">&lt;onIdle after=DURATION to=.V/&gt;</td>
-                    <td class="py-2 pr-4">S77 A5-6</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">SPEC §51.0.R; armed-at-module-init + reset-on-every-transition semantics</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">Computed-form after=&dollar;&lcub;expr&rcub;&lt;unit&gt;</td>
-                    <td class="py-2 pr-4">S77</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">SPEC §51.12.3.1; rides parseAfterDuration helper</td>
                 </tr>
                 <tr>
                     <td class="py-2 pr-4 font-mono text-xs">Tree-shake when no &lt;onIdle&gt; per engine</td>
-                    <td class="py-2 pr-4">S77</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">Runtime helpers only ship when at least one engine declares onIdle</td>
                 </tr>
             </tbody>

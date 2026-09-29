@@ -52,7 +52,7 @@
                     Compile-time
                 </span>
                 <span class="px-2 py-1 bg-emerald-50 text-emerald-700 rounded">
-                    Added S77 (A5-6)
+                    Added in v0.2
                 </span>
                 <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">

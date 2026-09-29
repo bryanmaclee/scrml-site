@@ -293,17 +293,17 @@ function cleanup() &#123; console.log("cleanup") &#125;
             <tbody class="text-slate-700">
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">&lt;onTransition&gt; from / to / once / if</td>
-                    <td class="py-2 pr-4">S57 D2.8</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">SPEC &sect;51.0.H; engine-only structural element</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">E-ONTRANSITION-NO-TARGET</td>
-                    <td class="py-2 pr-4">S74 A1b B17.3</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">Caught neither-from-nor-to misuse</td>
                 </tr>
                 <tr>
                     <td class="py-2 pr-4 font-mono text-xs">internal:rule= excludes onTransition</td>
-                    <td class="py-2 pr-4">S67 / S68 &sect;51.0.O</td>
+                    <td class="py-2 pr-4">v0.2</td>
                     <td class="py-2 text-xs">Internal transitions preserve outer-engine lifecycle including handler skip</td>
                 </tr>
             </tbody>

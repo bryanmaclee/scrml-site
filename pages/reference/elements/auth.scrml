@@ -261,7 +261,7 @@
             <li>
                 <strong>Full interpolation grammar.</strong>
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">role=${expr}</code>
-                works (S90 OQ-A3-A ratification &mdash; first-class
+                works (first-class
                 compiler state should have the same surface as
                 user-defined state). The closure analyzer constant-
                 folds where it can; non-foldable cases trigger
@@ -347,22 +347,22 @@
             <tbody class="text-slate-700">
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">&lt;auth role=&gt; first-class element</td>
-                    <td class="py-2 pr-4">v0.3.0 (Approach A — S91)</td>
+                    <td class="py-2 pr-4">v0.3</td>
                     <td class="py-2 text-xs">A-3 AuthGraph + per-gate classifier + redirect cross-ref</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">Per-route per-role chunks</td>
-                    <td class="py-2 pr-4">v0.3.0 (A-4 splitter — S91)</td>
+                    <td class="py-2 pr-4">v0.3</td>
                     <td class="py-2 text-xs">7 sub-phases; FNV-1a content-addressed chunk filenames</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">Full interpolation grammar (role=&#36;&#123;expr&#125;)</td>
-                    <td class="py-2 pr-4">S90 OQ-A3-A user override</td>
+                    <td class="py-2 pr-4">v0.3</td>
                     <td class="py-2 text-xs">First-class compiler state matches user-defined state surface</td>
                 </tr>
                 <tr>
                     <td class="py-2 pr-4 font-mono text-xs">scrml generate auth scaffold</td>
-                    <td class="py-2 pr-4">S94 (auth-redirect tightening)</td>
+                    <td class="py-2 pr-4">v0.3</td>
                     <td class="py-2 text-xs">Generates /login page when auth=required and route missing</td>
                 </tr>
             </tbody>

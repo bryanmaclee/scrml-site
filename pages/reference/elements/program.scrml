@@ -170,7 +170,7 @@
                 <a hard href="/reference/errors/E-CHANNEL-OUTSIDE-PROGRAM"
                    class="font-mono text-xs text-rose-700 underline">E-CHANNEL-OUTSIDE-PROGRAM</a>
                 fires on misplaced channels in a file that has
-                &lt;program&gt;. Per Insight 30 (S87).
+                &lt;program&gt;.
             </li>
             <li>
                 <strong>Auth wraps page subtrees.</strong>
@@ -258,17 +258,17 @@
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">cors-max-age=N</td>
                     <td class="py-2 pr-4">Middleware</td>
-                    <td class="py-2 text-xs">CORS preflight cache; default 86400 (S81 &sect;39.2.1)</td>
+                    <td class="py-2 text-xs">CORS preflight cache; default 86400 (&sect;39.2.1)</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">channel-reconnect=N</td>
                     <td class="py-2 pr-4">Middleware</td>
-                    <td class="py-2 text-xs">Project-level channel reconnect default (S81 &sect;38.3.1)</td>
+                    <td class="py-2 text-xs">Project-level channel reconnect default (&sect;38.3.1)</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-4 font-mono text-xs">idempotency-store=</td>
                     <td class="py-2 pr-4">Middleware</td>
-                    <td class="py-2 text-xs">Per-app idempotency-key backend (S72 ratification)</td>
+                    <td class="py-2 text-xs">Per-app idempotency-key backend</td>
                 </tr>
                 <tr>
                     <td class="py-2 pr-4 font-mono text-xs">headers= / log=</td>
@@ -305,7 +305,7 @@
                 &lt;page&gt; declarations is treated as a non-entry
                 page within an SPA-style structure. W-PROGRAM-001
                 surfaces this pattern. Multi-file route trees are the
-                canonical Day-30 shape.
+                canonical shape.
             </li>
             <li>
                 <strong>Channels and pages are siblings.</strong>
