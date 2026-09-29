@@ -56,26 +56,18 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-3">
-            Until the npm package lands, install from source. Two
-            installs, not one &mdash; a couple of the compiler's
-            dependencies are declared in the nested
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">compiler/</code>
-            manifest rather than the root one:
-        </p>
-
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>git clone https://github.com/bryanmaclee/scrml
-cd scrml
-bun install
-cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
-
-        <p class="text-slate-700 leading-relaxed mt-3">
-            Link the
+            scrml is not published to npm. Install it from source: clone
+            the repository, install its dependencies, and link the
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml</code>
             CLI onto your
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">PATH</code>:
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">PATH</code>.
+            Then
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml init</code>
+            scaffolds a starter app:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>bun link</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>git clone https://github.com/bryanmaclee/scrml &amp;&amp; cd scrml &amp;&amp; bun install &amp;&amp; bun link
+scrml init my-app</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Confirm it works:
@@ -115,11 +107,14 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
             That produces
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">dist/hello.html</code>,
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">dist/hello.css</code>,
-            and
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">dist/hello.client.js</code>.
-            Open the HTML in a browser. There is no framework runtime
-            on the page &mdash; the compiler emits only the JS that
-            your specific program needs.
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">dist/hello.client.js</code>,
+            and a shared runtime file,
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">dist/scrml-runtime.&lt;hash&gt;.js</code>.
+            Open the HTML in a browser. The runtime is scrml's own small
+            support library (about 41&nbsp;KB unminified as of v0.8.0) and
+            the same file serves every page; the per-program file holds
+            only the code your program needs &mdash; for this page, a few
+            dozen bytes.
         </p>
 
         // ───────────────────────────────────────────────────────────
@@ -149,7 +144,6 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
 
   function increment() &#123; @count = @count + @step &#125;
   function decrement() &#123; @count = @count - @step &#125;
-  function clearCount() &#123; reset(@count) &#125;
 
   &lt;div class="flex flex-col items-center gap-6 p-8 min-h-screen"&gt;
     &lt;h1 class="text-3xl font-bold"&gt;Counter&lt;/h1&gt;
@@ -157,7 +151,7 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
 
     &lt;div class="flex gap-2"&gt;
       &lt;button class="px-5 py-2 bg-red-500 text-white rounded" onclick=decrement()&gt;&minus;&lt;/button&gt;
-      &lt;button class="px-5 py-2 bg-gray-200 rounded" onclick=clearCount()&gt;Reset&lt;/button&gt;
+      &lt;button class="px-5 py-2 bg-gray-200 rounded" onclick=&#123; reset(@count); reset(@step) &#125;&gt;Reset&lt;/button&gt;
       &lt;button class="px-5 py-2 bg-green-500 text-white rounded" onclick=increment()&gt;+&lt;/button&gt;
     &lt;/div&gt;
 
@@ -170,7 +164,7 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
 &lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
-            Five things to notice:
+            Six things to notice:
         </p>
 
         <ul class="space-y-2 text-slate-700">
@@ -200,6 +194,12 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
                 <code class="font-mono text-sm">onClick</code>.
             </li>
             <li>
+                <strong>Short handlers stay inline.</strong>
+                A handler can be a braced block of statements &mdash;
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">onclick=&#123; reset(@count); reset(@step) &#125;</code>
+                &mdash; so a two-line action does not need a named function.
+            </li>
+            <li>
                 <strong>Two-way binding without a directive.</strong>
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bind:value=@step</code>
                 wires the input's value both ways.
@@ -220,14 +220,14 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
             Dev server with hot reload
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>scrml dev</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>scrml dev .</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Boots a local server on
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">localhost:3000</code>,
             watches every
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.scrml</code>
-            file in the directory, and triggers a recompile + browser
+            file in the directory you name (here, the current one), and triggers a recompile + browser
             reload on every save. Compile errors print to the terminal
             with a line/column pointer.
         </p>
@@ -246,17 +246,33 @@ cd compiler &amp;&amp; bun install &amp;&amp; cd ..</code></pre>
             Build for production
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>scrml build</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>scrml build .</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
-            Produces optimised HTML, CSS, and JavaScript under
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">dist/</code>,
-            content-addressed so cache invalidation is automatic. The
-            v0.3 release ships per-route per-role chunk splitting
-            &mdash; an unauthenticated visitor downloads only the
-            unauthenticated bundle; an
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">admin</code>
-            visitor downloads only the admin bundle.
+            Compiles every
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.scrml</code>
+            file in the directory into
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">dist/</code>:
+            HTML, CSS, content-hashed JavaScript (so cache invalidation
+            is automatic) and a server entry point,
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">dist/_server.js</code>.
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">--output &lt;dir&gt;</code>
+            picks another directory;
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">--target static</code>
+            builds a site with no server (this site is built that way).
+        </p>
+
+        <p class="text-slate-700 leading-relaxed mt-3">
+            A note on
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;auth role&gt;</code>:
+            it controls which client code mounts for which role. It is not
+            content secrecy &mdash; gated HTML is still sent to every viewer
+            (the compiler warns with
+            <a hard href="/reference/errors/W-AUTH-CONTENT-NOT-GATED"
+               class="text-blue-700 hover:text-blue-900 underline font-mono">W-AUTH-CONTENT-NOT-GATED</a>),
+            so keep secrets on the server. Per-role JavaScript chunks are
+            opt-in, through
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml compile --emit-per-route</code>.
         </p>
 
         // ───────────────────────────────────────────────────────────

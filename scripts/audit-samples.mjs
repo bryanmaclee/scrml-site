@@ -1,51 +1,62 @@
-// scripts/audit-samples.mjs — compile every code sample the wiki documents.
+// scripts/audit-samples.mjs — compile every code sample the wiki shows a reader.
 //
-//   scrml build . --output dist-audit   # or just run scripts/serve.sh once
-//   node scripts/audit-samples.mjs [distDir]
+//   scrml build . --target static --output <dir>
+//   node scripts/audit-samples.mjs <dir>          # exit 0 = every sample honest
 //
-// WHY: the wiki's gates prove routes resolve and pixels render. They cannot
-// prove the DOCUMENTATION IS TRUE. The cheapest executable proxy for truth in a
-// language reference is: does the code we tell people to write actually compile?
-// This extracts every <pre><code> block from the built site and compiles each
-// against the linked compiler.
+// WHY: the wiki's other gates prove routes resolve and pixels render. They
+// cannot prove the DOCUMENTATION IS TRUE. The cheapest executable proxy for
+// truth in a language reference is: does the code we tell people to write
+// actually compile? This extracts every <pre><code> block from the BUILT site
+// and compiles each against the compiler.
 //
-// ADVISORY, not merge-blocking — read the caveat before treating a FAIL as a bug:
+// THIS IS A GATE (since 2026-09-29). It exits 1 when any sample is dishonest,
+// and CI (.github/workflows/deploy.yml) runs it before publishing. Until then
+// it was advisory and ~20 reader-facing samples had quietly stopped compiling
+// (some never had).
 //
-//   Samples come in kinds. A SELF-CONTAINED sample (contains `<program>`) must
-//   compile standalone; those failures are real and actionable. A FRAGMENT is a
-//   few lines lifted out of a larger program — it is wrapped in a minimal
-//   <program> here, which cannot supply the surrounding declarations, so
-//   E-STATE-UNDECLARED / E-CTX-00x / E-SCOPE-001 on a fragment usually means
-//   "the harness lacks context", NOT "the doc is wrong". Judge fragments by
-//   whether the error names a REMOVED OR INVALID CONSTRUCT.
+// THE RULE — every <pre> block is one of:
 //
-//   Error-reference pages (/reference/errors/E-FOO) deliberately show code that
-//   triggers E-FOO. A sample under that route failing with its own code is the
-//   documentation being CORRECT; those are auto-excluded.
+//   (unlabelled)  scrml the reader can copy. It MUST compile: as-is when it
+//                 contains a <program> element, otherwise wrapped in a minimal
+//                 <program>. A failure fails the gate. Exception: on an error
+//                 reference page (/reference/errors/E-FOO) a sample that fails
+//                 WITH ITS OWN CODE is the page being correct.
+//   shell         auto-detected (starts with bun/git/cd/curl/npm/npx/scrml/$).
 //
-// Findings this caught on its first run (2026-07-22), all since fixed:
-//   - reference/keywords/lift + derived documented `forEach(x => lift ...)`,
-//     which is not lowerable (E-CODEGEN-INVALID-LOGIC). The `lift` page was
-//     documenting `lift` with an idiom that does not compile.
-//   - articles/why-deprecate-overloading used `not <expr>` for boolean negation
-//     (E-TYPE-045) — `not` is the absence value; `!` negates.
-//   - reference/elements/channel had a `server function` reading a channel cell
-//     (E-CHANNEL-SERVER-CELL-READ). A channel-cell write is CLIENT-side (§38.4).
+//   Or it carries a data-sample="…" label on the <pre>. Labels the reader can
+//   SEE are rendered as a caption by app.scrml's `pre[data-sample]::before`:
 //
-// It also cleared things that LOOKED wrong: plain `forEach` without `lift` is
-// fine, and `server function` is still valid where no other trigger exists.
-// (The `server` split migration later removed the 10 redundant uses and HELD the
-// trigger-free one — see hand-off Session 7.) Verify before "fixing" working docs.
+//   fragment  "fragment — not a complete program": lines lifted out of a larger
+//             program; they need declarations the block does not show.
+//   syntax    "syntax summary": a grammar line with placeholders.
+//   spec      "specified — not in the shipping compiler yet": designed and in
+//             SPEC, but the compiler does not build it. Never use this for
+//             something that is merely broken.
+//   error     "does not compile — shows the error": the block exists to show
+//             a diagnostic. The gate REQUIRES it to fail; if the compiler
+//             starts accepting it, the page is now wrong and the gate says so.
+//   other     not scrml at all (JavaScript/TypeScript "before" code, SQL, CSS
+//             or JS the compiler emitted, terminal output). No caption.
+//
+// Labelling is a claim a reviewer can check; it is not an escape hatch. Prefer
+// making a sample compile over labelling it.
+//
+// Env: SCRML (compiler entry, default: the linked dependency), AUDIT_WORK
+// (scratch dir, default: $TMPDIR/scrml-site-audit-<pid>), AUDIT_JOBS
+// (parallelism, default 6), AUDIT_ALL=1 also prints passing samples.
 import { readdirSync, statSync, readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join, relative } from "node:path";
-import { execFileSync } from "node:child_process";
+import { tmpdir } from "node:os";
+import { execFile } from "node:child_process";
 
 const DIST = process.argv[2] || "dist";
 // Resolve the compiler THROUGH the linked dependency, not an absolute path —
 // a hardcoded /home/<user>/... breaks on any other machine. SCRML overrides.
 const SCRML = process.env.SCRML
   || new URL("../node_modules/scrml/compiler/bin/scrml.js", import.meta.url).pathname;
-const WORK = "/tmp/scrml-site-audit";
+const WORK = process.env.AUDIT_WORK || join(tmpdir(), `scrml-site-audit-${process.pid}`);
+const JOBS = Number(process.env.AUDIT_JOBS || 6);
+const LABELS = new Set(["fragment", "syntax", "spec", "error", "other"]);
 
 const walk = (d, o = []) => {
   for (const e of readdirSync(d)) {
@@ -60,49 +71,82 @@ const unescape = (s) => s
   .replace(/<\/?span[^>]*>/g, "")
   .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
   .replace(/&#(\d+);/g, (_, d) => String.fromCharCode(+d))
-  .replace(/&mdash;/g, "—").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&");
+  .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
+  .replace(/&mdash;/g, "—").replace(/&ndash;/g, "–").replace(/&hellip;/g, "…")
+  .replace(/&minus;/g, "−").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&");
 
 const samples = [];
+const badLabels = [];
 for (const f of walk(DIST)) {
   let route = "/" + relative(DIST, f).replace(/\.html$/, "");
   route = route.replace(/\/index$/, "") || "/";
   const doc = readFileSync(f, "utf8");
-  const re = /<pre[^>]*>\s*<code[^>]*>([\s\S]*?)<\/code>\s*<\/pre>/g;
+  const re = /<pre([^>]*)>\s*<code[^>]*>([\s\S]*?)<\/code>\s*<\/pre>/g;
   let m, i = 0;
   while ((m = re.exec(doc))) {
-    const code = unescape(m[1]);
-    if (code.trim().length >= 10) samples.push({ route, i: i++, code });
+    const label = (m[1].match(/data-sample="([^"]*)"/) || [])[1] || null;
+    const code = unescape(m[2]);
+    const idx = i++;
+    if (label && !LABELS.has(label)) badLabels.push(`${route} #${idx} data-sample="${label}"`);
+    samples.push({ route, i: idx, label, code });
   }
 }
 
-const isShell = (c) => /^\s*(curl|bun|npm|npx|git|cd|\$)\s/.test(c);
-const isSkeleton = (c) => c.includes("...") || c.includes("…");
-const kindOf = (c) => isShell(c) ? "shell" : isSkeleton(c) ? "skeleton"
-  : c.includes("<program>") ? "self-contained" : "fragment";
+const isShell = (c) => /^\s*(curl|bun|npm|npx|git|cd|scrml|\$)\s/.test(c);
+const hasProgram = (c) => /<program[\s>]/.test(c);
 
-let ok = 0, failReal = 0, failFrag = 0, skipped = 0;
-const real = [];
-for (const s of samples) {
-  const kind = kindOf(s.code);
-  if (kind === "shell" || kind === "skeleton") { skipped++; continue; }
-  // error-reference pages demonstrate their own error on purpose
-  const own = s.route.match(/\/reference\/errors\/(E-[A-Z0-9-]+)/)?.[1];
-  rmSync(WORK, { recursive: true, force: true });
-  mkdirSync(WORK, { recursive: true });
-  const src = kind === "self-contained" ? s.code : `<program>\n${s.code}\n</program>\n`;
-  writeFileSync(join(WORK, "app.scrml"), src);
-  let out = "", code = 0;
-  try { out = execFileSync("bun", [SCRML, "build", WORK, "--output", join(WORK, "out")], { encoding: "utf8", timeout: 60000, stdio: ["ignore", "pipe", "pipe"] }); }
-  catch (e) { code = 1; out = (e.stdout || "") + (e.stderr || ""); }
-  if (!code) { ok++; continue; }
-  const codes = [...new Set(out.match(/E-[A-Z0-9-]+/g) || [])];
-  if (own && codes.includes(own)) { skipped++; continue; }   // correct by design
-  if (kind === "self-contained") { failReal++; real.push({ ...s, kind, codes }); }
-  else { failFrag++; }
+function compile(s, n) {
+  const dir = join(WORK, String(n));
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  const src = hasProgram(s.code) ? s.code : `<program>\n${s.code}\n</program>\n`;
+  writeFileSync(join(dir, "app.scrml"), src);
+  return new Promise((res) => {
+    execFile("bun", [SCRML, "build", dir, "--output", join(dir, "out")],
+      { encoding: "utf8", timeout: 120000, maxBuffer: 16 << 20 },
+      (err, stdout, stderr) => {
+        const out = (stdout || "") + (stderr || "");
+        res({ rc: err ? 1 : 0, codes: [...new Set(out.match(/\bE-[A-Z0-9-]+/g) || [])] });
+      });
+  });
 }
 
-console.log(`\nsamples: ${samples.length}   compiled OK: ${ok}   skipped (shell/skeleton/self-demo): ${skipped}`);
-console.log(`fragment failures (usually missing harness context — judge by error): ${failFrag}`);
-console.log(`SELF-CONTAINED failures (actionable): ${failReal}`);
-for (const r of real) console.log(`  FAIL ${r.route} #${r.i}  ${r.codes.slice(0, 3).join(",")}`);
-process.exit(0);   // advisory — never blocks
+const results = [];
+let next = 0;
+async function worker() {
+  while (next < samples.length) {
+    const n = next++;
+    const s = samples[n];
+    if (s.label && s.label !== "error") { results.push({ ...s, verdict: "skip" }); continue; }
+    if (!s.label && isShell(s.code)) { results.push({ ...s, verdict: "skip" }); continue; }
+    const r = await compile(s, n);
+    const own = s.route.match(/\/reference\/errors\/(E-[A-Z0-9-]+)/)?.[1];
+    let verdict;
+    if (s.label === "error") verdict = r.rc ? "ok-error" : "FAIL-compiles";
+    else if (!r.rc) verdict = "ok";
+    else if (own && r.codes.includes(own)) verdict = "ok-own-error";
+    else verdict = "FAIL";
+    results.push({ ...s, ...r, verdict });
+  }
+}
+mkdirSync(WORK, { recursive: true });
+await Promise.all(Array.from({ length: JOBS }, worker));
+rmSync(WORK, { recursive: true, force: true });
+
+results.sort((a, b) => (a.route + a.i).localeCompare(b.route + b.i));
+const count = (v) => results.filter((r) => r.verdict === v).length;
+const fails = results.filter((r) => r.verdict.startsWith("FAIL"));
+const byLabel = {};
+for (const r of results) byLabel[r.label || (isShell(r.code) ? "shell" : "scrml")] = (byLabel[r.label || (isShell(r.code) ? "shell" : "scrml")] || 0) + 1;
+
+console.log(`\nsamples: ${results.length}   ${JSON.stringify(byLabel)}`);
+console.log(`compiled OK: ${count("ok")}   error pages showing their own code: ${count("ok-own-error")}   labelled error demos failing as they should: ${count("ok-error")}   skipped (labelled/shell): ${count("skip")}`);
+if (process.env.AUDIT_ALL) for (const r of results) console.log(`  ${r.verdict.padEnd(14)} ${r.route} #${r.i} ${r.label || ""}`);
+for (const b of badLabels) console.log(`  FAIL unknown label ${b}`);
+for (const r of fails) {
+  const why = r.verdict === "FAIL-compiles" ? "labelled error but COMPILES" : (r.codes.slice(0, 4).join(",") || "non-zero exit");
+  console.log(`  FAIL ${r.route} #${r.i}  ${why}\n       ${r.code.trim().split("\n")[0].slice(0, 100)}`);
+}
+const bad = fails.length + badLabels.length;
+console.log(bad ? `\naudit-samples: RED — ${bad} dishonest sample(s)` : "\naudit-samples: GREEN");
+process.exit(bad ? 1 : 0);

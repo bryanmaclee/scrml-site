@@ -59,6 +59,21 @@
         .hover\:bg-slate-800:hover   { background-color: rgb(51 65 85) !important; }
         .hover\:text-slate-900:hover { color: rgb(241 245 249) !important; }
 
+        /* code-sample captions — see scripts/audit-samples.mjs for the rule */
+        pre[data-sample]::before {
+            display: block;
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.02em;
+            color: rgb(148 163 184);
+            margin-bottom: 0.5rem;
+        }
+        pre[data-sample="fragment"]::before { content: "fragment — not a complete program"; }
+        pre[data-sample="syntax"]::before   { content: "syntax summary — not a complete program"; }
+        pre[data-sample="spec"]::before     { content: "specified — not in the shipping compiler yet"; color: rgb(252 211 77); }
+        pre[data-sample="error"]::before    { content: "does not compile — shows the error"; color: rgb(251 113 133); }
+        pre[data-sample="other"]::before    { content: none; display: none; }
+
         /* link palette */
         .text-blue-700                { color: rgb(125 211 252) !important; }
         .hover\:text-blue-900:hover   { color: rgb(186 230 253) !important; }
