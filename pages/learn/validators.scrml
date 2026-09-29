@@ -76,13 +76,14 @@
 
         <p class="text-slate-700 leading-relaxed mb-3">
             Start with one cell and one predicate. Per SPEC &sect;55.2,
-            a validator attaches to a state declaration as a
-            bare attribute after the type:
+            a validator attaches to a state declaration as a bare
+            attribute inside the angle brackets, after the name. An
+            optional type annotation goes after the closing bracket:
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
 
-  &lt;email: string req&gt; = ""
+  &lt;email req&gt;: string = ""
 
   &lt;input bind:value=@email placeholder="Email"&gt;
   &lt;errors of=@email/&gt;
@@ -158,9 +159,9 @@
             Apply the right one per field:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;firstName:  string req&gt;     = ""    // must be meaningful
-&lt;middleName: string is some&gt; = ""    // empty is fine
-&lt;lastName:   string req&gt;     = ""    // must be meaningful</code></pre>
+        <pre data-sample="spec" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;firstName req&gt;: string      = ""    // must be meaningful
+&lt;middleName is some&gt;: string = ""    // empty is fine
+&lt;lastName req&gt;: string       = ""    // must be meaningful</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             A user with no middle name leaves that field blank;
@@ -168,6 +169,18 @@
             is
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">true</code>;
             the form submits.
+        </p>
+
+        <p class="text-slate-700 leading-relaxed mt-3">
+            <strong>Not in the compiler yet (as of v0.8.0):</strong>
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">is some</code>
+            on a cell declaration is specified (&sect;55.1) but the current
+            compiler does not declare a cell written that way &mdash; reading
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@middleName</code>
+            fails with
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-STATE-UNDECLARED</code>.
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">req</code>
+            and the other predicates work today.
         </p>
 
         // ───────────────────────────────────────────────────────────
@@ -184,8 +197,8 @@
             decl:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;username: string req length(&gt;=3, &lt;=20) pattern(/^[a-z0-9_]+$/)&gt; = ""
-&lt;age:      number req gte(13) lte(120)&gt;                            = 0</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;username req length(&gt;=3, &lt;=20) pattern(/^[a-z0-9_]+$/)&gt;: string = ""
+&lt;age req gte(13) lte(120)&gt;: number                                = 0</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Per &sect;55.12 short-circuit composition:
@@ -236,9 +249,9 @@
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;signup&gt;
-  &lt;email:    string req&gt;             = ""
-  &lt;password: string req length(&gt;=8)&gt; = ""
-  &lt;age:      number req gte(13)&gt;      = 0
+  &lt;email req&gt;: string                = ""
+  &lt;password req length(&gt;=8)&gt;: string = ""
+  &lt;age req gte(13)&gt;: number          = 0
 &lt;/&gt;
 
 &lt;form&gt;
@@ -278,11 +291,11 @@
         <p class="text-slate-700 leading-relaxed mb-3">
             Per &sect;55.10, error messages resolve through a 4-level
             chain. The first that matches wins. For per-decl
-            customisation, write the message inline after the
+            customisation, pass the message as a string argument to the
             predicate:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;email: string req:"Please enter your email."&gt; = ""</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;email req("Please enter your email.")&gt;: string = ""</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             For project-level messages (shared across many fields),
@@ -311,18 +324,33 @@
             that failed:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>$&#123;
-  @signup.email.errors.forEach(e =&gt; match e &#123;
-    .Required          =&gt; logEvent("email-blank")
-    .PatternMismatch(p)=&gt; logEvent("email-malformed", p)
-    .LengthFailed(p)   =&gt; logEvent("email-too-short", p)
-  &#125;)
+        <pre data-sample="spec" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>function report(e: ValidationError) &#123;
+  match e &#123;
+    .Required        :&gt; logEvent("email-blank")
+    .PatternMismatch :&gt; logEvent("email-malformed")
+    .LengthFailed    :&gt; logEvent("email-too-short")
+    else             :&gt; logEvent("email-other")
+  &#125;
 &#125;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Consumers pattern-match on the tag; the message string is
             one rendering. Analytics, custom UIs, and accessibility
             layers all read from the same typed surface.
+        </p>
+
+        <p class="text-slate-700 leading-relaxed mt-3">
+            <strong>Not reliable yet (as of v0.8.0):</strong> the block
+            above compiles, but in the current compiler a
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">match</code>
+            over a
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">ValidationError</code>
+            value does not match the error objects the runtime produces, so
+            every error falls to the
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">else</code>
+            arm. Render errors with
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;errors of=&hellip;/&gt;</code>,
+            which does work, until that is fixed.
         </p>
 
         // ───────────────────────────────────────────────────────────

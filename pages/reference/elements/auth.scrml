@@ -1,7 +1,7 @@
 // scrml.dev /reference/elements/auth
 //
-// Reference page for the auth element. First-class compile-time
-// visibility constraint. Drives the per-route per-role artifact
+// Reference page for the auth element. Per-role JS-mount gate (not
+// content secrecy — W-AUTH-CONTENT-NOT-GATED). Drives the per-route per-role artifact
 // splitter (Approach A, S88-S92).
 //
 // SPEC anchors: §40.1 (auth first-class element) + §40.9 (Approach
@@ -41,9 +41,11 @@
             <p class="text-lg text-slate-600 mt-2">
                 Per-role <strong>JS-mount / code-split</strong> constraint.
                 Wraps page subtrees whose client behaviour should mount only
-                for specific roles. The compiler emits per-role JS bundles
-                automatically &mdash; anonymous visitors download strictly
-                smaller initial <em>JS</em> artifacts.
+                for specific roles. With
+                <code class="font-mono text-sm">scrml compile --emit-per-route</code>
+                (opt-in) the compiler also splits the JavaScript per role, so
+                anonymous visitors download smaller initial <em>JS</em>
+                artifacts.
             </p>
             <p class="text-sm text-rose-800 bg-rose-50 border border-rose-200 rounded px-3 py-2 mt-3">
                 <strong>Not a content-secrecy control.</strong>
@@ -75,9 +77,8 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;auth role="Admin"&gt;
-  &lt;page path="/admin" /&gt;
-  ...
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;auth role="Admin"&gt;
+  ...markup whose client code mounts only for Admin...
 &lt;/auth&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-4">
@@ -102,28 +103,39 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-3">
-            A small app with two public pages and one admin-only
-            page. Anonymous visitors get a chunk without any of the
-            admin subtree's atoms.
+            A nav bar with an admin-only link and button. Routes come
+            from the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">pages/</code>
+            directory, not from attributes; <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;auth&gt;</code>
+            wraps markup. With per-route output on, anonymous visitors get
+            a chunk without the admin subtree's code.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Role:enum = { Anonymous, User, Admin }
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program auth="required" loginRedirect="/login"&gt;
 
-&lt;program auth="required" loginRedirect="/login"&gt;
+  type Role:enum = &#123; Anonymous, User, Admin &#125;
 
-  &lt;page path="/"        /&gt;
-  &lt;page path="/about"   /&gt;
+  &lt;nav&gt;
+    &lt;a href="/"&gt;Home&lt;/a&gt;
+    &lt;a href="/about"&gt;About&lt;/a&gt;
+    &lt;auth role="Admin"&gt;
+      &lt;a href="/admin"&gt;Admin&lt;/a&gt;
+      &lt;button onclick=clearCache()&gt;Clear cache&lt;/button&gt;
+    &lt;/auth&gt;
+  &lt;/nav&gt;
 
-  &lt;auth role="Admin"&gt;
-    &lt;page path="/admin"        /&gt;
-    &lt;page path="/admin/users"  /&gt;
-  &lt;/auth&gt;
+  function clearCache() &#123; console.log("cleared") &#125;
 
 &lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
-            The compiler analyzes the closure of each page across the
-            three roles and emits three sets of <em>JS</em> chunks. Anonymous
+            It compiles today with
+            <a hard href="/reference/errors/W-AUTH-CONTENT-NOT-GATED"
+               class="font-mono text-xs text-amber-700 underline">W-AUTH-CONTENT-NOT-GATED</a>
+            (and, until a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">/login</code>
+            page exists, W-AUTH-LOGIN-MISSING). Under
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">--emit-per-route</code>
+            the compiler analyzes the closure of each page across the
+            three roles and emits a set of <em>JS</em> chunks per role. Anonymous
             visitors load the public pages and the login redirect; the admin
             subtree's <em>JS atoms</em> (mount + wiring) are absent from their
             bundle. The served HTML, however, still carries the admin markup
@@ -297,7 +309,7 @@
                 &mdash; individual page route. Inherits the wrapping
                 the auth element's role unless it has its own
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">auth=</code>.
-                Reference page queued.
+                See <a hard href="/reference/elements/page" class="font-mono text-blue-700 hover:text-blue-900 underline">&lt;page&gt;</a>.
             </li>
             <li>
                 <span class="font-mono text-slate-500">chunks.json</span>

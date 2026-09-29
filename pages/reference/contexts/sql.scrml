@@ -54,7 +54,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>?&#123; &lt;sql template literal&gt; &#125;.&lt;result-mode&gt;()</code></pre>
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>?&#123; &lt;sql template literal&gt; &#125;.&lt;result-mode&gt;()</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-4">
             The SQL goes inside <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?&#123;…&#125;</code>.
@@ -72,7 +72,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-3">
-            A four-call contact book sketch — INSERT, SELECT, DELETE — all
+            A contact book sketch — INSERT, SELECT, DELETE — all
             inline in scrml. No API definition, no fetch wrapper, no
             server route to wire up. The compiler reads the SQL sites,
             infers which functions need to run server-side (per
@@ -80,17 +80,31 @@
             automatically.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>function addContact(name, email) &#123;
-  ?&#123;`INSERT INTO contacts (name, email) VALUES (...)`&#125;.run()
-&#125;
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program db="./app.db"&gt;
 
-function loadContacts() &#123;
-  return ?&#123;`SELECT id, name, email FROM contacts`&#125;.all()
-&#125;
+  &lt;schema&gt;
+    contacts &#123;
+      id:    integer primary key
+      name:  text req
+      email: text req
+    &#125;
+  &lt;/schema&gt;
 
-function deleteContact(id) &#123;
-  ?&#123;`DELETE FROM contacts WHERE id = ...`&#125;.run()
-&#125;</code></pre>
+  function addContact(name, email) &#123;
+    ?&#123;`INSERT INTO contacts (name, email) VALUES ($&#123;name&#125;, $&#123;email&#125;)`&#125;.run()
+  &#125;
+
+  function loadContacts() &#123;
+    return ?&#123;`SELECT id, name, email FROM contacts`&#125;.all()
+  &#125;
+
+  function deleteContact(id) &#123;
+    ?&#123;`DELETE FROM contacts WHERE id = $&#123;id&#125;`&#125;.run()
+  &#125;
+
+  &lt;button onclick=addContact("Ada", "ada@example.com")&gt;Add Ada&lt;/button&gt;
+
+&lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-4">
             The full runnable example lives at

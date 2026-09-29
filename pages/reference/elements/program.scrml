@@ -67,11 +67,8 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program [attributes]&gt;
-  &lt;page path=... /&gt;
-  &lt;channel name=... /&gt;
-  &lt;auth role=... /&gt;
-  ...
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program [attributes]&gt;
+  ...state, functions, markup, &lt;channel&gt;, &lt;auth&gt;, &lt;outlet/&gt;...
 &lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-4">
@@ -91,9 +88,12 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-3">
-            A small app with documentary attributes, two pages, a
-            real-time channel for chat, and a logged-in-only admin
-            page.
+            The root of a multi-page app: documentary attributes, the nav
+            chrome every page shares, an
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;outlet/&gt;</code>
+            where the current page renders, and a real-time presence
+            channel. The pages themselves are files under
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">pages/</code>.
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="Acme Cards"
@@ -102,32 +102,28 @@
          author="Bryan MacLee"
          license="MIT"&gt;
 
-  &lt;page path="/" /&gt;
-  &lt;page path="/board" /&gt;
+  &lt;nav&gt;
+    &lt;a href="/"&gt;Home&lt;/a&gt;
+    &lt;a href="/board"&gt;Board&lt;/a&gt;
+  &lt;/nav&gt;
 
-  &lt;auth role="Admin"&gt;
-    &lt;page path="/admin" /&gt;
-  &lt;/auth&gt;
+  &lt;outlet/&gt;
 
   &lt;channel name="presence" topic="board"&gt;
     &lt;online&gt; = []
   &lt;/channel&gt;
+
+  &lt;p&gt;${@online.length} online&lt;/p&gt;
 
 &lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             The documentary attributes feed the HTML
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;head&gt;</code>
-            (per SPEC &sect;40.7). The
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;auth role="Admin"&gt;</code>
-            wrapper omits
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">/admin</code>
-            from anonymous <em>JS</em> bundles (code-split only, per the
-            Approach A closure-analysis + per-route per-role artifact splitter)
-            &mdash; it is NOT a content-secrecy gate; the served HTML still
-            carries the markup (see the
+            (per SPEC &sect;40.7). For role-gated markup, see the
             <a hard href="/reference/elements/auth" class="text-blue-700 hover:text-blue-900 underline">&lt;auth&gt;</a>
-            page).
+            page &mdash; it gates which client code mounts, not what HTML
+            is sent.
             The channel body uses V5-strict declarations; its cells
             auto-sync across connected clients.
         </p>
@@ -331,26 +327,23 @@
 
         <ul class="space-y-1 text-slate-700">
             <li>
-                <span class="font-mono text-slate-500">&lt;page path=...&gt;</span>
-                &mdash; route declaration. Filesystem-routed by
-                default;
-                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">path=</code>
-                overrides. Reference page queued.
+                <a hard href="/reference/elements/page" class="font-mono text-blue-700 hover:text-blue-900 underline">&lt;page&gt;</a>
+                &mdash; route declaration. Routes come from the files
+                under pages/.
             </li>
             <li>
-                <span class="font-mono text-slate-500">&lt;channel name=...&gt;</span>
+                <a hard href="/reference/elements/channel" class="font-mono text-blue-700 hover:text-blue-900 underline">&lt;channel name=...&gt;</a>
                 &mdash; real-time multi-client surface. V5-strict body;
-                auto-sync. Reference page queued.
+                auto-sync.
             </li>
             <li>
-                <span class="font-mono text-slate-500">&lt;auth role=...&gt;</span>
-                &mdash; per-role visibility. Drives the per-route
-                per-role artifact splitter. Reference page queued.
+                <a hard href="/reference/elements/auth" class="font-mono text-blue-700 hover:text-blue-900 underline">&lt;auth role=...&gt;</a>
+                &mdash; per-role JS-mount gate (not content secrecy).
             </li>
             <li>
-                <span class="font-mono text-slate-500">&lt;schema&gt;</span>
+                <a hard href="/reference/elements/schema" class="font-mono text-blue-700 hover:text-blue-900 underline">&lt;schema&gt;</a>
                 &mdash; declarative database schema. Cross-checked
-                with ?{} at compile time. Reference page queued.
+                with ?{} at compile time.
             </li>
         </ul>
 

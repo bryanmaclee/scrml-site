@@ -38,9 +38,9 @@
                 &lt;page&gt;
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                Route declaration. Filesystem-routed by default;
-                path= overrides. Lives inside the entry-file program,
-                or as a standalone file under pages/.
+                Route declaration. Routes come from the filesystem: a
+                file under pages/ is a route. Lives as a standalone file
+                under pages/, or inside the entry-file program.
             </p>
             <div class="flex gap-4 mt-4 text-xs">
                 <span class="px-2 py-1 bg-emerald-50 text-emerald-700 rounded">
@@ -61,7 +61,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;page [path="/explicit-route"] [auth="required"]&gt;
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;page [auth="required"] [db="./app.db"] [csrf=…] [ratelimit=…] [keep-alive]&gt;
   &lt;!-- page body --&gt;
 &lt;/page&gt;</code></pre>
 
@@ -73,9 +73,7 @@
             <li>
                 <strong>Inline in entry file.</strong>
                 A &lt;page&gt; declared inside the entry-file
-                &lt;program&gt; body. Useful for small apps. The
-                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">path=</code>
-                attribute is REQUIRED when used inline.
+                &lt;program&gt; body. Useful for small apps.
             </li>
             <li>
                 <strong>Standalone file under pages/.</strong>
@@ -102,7 +100,7 @@
             routes.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>app.scrml                       &lt;program&gt; root + nav chrome
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>app.scrml                       &lt;program&gt; root + nav chrome
 pages/
   index.scrml                   /
   about.scrml                   /about
@@ -220,14 +218,21 @@ pages/
                 per route inference.
             </li>
             <li>
-                <strong>Dynamic segments via path= attribute.</strong>
-                For routes that need positional parameters
-                (e.g.,
-                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">/users/:id</code>),
-                use the explicit
-                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">path=</code>
-                attribute. Filesystem-inferred routes are static
-                only.
+                <strong>No <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">path=</code> attribute.</strong>
+                The attributes a
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;page&gt;</code>
+                accepts are exactly
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">db</code>,
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">auth</code>,
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">csrf</code>,
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">ratelimit</code>
+                and
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">keep-alive</code>;
+                anything else, including
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">path=</code>,
+                is
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-PAGE-INVALID-ATTR</code>.
+                The file's position under pages/ is the route.
             </li>
             <li>
                 <strong>routes/ alias.</strong>

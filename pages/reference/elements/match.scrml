@@ -64,7 +64,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;match for=TypeName [on=expr]&gt;
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;match for=TypeName on=expr&gt;
   &lt;Variant /&gt;
   &lt;OtherVariant payload /&gt;
   ...
@@ -77,10 +77,12 @@
             <a hard href="/reference/errors/E-MATCH-NOT-EXHAUSTIVE"
                class="font-mono text-xs text-rose-700 underline">E-MATCH-NOT-EXHAUSTIVE</a>.
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">on=</code>
-            picks the expression to &#109;atch against; if omitted, the
-            block matches the auto-declared engine variable for that
-            type (typically the lowercased first-letter of the type
-            name).
+            picks the expression to &#109;atch against. It is required,
+            except when an
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;engine for=&gt;</code>
+            for the same type is in scope &mdash; then the block matches
+            that engine's variable. Leaving it out otherwise is
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-MATCH-ON-REQUIRED</code>.
         </p>
 
         <p class="text-slate-700 leading-relaxed mt-4">
@@ -109,9 +111,9 @@
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = { Idle, Loading, Error(msg: string), Success(count: int) }
 
-&lt;phase&gt; = .Idle
+&lt;phase&gt;: Phase = .Idle
 
-&lt;match for=Phase&gt;
+&lt;match for=Phase on=@phase&gt;
   &lt;Idle&gt;
     &lt;button onclick=&#36;{@phase = .Loading}&gt;Load&lt;/button&gt;
   &lt;/Idle&gt;

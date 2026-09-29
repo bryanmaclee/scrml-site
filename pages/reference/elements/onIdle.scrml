@@ -59,7 +59,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;onIdle after=DURATION to=.Variant /&gt;</code></pre>
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;onIdle after=DURATION to=.Variant /&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-4">
             Self-closing only. Both

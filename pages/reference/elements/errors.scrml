@@ -55,7 +55,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;errors of=@cellExpr/&gt;
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;errors of=@cellExpr/&gt;
 &lt;errors of=@compound.field all/&gt;
 &lt;errors of=@compound/&gt;</code></pre>
 
@@ -84,15 +84,19 @@
     &lt;agree req&gt;             = &lt;input type="checkbox"/&gt;
 &lt;/&gt;
 
+function submit() &#123; console.log(@signup.name) &#125;
+
 &lt;form onsubmit=submit()&gt;
-    &lt;label&gt;Name  &lt;signup.name/&gt;&lt;/label&gt;
-    &lt;errors of=@signup.name/&gt;
+    &lt;signup&gt;
+        &lt;label&gt;Name  &lt;name/&gt;&lt;/label&gt;
+        &lt;errors of=@signup.name/&gt;
 
-    &lt;label&gt;Email &lt;signup.email/&gt;&lt;/label&gt;
-    &lt;errors of=@signup.email/&gt;
+        &lt;label&gt;Email &lt;email/&gt;&lt;/label&gt;
+        &lt;errors of=@signup.email/&gt;
 
-    &lt;label&gt;Agree &lt;signup.agree/&gt;&lt;/label&gt;
-    &lt;errors of=@signup.agree/&gt;
+        &lt;label&gt;Agree &lt;agree/&gt;&lt;/label&gt;
+        &lt;errors of=@signup.agree/&gt;
+    &lt;/&gt;
 
     &lt;button type="submit" disabled=${!@signup.isValid}&gt;Submit&lt;/button&gt;
 

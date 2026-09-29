@@ -62,7 +62,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>${ statementOrExpression }
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>${ statementOrExpression }
 ${ @cell }
 ${ @count + 1 }
 ${ function name() { ... } }
@@ -98,7 +98,7 @@ ${ if (cond) { ... } }</code></pre>
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;count&gt; = 0
-const &lt;label&gt; = ${ "Clicked " + @count + " times" }
+const &lt;label&gt; = "Clicked " + @count + " times"
 
 &lt;button onclick=${ @count = @count + 1 }&gt;
   ${ @label }
@@ -271,9 +271,9 @@ const &lt;label&gt; = ${ "Clicked " + @count + " times" }
                 Reference page queued.
             </li>
             <li>
-                <span class="font-mono text-slate-500">^&#123; ... &#125;</span>
+                <a hard href="/reference/contexts/meta" class="font-mono text-blue-700 hover:text-blue-900 underline">^&#123; ... &#125;</a>
                 &mdash; meta context. Compile-time code execution +
-                splicing. Reference page queued.
+                splicing.
             </li>
             <li>
                 <span class="font-mono text-slate-500">_&#123; ... &#125;</span>

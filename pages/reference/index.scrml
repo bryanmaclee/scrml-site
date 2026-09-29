@@ -103,7 +103,7 @@
             <li>
                 <a hard href="/reference/elements/page" class="font-mono text-blue-700 hover:text-blue-900 underline">
                     &lt;page&gt;
-                </a> &mdash; Route declaration. Filesystem-routed; path= overrides. Per-route per-role artifacts.
+                </a> &mdash; Route declaration. Routes come from the files under pages/.
             </li>
             <li>
                 <a hard href="/reference/elements/schema" class="font-mono text-blue-700 hover:text-blue-900 underline">

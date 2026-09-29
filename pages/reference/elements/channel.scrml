@@ -59,7 +59,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;channel name="chat" topic="lobby"&gt;
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;channel name="chat" topic="lobby"&gt;
   &lt;cell&gt; = initialValue
   ...
 &lt;/channel&gt;</code></pre>

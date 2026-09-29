@@ -57,7 +57,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;onTransition [from=.Variant] [to=.Variant] [once] [if=cond]&gt;
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;onTransition [from=.Variant] [to=.Variant] [once] [if=cond]&gt;
   &lt;!-- effect body --&gt;
 &lt;/onTransition&gt;</code></pre>
 
@@ -86,7 +86,10 @@
             and cleanup on the error transition.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = { Idle, Loading, Error(msg: string), Success(count: int) }
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = &#123; Idle, Loading, Error(msg: string), Success(count: int) &#125;
+
+function track(name) &#123; console.log(name) &#125;
+function cleanup() &#123; console.log("cleanup") &#125;
 
 &lt;engine for=Phase initial=.Idle&gt;
   &lt;Idle    rule=.Loading /&gt;
@@ -95,7 +98,7 @@
   &lt;Success rule=.Idle /&gt;
 
   &lt;onTransition from=.Loading to=.Success&gt;
-    ${ analytics.track("load.success") }
+    ${ track("load.success") }
   &lt;/onTransition&gt;
 
   &lt;onTransition to=.Error&gt;
@@ -103,7 +106,7 @@
   &lt;/onTransition&gt;
 
   &lt;onTransition from=.Idle to=.Loading once&gt;
-    ${ firstLoadInstrumentation() }
+    ${ track("first-load") }
   &lt;/onTransition&gt;
 &lt;/engine&gt;</code></pre>
 
@@ -261,8 +264,7 @@
                 <span class="font-mono text-slate-500">&lt;onTimeout&gt;</span>
                 &#47; <span class="font-mono text-slate-500">&lt;onIdle&gt;</span>
                 &mdash; sibling temporal triggers (per-state and
-                engine-wide watchdog respectively). Reference pages
-                queued.
+                engine-wide watchdog respectively). See <a hard href="/reference/elements/onTimeout" class="font-mono text-blue-700 hover:text-blue-900 underline">&lt;onTimeout&gt;</a> and <a hard href="/reference/elements/onIdle" class="font-mono text-blue-700 hover:text-blue-900 underline">&lt;onIdle&gt;</a>.
             </li>
             <li>
                 <a hard href="/reference/elements/match" class="text-blue-700 hover:text-blue-900 underline">

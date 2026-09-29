@@ -177,9 +177,9 @@
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program db="./contacts.db"&gt;
 
   &lt;contacts&gt; = ?&#123;`SELECT id, name, email, phone FROM contacts ORDER BY name`&#125;.all()
-  &lt;newName: string req&gt;  = ""
-  &lt;newEmail: string req&gt; = ""
-  &lt;newPhone: string is some&gt; = ""
+  &lt;newName req&gt;: string  = ""
+  &lt;newEmail req&gt;: string = ""
+  &lt;newPhone&gt;: string     = ""
 
   $&#123;
     function addContact(name, email, phone) &#123;
@@ -233,7 +233,7 @@
             the compiler re-issues the query through the server boundary:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>function submit() &#123;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>function submit() &#123;
   addContact(@newName, @newEmail, @newPhone)
   reset(@newName)
   reset(@newEmail)

@@ -68,7 +68,7 @@
             Per &sect;22.2:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>meta-block ::= '^&#123;' meta-body '&#125;'
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>meta-block ::= '^&#123;' meta-body '&#125;'
 meta-body  ::= (any sequence of scrml statements and expressions)</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
@@ -221,22 +221,19 @@ meta-body  ::= (any sequence of scrml statements and expressions)</code></pre>
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Signup:struct = &#123;
-  email:    string req
-  password: string req
-  name:     string is some
+  email:    string,
+  password: string,
+  name:     string
 &#125;
 
-^&#123;
-  for (const field of reflect(Signup).fields) &#123;
-    emit(`
-      &lt;label&gt;
-        $&#123;field.name&#125;
-        &lt;input type="$&#123;field.type === 'string' ? 'text' : field.type&#125;"
-               name="$&#123;field.name&#125;"&gt;
-      &lt;/label&gt;
-    `)
+&lt;form&gt;
+  ^&#123;
+    const info = reflect(Signup)
+    for (const field of info.fields) &#123;
+      emit(`&lt;label&gt;$&#123;field.name&#125; &lt;input type="text" name="$&#123;field.name&#125;"&gt;&lt;/label&gt;`)
+    &#125;
   &#125;
-&#125;</code></pre>
+&lt;/form&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             At compile time, the block iterates the struct's three
@@ -245,8 +242,8 @@ meta-body  ::= (any sequence of scrml statements and expressions)</code></pre>
             elements in the emitted artifact. The output is plain
             markup &mdash; no runtime cost. For form-shaped types
             specifically, the dedicated
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">formFor(StructType)</code>
-            primitive (&sect;41.14) is the canonical alternative; the
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;formFor for=StructType/&gt;</code>
+            element (&sect;41.14) is the canonical alternative; the
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">^&#123;&#125;</code>
             surface is for shapes that don't have a dedicated
             primitive yet.

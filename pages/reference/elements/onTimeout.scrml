@@ -62,7 +62,7 @@
             Syntax
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;onTimeout after=DURATION to=.Variant [name=IDENT] /&gt;</code></pre>
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;onTimeout after=DURATION to=.Variant [name=IDENT] /&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-4">
             Self-closing only. Both
@@ -136,16 +136,21 @@
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.TimedOut</code>.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type LoadPhase:enum = { Idle, Loading, Done(rows: int), TimedOut, Error(msg: string) }
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type LoadPhase:enum = &#123; Idle, Loading, Done(rows: int), TimedOut, Error(msg: string) &#125;
+type FetchError:enum = &#123; Network(msg: string), Empty &#125;
 
-function load() {
+function fetchItems()! -&gt; FetchError &#123;
+  fail FetchError::Empty          // stand-in for a real server read
+&#125;
+
+function load() &#123;
   @loadPhase = .Loading
-  const result = fetchItems() !{
-    | ::Network msg -&gt; { @loadPhase = .Error(msg); return }
-    | ::Empty       -&gt; { @loadPhase = .Done(0);    return }
-  }
+  const result = fetchItems() !&#123;
+    | ::Network msg :&gt; &#123; @loadPhase = .Error(msg); return &#125;
+    | ::Empty       :&gt; &#123; @loadPhase = .Done(0);    return &#125;
+  &#125;
   @loadPhase = .Done(result.length)
-}
+&#125;
 
 &lt;engine for=LoadPhase initial=.Idle&gt;
   &lt;Idle rule=.Loading&gt;
@@ -157,9 +162,9 @@ function load() {
     Loading&hellip;
   &lt;/&gt;
 
-  &lt;Done rows rule=.Idle&gt;: ${rows} rows
-  &lt;TimedOut rule=.Idle&gt;: Timed out
-  &lt;Error msg rule=.Idle&gt;: ${msg}
+  &lt;Done rows rule=.Idle&gt;${rows} rows&lt;/&gt;
+  &lt;TimedOut rule=.Idle&gt;Timed out&lt;/&gt;
+  &lt;Error msg rule=.Idle&gt;${msg}&lt;/&gt;
 &lt;/&gt;</code></pre>
 
         // ───────────────────────────────────────────────────────────
@@ -247,7 +252,7 @@ function load() {
             scrml; they only fire or clear-on-exit.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;Loading rule=(.Done | .TimedOut)&gt;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;Loading rule=(.Done | .TimedOut)&gt;
   &lt;onTimeout name=slow  after=5s  to=.Loading.history /&gt;
   &lt;onTimeout name=abort after=30s to=.TimedOut       /&gt;
 
