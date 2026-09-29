@@ -280,6 +280,35 @@
             were declared by you.
         </p>
 
+        <h3 class="text-lg font-semibold text-slate-900 mt-8 mb-2">
+            Or generate the form from a type
+        </h3>
+
+        <p class="text-slate-700 leading-relaxed mb-3">
+            When the fields already live on a struct, the
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;formFor&gt;</code> element (from
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml:data</code>) builds the form, its state cell and its
+            submit path from the type:
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
+  import &#123; formFor &#125; from "scrml:data"
+
+  type Signup:struct = &#123;
+    email:    string req
+    password: string req length(&gt;=8)
+  &#125;
+
+  function saveSignup(s) &#123; console.log(s) &#125;
+
+  &lt;formFor for=Signup onsubmit=saveSignup/&gt;
+&lt;/program&gt;</code></pre>
+
+        <p class="text-slate-700 leading-relaxed mt-3">
+            Its output-side twin, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;tableFor for=User rows=@users/&gt;</code>,
+            renders a table from the same kind of struct.
+        </p>
+
         // ───────────────────────────────────────────────────────────
         // Step 5
         // ───────────────────────────────────────────────────────────

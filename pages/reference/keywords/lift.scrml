@@ -158,6 +158,25 @@
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;ul&gt;</code>.
         </p>
 
+        <p class="text-slate-700 leading-relaxed mt-4 mb-3">
+            For a list whose items are added, removed or reordered, the
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;each&gt;</code> element is the keyed alternative &mdash; each
+            row is identified by its key:
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
+  &lt;contacts&gt; = [
+    &#123; id: 1, name: "Alice" &#125;,
+    &#123; id: 2, name: "Bob" &#125;,
+  ]
+
+  &lt;ul&gt;
+    &lt;each in=@contacts key=@.id as c&gt;
+      &lt;li&gt;$&#123;c.name&#125;&lt;/li&gt;
+    &lt;/each&gt;
+  &lt;/ul&gt;
+&lt;/program&gt;</code></pre>
+
         // ───────────────────────────────────────────────────────────
         // §4 — Worked example — value-lift mode
         // ───────────────────────────────────────────────────────────

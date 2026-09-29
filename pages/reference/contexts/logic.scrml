@@ -117,6 +117,50 @@ const &lt;label&gt; = "Clicked " + @count + " times"
             wiring.
         </p>
 
+        <h3 class="text-lg font-semibold text-slate-900 mt-8 mb-2">
+            Cleanup on every exit: <code class="font-mono">defer</code>
+        </h3>
+
+        <p class="text-slate-700 leading-relaxed mb-3">
+            scrml has no <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">try</code>/<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">finally</code>. Inside a
+            function body, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">defer &lt;statement&gt;</code> runs that statement
+            when the function exits, whichever way it exits (SPEC &sect;19.16):
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
+  &lt;busy&gt; = false
+  &lt;log&gt;  = ""
+
+  function save() &#123;
+    @busy = true
+    defer @busy = false          // runs on every way out of save()
+    @log = @log + "saved; "
+  &#125;
+
+  &lt;button onclick=save() disabled=@busy&gt;Save&lt;/button&gt;
+  &lt;p&gt;$&#123;@log&#125;&lt;/p&gt;
+&lt;/program&gt;</code></pre>
+
+        <h3 class="text-lg font-semibold text-slate-900 mt-8 mb-2">
+            Maps are values
+        </h3>
+
+        <p class="text-slate-700 leading-relaxed mb-3">
+            A map type is written <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">[K:V]</code> and an empty map
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">[:]</code>. Maps are values: <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.insert</code>
+            returns a new map, and assigning it back to the cell is the write
+            (SPEC &sect;59):
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
+  &lt;fares&gt;: [string:int] = [:]
+
+  function addFare(lane: string, cents: int) &#123; @fares = @fares.insert(lane, cents) &#125;
+
+  &lt;button onclick=addFare("DAL-HOU", 42000)&gt;Add DAL-HOU&lt;/button&gt;
+  &lt;p&gt;$&#123;@fares.size&#125; lanes priced&lt;/p&gt;
+&lt;/program&gt;</code></pre>
+
         // ───────────────────────────────────────────────────────────
         // §4 — Semantics
         // ───────────────────────────────────────────────────────────
