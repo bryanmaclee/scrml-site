@@ -23,6 +23,7 @@
         <p class="text-slate-700 leading-relaxed my-4"><em>by Bryan MacLee</em></p>
         <p class="text-slate-700 leading-relaxed my-4"><strong>TL;DR: The goal is a shipped app that is essentially bullet-proof — every reachable state has UI, every transition is intentional, every effect runs at the right moment. Getting there should not require rewriting the prototype. scrml has a three-tier ladder — <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102;=</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;m&#97;tch&gt;</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;e&#110;gine&gt;</code> — where the state-children migrate verbatim. The compiler tells you when to promote. The wrapper swap is the commitment moment.</strong></p>
         <p class="text-slate-700 leading-relaxed my-4">&gt; <strong>Status:</strong> all three rungs ship in the current compiler and the code blocks below compile against it — Tier 0 (lifecycle booleans + <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102;=</code> chains), Tier 1 block-form <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;m&#97;tch f&#111;r=Type&gt;</code> (plus the JS-style value-return <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">m&#97;tch expr {}</code> shape from §"Aside" below), and Tier 2 (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;e&#110;gine&gt;</code> with target-only <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">rule=.Variant</code> forms). The promotion path between rungs is the wrapper swap shown in this article; <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun scrml promote --match</code> mechanizes the Tier 0 → Tier 1 lift.</p>
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800"><strong>Correction, 2026-09-29.</strong> The status line above said every code block compiled; two did not. The Tier 1 <code>&lt;match&gt;</code> needed <code>on=@phase</code> (a <code>&lt;match&gt;</code> without an engine must name the cell it matches on), and the value-return <code>match</code> needed parenthesized payload bindings, <code>.Error(msg) :&gt; &hellip;</code>. Both are fixed below, and every full program now declares the <code>items</code> table it queries so it compiles as shown with v0.8.0. Two quoted lints were never real output: <code>W-LIFECYCLE-CANDIDATE</code> is specified for the four-boolean shape but does not fire on it, and <code>W-MATCH-TRANSITIONS-ACCRUING</code> was dropped before it shipped (the lint that pairs with the Tier 1&rarr;2 lift is <code>W-MATCH-RULE-INERT</code>). <code>scrml promote --engine</code>, described as deferred at the end, now ships. The error-handler arms in the examples now use the current arm arrow, <code>:&gt;</code>, instead of the legacy <code>-&gt;</code>.</div>
         <p class="text-slate-700 leading-relaxed my-4">This piece and its companion arrived together. This one shows the ladder. The companion piece, <em>Why scrml has to deprecate function and component overloading</em>, explains two features the language is deleting in v0.2.0 because the ladder you are about to read already does their job better.</p>
         <p class="text-slate-700 leading-relaxed my-4">Every framework I have looked at picks a side in the same fight. The state-machine evangelists insist you specify your machine before you write a feature. The rapid-prototyping evangelists hand you <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">useState</code> and let you stack booleans until you have a runtime invariant problem you cannot debug. Both camps are right about something and wrong about something else.</p>
         <p class="text-slate-700 leading-relaxed my-4">I have hobbled through React when I had to. I have written enough boolean-lifecycle code in my own experiments to recognize exactly the bug class state machines are supposed to prevent. The state-machine-first response to that bug class is fine in theory, but the prototype is the place where you find out what the states actually are. Asking the developer to name the machine before the feature exists is asking them to commit before they know.</p>
@@ -36,7 +37,15 @@
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program title="Counter"
          description="A counter app demonstrating Tier 0 → Tier 1 → Tier 2 promotion."
          version="0.1.0"
-         license="MIT"&gt;
+         license="MIT"
+         db=".&#47;app.db"&gt;
+
+&lt;schema&gt;
+    items &#123;
+        id:   integer primary key
+        name: text
+    &#125;
+&lt;&#47;&gt;
 
 ${
     t&#121;pe LoadError:enum = {
@@ -59,13 +68,13 @@ ${
         @isLoading = true
         @isError = false
         c&#111;nst rows = fetchItems() !{
-            | ::Network msg -&gt; {
+            | ::Network msg :&gt; {
                 @isError = true
                 @errorMsg = msg
                 @isLoading = false
                 r&#101;turn
             }
-            | ::Empty -&gt; {
+            | ::Empty :&gt; {
                 @isError = true
                 @errorMsg = "no rows"
                 @isLoading = false
@@ -94,7 +103,8 @@ ${
 
         <p class="text-slate-700 leading-relaxed my-4">The scrml compiler watches for this and emits a lint:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>W-LIFECYCLE-CANDIDATE: 4 reactive booleans gating the same UI tree.
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>(specified in SPEC §17 for booleans; not implemented as of v0.8.0)
+W-LIFECYCLE-CANDIDATE: 4 reactive booleans gating the same UI tree.
 Consider promoting to &lt;m&#97;tch f&#111;r=Type&gt; f&#111;r structural exhaustiveness.
   See SPEC §17 (Tier 0&#47;1&#47;2 ladder).</code></pre>
 
@@ -104,7 +114,14 @@ Consider promoting to &lt;m&#97;tch f&#111;r=Type&gt; f&#111;r structural exhaus
 
         <p class="text-slate-700 leading-relaxed my-4">The promotion looks like this. You name the type, write each variant once, give each variant the markup it owns.</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program db=".&#47;app.db"&gt;
+
+&lt;schema&gt;
+    items &#123;
+        id:   integer primary key
+        name: text
+    &#125;
+&lt;&#47;&gt;
 
 ${
     t&#121;pe LoadError:enum = {
@@ -130,14 +147,14 @@ ${
     f&#117;nction load() {
         @phase = .Loading
         c&#111;nst rows = fetchItems() !{
-            | ::Network msg -&gt; { @phase = .Error(msg); r&#101;turn }
-            | ::Empty       -&gt; { @phase = .Empty;     r&#101;turn }
+            | ::Network msg :&gt; { @phase = .Error(msg); r&#101;turn }
+            | ::Empty       :&gt; { @phase = .Empty;     r&#101;turn }
         }
         @phase = .Success(rows.length)
     }
 }
 
-&lt;m&#97;tch f&#111;r=Phase&gt;
+&lt;m&#97;tch f&#111;r=Phase on=@phase&gt;
     &lt;Idle&gt;
         &lt;button onclick=load()&gt;Load&lt;&#47;button&gt;
     &lt;&#47;&gt;
@@ -172,12 +189,12 @@ ${
 
         <p class="text-slate-700 leading-relaxed my-4">Sometimes you want the case-analysis to return a value into an expression position, not project markup. scrml has the same Tier-1 shape, JS-style:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>c&#111;nst summary = m&#97;tch @phase {
-    .Idle             -&gt; "Click load to begin"
-    .Loading          -&gt; "Loading…"
-    .Error msg        -&gt; "Failed: ${msg}"
-    .Empty            -&gt; "No items"
-    .Success count    -&gt; "Loaded ${count} items"
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>c&#111;nst summary = m&#97;tch @phase {
+    .Idle             :&gt; "Click load to begin"
+    .Loading          :&gt; "Loading…"
+    .Error(msg)       :&gt; "Failed: ${msg}"
+    .Empty            :&gt; "No items"
+    .Success(count)   :&gt; "Loaded ${count} items"
 }</code></pre>
 
         <p class="text-slate-700 leading-relaxed my-4">Same exhaustiveness contract — every variant must be covered, the compiler errors otherwise. Same payload destructuring (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">Error msg</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">Success count</code>). The difference is <em>position</em> and <em>output</em>: <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;m&#97;tch f&#111;r=Phase&gt;</code> projects markup into a render tree; <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">m&#97;tch @phase {}</code> evaluates to a value. Use whichever fits.</p>
@@ -194,7 +211,8 @@ ${
         </ul>
         <p class="text-slate-700 leading-relaxed my-4">You wire each of these into your event handlers. The wiring works. But the rules — "Loading is reachable from Idle and from Error&#47;Retry" — live distributed across handler bodies. There is no single place to read the transition graph. The compiler emits:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>W-MATCH-TRANSITIONS-ACCRUING: This &lt;m&#97;tch f&#111;r=Phase&gt; has 3 transition
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>(a lint proposed when this was written; it was dropped and never shipped)
+W-MATCH-TRANSITIONS-ACCRUING: This &lt;m&#97;tch f&#111;r=Phase&gt; has 3 transition
 points across event handlers (.Idle → .Loading, .Error → .Loading,
 .Loading → .Success). Consider promoting to &lt;e&#110;gine f&#111;r=Phase&gt; f&#111;r
 transition validation.
@@ -206,7 +224,14 @@ transition validation.
 
         <p class="text-slate-700 leading-relaxed my-4">Here is where most languages would ask you to rewrite. scrml does not. The state-children migrate verbatim. Only the wrapper changes.</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program db=".&#47;app.db"&gt;
+
+&lt;schema&gt;
+    items &#123;
+        id:   integer primary key
+        name: text
+    &#125;
+&lt;&#47;&gt;
 
 ${
     t&#121;pe LoadError:enum = {
@@ -231,8 +256,8 @@ ${
     f&#117;nction load() {
         @phase = .Loading
         c&#111;nst rows = fetchItems() !{
-            | ::Network msg -&gt; { @phase = .Error(msg); r&#101;turn }
-            | ::Empty       -&gt; { @phase = .Empty;     r&#101;turn }
+            | ::Network msg :&gt; { @phase = .Error(msg); r&#101;turn }
+            | ::Empty       :&gt; { @phase = .Empty;     r&#101;turn }
         }
         @phase = Phase.Success(rows.length)
     }
@@ -291,7 +316,7 @@ ${
         <p class="text-slate-700 leading-relaxed my-4">This is the load-bearing design claim, and it is worth being precise about: <strong>the state-children carry forward verbatim.</strong> The <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;Idle&gt;...&lt;&#47;&gt;</code> block in the engine is the same <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;Idle&gt;...&lt;&#47;&gt;</code> block from the match. The variant header, the body markup, the bound payload variable — all unchanged.</p>
         <p class="text-slate-700 leading-relaxed my-4">The only thing that changes between tiers is the wrapper.</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>Tier 0:  i&#102;= chains scattered across markup           (no wrapper)
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>Tier 0:  i&#102;= chains scattered across markup           (no wrapper)
 Tier 1:  &lt;m&#97;tch f&#111;r=Phase&gt; { state-children }         (structural exhaustiveness;
                                                        rule= allowed but inert)
 Tier 2:  &lt;e&#110;gine f&#111;r=Phase initial=.Variant&gt; {        (transition validation +
@@ -323,7 +348,7 @@ bun scrml promote --e&#110;gine app.scrml         # Tier 1→2: &lt;m&#97;tch&gt
         <p class="text-slate-700 leading-relaxed my-4">The transformation is AST-aware: per-branch rewrite rules handle <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102; (@cell == .X) { body }</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;X&gt;{body}&lt;&#47;&gt;</code>, payload destructure <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102; (@cell == .Error msg)</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;Error msg&gt;{body}&lt;&#47;&gt;</code>, the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.i&#115;(.X)</code> predicate form, and the trailing <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">e&#108;se</code> (dropped on exhaustive coverage). Comments, indentation, and surrounding markup are preserved verbatim. Re-running the verb on already-promoted code is a no-op.</p>
         <p class="text-slate-700 leading-relaxed my-4">The pairing matters. React, Vue, Svelte have nothing comparable — there is no equivalent of "your compiler told you a region is ready to lift, and the CLI does the lift mechanically without rewriting your hand-written code." It is uniquely available because scrml's tier ladder is uniquely a <em>language</em> feature, not a library convention.</p>
         <p class="text-slate-700 leading-relaxed my-4"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun scrml promote</code> is a sibling of <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun scrml migrate</code> (which rewrites deprecated→current syntax, e.g., <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;machine&gt;</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;e&#110;gine&gt;</code>). Different verb, different semantics: <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">migrate</code> removes the old form; <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">promote</code> keeps both forms valid. You promote because you decide to, not because something is going away.</p>
-        <p class="text-slate-700 leading-relaxed my-4">(<em>Status note (S66): <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun scrml promote --m&#97;tch</code> is shipped — the I-MATCH-PROMOTABLE lint fires with three message shapes (exhaustive &#47; near-miss &#47; compound), and the CLI executes the AST→AST span-rewrite. Both <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102; (@cell i&#115; .X)</code> and <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102; (@cell == .X)</code> predicate forms are accepted. The CLI's companion <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">--e&#110;gine</code> flag (Tier 1→2 lift) is deferred to a follow-up dispatch — it pairs with <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">W-MATCH-TRANSITIONS-ACCRUING</code>, a sibling lint that needs its own §34 catalog + impl groundwork; the flag stays registered but prints a clear "deferred" message until that lands.</em>)</p>
+        <p class="text-slate-700 leading-relaxed my-4">(<em>Status note, updated 2026-09-29: <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun scrml promote --m&#97;tch</code> ships &mdash; the I-MATCH-PROMOTABLE lint fires with three message shapes (exhaustive &#47; near-miss &#47; compound), and the CLI executes the AST-to-AST rewrite. Both <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102; (@cell i&#115; .X)</code> and <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102; (@cell == .X)</code> predicate forms are accepted. The <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">--e&#110;gine</code> mode (Tier 1&rarr;2) now ships too: it lifts a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;m&#97;tch&gt;</code> whose arms carry inert <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">rule=</code> attributes into an <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;e&#110;gine&gt;</code>, and pairs with the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">W-MATCH-RULE-INERT</code> lint rather than the proposed lint quoted above.</em>)</p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">What this is not</h2>
 
@@ -337,7 +362,7 @@ bun scrml promote --e&#110;gine app.scrml         # Tier 1→2: &lt;m&#97;tch&gt
         <p class="text-slate-700 leading-relaxed my-4">A scrml app maturing through its tiers is the language working as designed. Booleans-as-lifecycle in early sketch code are not violations; they are in-progress pins. The compiler nudges, the developer responds. The endpoint is an app where every reachable state has UI and every transition is intentional, and you got there without rewriting any of it.</p>
         <p class="text-slate-700 leading-relaxed my-4">That is the point.</p>
         <hr class="my-8 border-slate-200"/>
-        <p class="text-slate-700 leading-relaxed my-4"><em>Drafted with Claude. Companion piece: [Why scrml has to deprecate function and component overloading](&#47;articles&#47;why-deprecate-overloading). Two features the language is deleting in v0.2.0 because the ladder above already does their job. Part of an ongoing series unpacking scrml's design. Earlier pieces: components-are-states, the npm myth, css without a build step.</em></p>
+        <p class="text-slate-700 leading-relaxed my-4"><em>Drafted with Claude. Companion piece: <a hard href="/articles/why-deprecate-overloading" class="text-blue-700 hover:text-blue-900 underline">Why scrml has to deprecate function and component overloading</a>. Two features the language is deleting in v0.2.0 because the ladder above already does their job. Part of an ongoing series unpacking scrml's design. Earlier pieces: components-are-states, the npm myth, css without a build step.</em></p>
 
     </article>
 
