@@ -12,6 +12,7 @@
 // dev.to publish gets canonical_url=https://scrml.dev/articles/why-programming-for-the-browser
 
 <page>
+    <title>Why programming for the browser needs a different kind of language · scrml</title>
 
     <article class="prose prose-slate max-w-3xl">
 
@@ -282,8 +283,8 @@
             </li>
             <li>
                 <strong>scrml on GitHub:</strong>
-                <a href="https://github.com/bryanmaclee/scrmlTS" class="text-blue-700 hover:text-blue-900 underline">
-                    github.com/bryanmaclee/scrmlTS
+                <a href="https://github.com/bryanmaclee/scrml" class="text-blue-700 hover:text-blue-900 underline">
+                    github.com/bryanmaclee/scrml
                 </a>
                 &mdash; The working compiler, examples, spec, benchmarks.
             </li>

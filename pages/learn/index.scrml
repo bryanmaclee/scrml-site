@@ -6,6 +6,7 @@
 // not reintroduce a "Day-N build-out" promise.
 
 <page>
+    <title>Learn · scrml</title>
 
     <article class="prose prose-slate max-w-3xl">
 

@@ -6,6 +6,7 @@
 // and do not point the source link at scrmlTS (retired 2026-06-07).
 
 <page>
+    <title>About · scrml</title>
 
     <article class="prose prose-slate max-w-3xl">
 
@@ -28,10 +29,11 @@
             </p>
             <p class="leading-relaxed">
                 scrml is an in-development full-stack language for the
-                browser, currently at <strong>v0.7.1</strong>. The
-                compiler is written in TypeScript; rewriting it in scrml
-                is underway rather than promised &mdash; two
-                implementations exist in the tree today. MIT-licensed;
+                browser. The current release is <strong>v0.8.0</strong>
+                (tagged 2026-09-26). The working compiler is written in
+                TypeScript; a second compiler written in scrml is being
+                built as a bootstrap in the same repository and is not yet
+                usable on its own. MIT-licensed;
                 source at
                 <a href="https://github.com/bryanmaclee/scrml"
                    class="text-blue-700 hover:text-blue-900 underline">

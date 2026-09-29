@@ -5,6 +5,7 @@
 // pointer for adopters who land here from older docs / search.
 
 <page>
+    <title>E-CHANNEL-INSIDE-PROGRAM (retired) · scrml error reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and

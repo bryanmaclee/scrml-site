@@ -8,6 +8,7 @@
 // the categories + lists what's shipped so far vs queued.
 
 <page>
+    <title>Reference · scrml</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and

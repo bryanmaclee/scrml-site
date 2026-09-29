@@ -6,6 +6,7 @@
 // SPEC anchors: §51.0.E + §34 catalog row.
 
 <page>
+    <title>W-ENGINE-INITIAL-MISSING · scrml error reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and
@@ -46,7 +47,7 @@
                 <span class="px-2 py-1 bg-amber-50 text-amber-700 rounded">
                     Compile-time
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§51"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §51.0.E (normative)
                 </a>
@@ -162,7 +163,7 @@
             <strong>§51.0.J</strong> (derived engines reject initial=),
             <strong>§28</strong> (lint suppression configs),
             <strong>§34</strong> catalog row. Spec lives at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md"
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md
             </a>.

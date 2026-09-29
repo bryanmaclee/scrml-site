@@ -8,6 +8,7 @@
 // dev.to publish uses canonical_url=https://scrml.dev/articles/why-deprecate-overloading
 
 <page>
+    <title>Why scrml has to deprecate function and component overloading · scrml</title>
 
     <article class="prose prose-slate max-w-3xl">
 

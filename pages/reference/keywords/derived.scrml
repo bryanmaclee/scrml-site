@@ -10,6 +10,7 @@
 // §51.0.J (derived engines), §55.14 (req-on-derived).
 
 <page>
+    <title>derived · scrml reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and
@@ -43,7 +44,7 @@
                 bound name is never directly written.
             </p>
             <div class="flex gap-3 mt-4 text-xs">
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§6"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC &sect;6.6 (state shapes)
                 </a>
@@ -380,7 +381,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
             (derived value-mutate forbidden) +
             <strong>&sect;51</strong>
             (derived engines). Spec lives at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md"
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md
             </a>.

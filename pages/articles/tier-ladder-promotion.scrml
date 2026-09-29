@@ -8,6 +8,7 @@
 // dev.to publish uses canonical_url=https://scrml.dev/articles/tier-ladder-promotion
 
 <page>
+    <title>The compiler that grows up with your app · scrml</title>
 
     <article class="prose prose-slate max-w-3xl">
 

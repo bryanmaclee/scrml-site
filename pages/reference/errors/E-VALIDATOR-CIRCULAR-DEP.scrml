@@ -9,6 +9,7 @@
 // linked compiler to verify what this code does.
 
 <page>
+    <title>E-VALIDATOR-CIRCULAR-DEP · scrml error reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and

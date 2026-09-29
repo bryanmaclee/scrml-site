@@ -10,6 +10,7 @@
 // The literal ?&#123;&#125; characters don't play nicely with URL routing.
 
 <page>
+    <title>?&#123; &#125; — the SQL context · scrml reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and

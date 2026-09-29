@@ -10,6 +10,7 @@
 // reactive read.
 
 <page>
+    <title>&lt;errors of=…/&gt; · scrml reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and

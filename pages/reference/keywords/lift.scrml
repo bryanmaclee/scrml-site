@@ -8,6 +8,7 @@
 // expression value-lift).
 
 <page>
+    <title>lift · scrml reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and
@@ -43,7 +44,7 @@
                 generators.
             </p>
             <div class="flex gap-3 mt-4 text-xs">
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§10"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC &sect;10
                 </a>
@@ -368,7 +369,7 @@
             &sect;10.4) +
             <strong>&sect;17.6</strong>
             (if-as-expression value-lift). Spec lives at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md"
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md
             </a>.

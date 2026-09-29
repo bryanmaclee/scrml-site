@@ -7,6 +7,7 @@
 // SPEC anchors: §6.11 + §55.7 + §34 catalog row.
 
 <page>
+    <title>E-SYNTHESIZED-WRITE · scrml error reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and
@@ -45,7 +46,7 @@
                 <span class="px-2 py-1 bg-amber-50 text-amber-700 rounded">
                     Compile-time
                 </span>
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§55"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §6.11 &#47; §55.7 (normative)
                 </a>
@@ -206,7 +207,7 @@ function forceSubmit() &#123;
             <strong>§55.5</strong> &#47; <strong>§55.6</strong> (compound +
             per-field synthesis rules),
             <strong>§34</strong> catalog row. Spec lives at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md"
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md
             </a>.

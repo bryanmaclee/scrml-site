@@ -1,10 +1,11 @@
-// scrml.dev /about/changelog — Day-30 placeholder stub
+// scrml.dev /about/changelog — pointer page + release list (2026-09-29)
 //
 // Pointer page. The canonical changelog lives in the repo at
 // docs/changelog.md (per pa.md "wrap" §3); this page will eventually
 // pretty-print it. For now we link out.
 
 <page>
+    <title>Changelog · scrml</title>
 
     <article class="prose prose-slate max-w-3xl">
 
@@ -16,24 +17,27 @@
                 Changelog
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                Per-session landings, ordered most-recent first.
+                Releases, and where the full record lives.
             </p>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Pretty-printed changelog queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The canonical changelog is maintained as Markdown in the
-                repository at
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/docs/changelog.md"
-                   class="text-blue-700 hover:text-blue-900 underline font-mono">
-                    docs/changelog.md
-                </a>.
-                It is updated every session-close.
-            </p>
-        </div>
+        <p class="leading-relaxed text-slate-700">
+            The full changelog is kept as Markdown in the compiler
+            repository at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/docs/changelog.md"
+               class="text-blue-700 hover:text-blue-900 underline font-mono">docs/changelog.md</a>,
+            most recent first. Tagged releases:
+        </p>
+
+        <ul class="space-y-1 text-slate-700 font-mono text-sm mt-4">
+            <li>v0.8.0 &mdash; 2026-09-26 (current)</li>
+            <li>v0.7.1 &mdash; 2026-06-28</li>
+            <li>v0.7.0 &mdash; 2026-05-30</li>
+            <li>v0.6.0 &ndash; v0.6.11 &mdash; 2026-05-21 to 2026-05-29</li>
+            <li>v0.5.0, v0.4.0 &mdash; 2026-05-21</li>
+            <li>v0.3.0 &ndash; v0.3.3 &mdash; 2026-05-14 to 2026-05-18</li>
+            <li>v0.2.0 &ndash; v0.2.6 &mdash; 2026-05-11 to 2026-05-12</li>
+        </ul>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
             Release announcements
@@ -46,7 +50,7 @@
                     v0.3.0 announce
                 </a>
                 &mdash; per-route per-role chunks, content-addressing,
-                auth-as-visibility.
+                <code>&lt;auth&gt;</code> gates (a period record).
             </li>
             <li>
                 <a hard href="/articles/v0.2.0-announce"

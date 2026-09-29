@@ -19,7 +19,6 @@ ${
         <span class="viewer-nav-sep">/</span>
         <a hard href="/">Showcase</a>
         <a hard href="/reference">Reference</a>
-        <a hard href="/dashboard">Dashboard</a>
         <a href="https://github.com/bryanmaclee/scrml">GitHub</a>
     </>
 }

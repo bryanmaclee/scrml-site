@@ -25,6 +25,7 @@
 //     `=@.n` trips E-SCOPE-001 in attribute position).
 
 <page>
+    <title>Showcase — a scrml app dissecting a scrml app · scrml</title>
 
     ${
         // FRICTION (logged): importing client-side pure `fn` helpers from a
@@ -286,7 +287,7 @@
         // 1-based source line; JS cells light when their srcLine matches it.
         <activeSourceLine> = 0
 
-        <title>  = "flagship"
+        <flagshipTitle> = "flagship"
         <loaded> = false
 
         // ── flagship selector state (inc2: 2nd flagship) ──
@@ -370,7 +371,7 @@
         function loadArtifacts() {
             const base = "/data/" + @flagshipId + "/"
             fetch(base + "manifest.json").then((r) => r.json()).then((m) => {
-                @title = m.title
+                @flagshipTitle = m.title
                 @sourceName = m.sourceFile
                 fetch(base + m.source).then((r) => r.text()).then((t) => {
                     @sourceText  = t
@@ -508,14 +509,6 @@
         .eg-arrow { color: rgb(100 116 139); margin: 0 0.25rem; }
         .eg-flag { font-size: 0.6rem; color: rgb(148 163 184); border: 1px dashed rgb(71 85 105); border-radius: 0.25rem; padding: 0 0.3rem; margin-left: 0.25rem; }
 
-        /* dashboard stub */
-        .dash-stub { border: 1px solid rgb(30 41 59); border-radius: 0.5rem; padding: 0.9rem 1rem; margin-top: 1.5rem; background-color: rgb(15 23 42); }
-        .dash-stub-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-        .dash-stub-title { font-weight: 600; color: rgb(226 232 240); }
-        .dash-stub-posture { color: rgb(134 239 172); font-family: ui-monospace, monospace; font-size: 0.85rem; margin: 0.5rem 0 0.25rem; }
-        .dash-stub-summary { color: rgb(148 163 184); font-size: 0.85rem; margin: 0; }
-        .dash-stub-note { color: rgb(100 116 139); font-size: 0.75rem; margin-top: 0.5rem; }
-        .dash-stub-note a, .dash-stub-note code { color: rgb(125 211 252); }
 
         .showcase-intro h1 { font-size: 1.4rem; margin: 0 0 0.25rem; color: rgb(241 245 249); }
         .showcase-intro p { color: rgb(148 163 184); margin: 0 0 1rem; font-size: 0.9rem; }
@@ -540,7 +533,7 @@
     <div class="showcase-intro">
         <h1>This page is a scrml app dissecting another scrml app.</h1>
         <p>
-            Left: the real compiled <span class="mono">${@title}</span> flagship,
+            Left: the real compiled <span class="mono">${@flagshipTitle}</span> flagship,
             running live. Right: its real source, its real engine graph, and its
             real compiled output. Hover a <span class="mono">@state</span> line in
             the source — the spans the compiler generated from it light up in the
@@ -710,18 +703,5 @@
         </div>
     </div>
 
-    // ── dashboard-embed STUB (inc1: static; live dashboard is inc2) ──
-    <section class="dash-stub">
-        <div class="dash-stub-head">
-            <span class="dash-stub-title">Verification dashboard</span>
-            <span class="built-in-pill">built in scrml</span>
-        </div>
-        <p class="dash-stub-posture">GREEN — 27/27 examples compiling</p>
-        <p class="dash-stub-summary">Last-known posture (hardcoded stub). The live dashboard reads examples/.verification.json via scrml:fs.</p>
-        <p class="dash-stub-note">
-            inc1 embed STUB — the live server-side dashboard drops into this slot
-            in increment 2. <a hard href="/dashboard">Dashboard route</a>.
-        </p>
-    </section>
 
 </page>

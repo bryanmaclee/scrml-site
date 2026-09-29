@@ -5,6 +5,7 @@
 // SPEC anchors: §42.2.5 (vs req), §55.1 (universal-core catalog).
 
 <page>
+    <title>is some · scrml reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and
@@ -42,7 +43,7 @@
                 fails it.
             </p>
             <div class="flex gap-3 mt-4 text-xs">
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§42"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC &sect;42.2.5
                 </a>
@@ -330,7 +331,7 @@
             and
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">req</code>).
             Spec lives at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md"
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md
             </a>.

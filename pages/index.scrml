@@ -14,12 +14,16 @@
 // Every claim below was re-verified against ../scrml (changelog + SPEC +
 // tree) on that date.
 //
-// RULE FOR EDITORS — prefer claims that cannot rot. "v0.7.1 was cut on
-// 2026-06-28" stays true forever; "we're at day-1" was false within a week.
+// CURRENCY PASS 2026-09-29 (v0.8.0; auth claim corrected per SPEC §34
+// W-AUTH-CONTENT-NOT-GATED; pending list rewritten).
+//
+// RULE FOR EDITORS — prefer claims that cannot rot. "v0.8.0 was tagged on
+// 2026-09-26" stays true forever; "we're at day-1" was false within a week.
 // Do not reintroduce day-N targets, "as of today", or a version peg that
 // has to be hand-bumped to stay honest.
 
 <page>
+    <title>scrml — a full-stack language for the browser</title>
 
     <article class="prose prose-slate max-w-3xl">
 
@@ -39,24 +43,30 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                <strong>v0.7.1</strong> is the current cut (2026-06-28). It
-                bundles roughly a month of fixes on top of v0.7.0, which
-                closed the last of the high-severity bug board.
+                <strong>v0.8.0</strong> is the current release, tagged
+                2026-09-26. It is the stable floor of the working compiler
+                (written in TypeScript) and carries three months of fixes and
+                additions on top of v0.7.1 &mdash; the full list is in the
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/docs/changelog.md"
+                   class="text-blue-700 hover:text-blue-900 underline">changelog</a>.
             </li>
             <li>
                 <strong>v0.4.0 &ndash; v0.6.0</strong> added generation from
-                types &mdash; <code>formFor(StructType)</code> builds a form,
-                its state cell, its validity surface and its submit path;
-                <code>schemaFor(StructType)</code> builds the SQL DDL, and
-                enum fields carry their variants across the database
-                boundary. The same arc replaced the compiler's own front end
-                with the native parser and expanded the built-in Tailwind
-                surface.
+                types &mdash; <code>&lt;formFor for=StructType/&gt;</code>
+                builds a form, its state cell, its validity surface and its
+                submit path; <code>schemaFor(StructType)</code> inside a
+                <code>&lt;schema&gt;</code> builds the SQL DDL, and enum fields
+                carry their variants across the database boundary. The same
+                arc expanded the built-in Tailwind surface.
             </li>
             <li>
-                <strong>v0.3.0</strong> shipped per-route per-role chunks,
-                content-addressing, and auth as a compile-time visibility
-                constraint (not a runtime check).
+                <strong>v0.3.0</strong> shipped content-addressed output and
+                <code>&lt;auth role&gt;</code> gates. Be precise about what
+                <code>&lt;auth&gt;</code> does: it decides which client code
+                mounts for which role. It is not content secrecy &mdash; the
+                gated HTML is still sent to every viewer, so anything secret
+                belongs on the server. Per-role JavaScript chunks exist but are
+                opt-in (<code>scrml compile --emit-per-route</code>).
             </li>
             <li>
                 <strong>v0.2.x</strong> laid the foundational reactive
@@ -81,17 +91,23 @@
 
         <ul class="space-y-2 text-slate-700">
             <li>
-                Self-host &mdash; the compiler written in scrml. This is in
-                flight, not hypothetical: two implementations live in the
-                tree, and the second one's lexer is token-complete and
-                verified token-for-token against the first. It is a long
-                way from a compiler, and it is no longer a someday.
+                A second compiler, written in scrml itself, is being built as a
+                bootstrap in the compiler repo (<code>compiler/self-host-v2/</code>).
+                Its first slices parse, analyze and lower real programs. It is
+                not yet a compiler you can use.
             </li>
             <li>
-                The <strong>v0.8</strong> milestone target is open. The
-                native-parser peg it used to carry is retired; the
-                server-render-time and dynamic-deployment work is the
-                current candidate.
+                The next language model &mdash; declarations, instances and
+                value contracts (SPEC &sect;66) &mdash; is written into the
+                specification but is <strong>not</strong> in the shipping
+                compiler. The bootstrap compiler is where it is being built.
+            </li>
+            <li>
+                Several decided changes are not built yet: conditions that must
+                be a boolean or a presence test (no JavaScript-style
+                truthiness), a <code>decimal</code> number type, and arithmetic
+                operators restricted to numbers. Until they ship, the compiler
+                behaves as it does today.
             </li>
             <li>
                 Depth, not coverage, in these docs. Every reference page is

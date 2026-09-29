@@ -8,6 +8,7 @@
 // dev.to publish uses canonical_url=https://scrml.dev/articles/v0.2.0-announce
 
 <page>
+    <title>scrml v0.2.0 — what's coming, what's stable · scrml</title>
 
     <article class="prose prose-slate max-w-3xl">
 
@@ -22,7 +23,7 @@
 
         <h1 class="text-3xl font-bold tracking-tight text-slate-900 mt-10 mb-4">scrml v0.2.0 — what's coming, and what's stable today</h1>
 
-        <p class="text-slate-700 leading-relaxed my-4">scrml has been v0.1.0 for a while now. That version is shipped. The compiler at <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">github.com&#47;bryanmaclee&#47;scrmlTS</code> works, has 8,700+ tests passing, and emits clean HTML, CSS, client JS, and server route handlers for the full v0.1.0 surface. If you're kicking the tires today, you're using v0.1.0. It compiles. It runs.</p>
+        <p class="text-slate-700 leading-relaxed my-4">scrml has been v0.1.0 for a while now. That version is shipped. The compiler at <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">github.com&#47;bryanmaclee&#47;scrml</code> works, has 8,700+ tests passing, and emits clean HTML, CSS, client JS, and server route handlers for the full v0.1.0 surface. If you're kicking the tires today, you're using v0.1.0. It compiles. It runs.</p>
         <p class="text-slate-700 leading-relaxed my-4">I'm also in the middle of a much bigger second pass — call it v0.2.0 — that I want to be transparent about. It's a breaking change. It's been planned across multiple sessions of design work. The spec reflects it. The compiler is catching up — the foundational lex+parse pass for v0.2.0 syntax (Phase A1a) just finished, and the resolve+type pass (Phase A1b) is in flight.</p>
         <p class="text-slate-700 leading-relaxed my-4">This post tells you what's stable, what's coming, where the compiler implementation actually is, and how to read articles that reference scrml right now.</p>
         <hr class="my-8 border-slate-200"/>
@@ -132,7 +133,7 @@ c&#111;nst &lt;doubled&gt; = @count * 2               &#47;&#47; Shape 3 — der
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">Full L1-L21 lock list</h3>
 
         <p class="text-slate-700 leading-relaxed my-4">There are 21 architectural locks ratified across sessions S55-S59. Markup-as-first-class-value (the pillar held since the very first prototype). Variant C compound state. Multi-statement event handlers force named function. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">p&#105;nned</code> modifier. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">reset(@cell)</code> keyword. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">default=</code> attribute. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">derived=expr</code> engine attribute. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#115; s&#111;me</code> vs <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">r&#101;q</code> distinction. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;errors of=expr&#47;&gt;</code> first-class element. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-DERIVED-VALUE-MUTATE</code> (no in-place mutation of <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">c&#111;nst</code>-derived cells). And about a dozen more.</p>
-        <p class="text-slate-700 leading-relaxed my-4">Full list with cross-references: <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/docs/PA-SCRML-PRIMER.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">docs&#47;PA-SCRML-PRIMER.md</code></a> — a primer that distills the whole language design as it'll exist post-v0.2.0.</p>
+        <p class="text-slate-700 leading-relaxed my-4">Full list with cross-references: <a href="https://github.com/bryanmaclee/scrml/blob/main/docs/PA-SCRML-PRIMER.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">docs&#47;PA-SCRML-PRIMER.md</code></a> — a primer that distills the whole language design as it'll exist post-v0.2.0.</p>
         <hr class="my-8 border-slate-200"/>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">Where the compiler is today (2026-05-05)</h2>
@@ -180,10 +181,10 @@ c&#111;nst &lt;doubled&gt; = @count * 2               &#47;&#47; Shape 3 — der
         <p class="text-slate-700 leading-relaxed my-4">Realistic calendar: 3-9 months from the original v0.2.0 design freeze (S58, 2026-05-04) depending on session cadence. A1a finished one day after design freeze. It will ship when it's done, not on a date.</p>
         <p class="text-slate-700 leading-relaxed my-4">We'll post incremental milestones as each Phase lands. The full inventory and live dashboard are visible to anyone reading the repo:</p>
         <ul class="list-disc list-outside ml-6 space-y-2 text-slate-700 my-4">
-            <li><a href="https://github.com/bryanmaclee/scrmlTS/blob/main/master-list.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">master-list.md</code></a> — live progress dashboard.</li>
-            <li><a href="https://github.com/bryanmaclee/scrmlTS/blob/main/docs/changes/v0next-inventory/SCOPE-MAP-2026-05-05.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">docs&#47;changes&#47;v0next-inventory&#47;SCOPE-MAP-2026-05-05.md</code></a> — full subsystem-by-subsystem inventory.</li>
-            <li><a href="https://github.com/bryanmaclee/scrmlTS/blob/main/docs/changes/v0next-audit/PARSER-AUDIT-2026-05-05.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">docs&#47;changes&#47;v0next-audit&#47;PARSER-AUDIT-2026-05-05.md</code></a> — parser-vs-spec gap audit.</li>
-            <li><a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">compiler&#47;SPEC.md</code></a> — the engineering target.</li>
+            <li><a href="https://github.com/bryanmaclee/scrml/blob/main/master-list.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">master-list.md</code></a> — live progress dashboard.</li>
+            <li><a href="https://github.com/bryanmaclee/scrml/blob/main/docs/changes/v0next-inventory/SCOPE-MAP-2026-05-05.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">docs&#47;changes&#47;v0next-inventory&#47;SCOPE-MAP-2026-05-05.md</code></a> — full subsystem-by-subsystem inventory.</li>
+            <li><a href="https://github.com/bryanmaclee/scrml/blob/main/docs/changes/v0next-audit/PARSER-AUDIT-2026-05-05.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">docs&#47;changes&#47;v0next-audit&#47;PARSER-AUDIT-2026-05-05.md</code></a> — parser-vs-spec gap audit.</li>
+            <li><a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md" class="text-blue-700 hover:text-blue-900 underline"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">compiler&#47;SPEC.md</code></a> — the engineering target.</li>
         </ul>
         <hr class="my-8 border-slate-200"/>
 

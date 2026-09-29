@@ -20,7 +20,7 @@
 
     const SITE_NAME = "scrml.dev"
     const SITE_TAGLINE = "Official documentation for the scrml language"
-    const VERSION = "v0.7.1"
+    const VERSION = "v0.8.0"
 
     #{
         /* ─── base canvas ────────────────────────────────────────── */
@@ -540,11 +540,13 @@
             <p class="text-xs text-slate-500 leading-relaxed max-w-xl">
                 Every page on this site was authored as a
                 <code class="font-mono text-slate-300">&lt;page&gt;</code>
-                and compiled by the same
-                <a href="https://github.com/bryanmaclee/scrml-site/tree/main"
+                and compiled by the
+                <a href="https://github.com/bryanmaclee/scrml"
                    class="text-sky-400 hover:text-sky-300 underline">scrml compiler</a>
-                that ships in
-                <code class="font-mono text-slate-300">bun install scrml</code>.
+                (<a href="https://github.com/bryanmaclee/scrml-site"
+                   class="text-sky-400 hover:text-sky-300 underline">site source</a>).
+                scrml is not on npm; it installs from source &mdash;
+                <code class="font-mono text-slate-300">git clone https://github.com/bryanmaclee/scrml &amp;&amp; cd scrml &amp;&amp; bun install &amp;&amp; bun link</code>.
             </p>
             <p class="text-xs text-slate-600">
                 MIT licensed &middot;

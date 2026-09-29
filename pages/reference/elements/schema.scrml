@@ -9,6 +9,7 @@
 // SQL DDL) + §39.5.9 (when-to-use SQL-mirror vs shared-core).
 
 <page>
+    <title>&lt;schema&gt; · scrml reference</title>
 
     // REFERENCE SIDEBAR opt-in — static, page-scoped, zero JS. The nav is
     // authored once in app.scrml and hidden by default; this shows it and
@@ -44,7 +45,7 @@
                 vocabulary that lowers to CHECK constraints.
             </p>
             <div class="flex gap-4 mt-4 text-xs">
-                <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md#§39"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §39 (normative)
                 </a>
@@ -343,11 +344,11 @@
             <strong>&sect;53</strong> (refinement types) for the
             cross-locus vocabulary unification. The normative text
             lives at
-            <a href="https://github.com/bryanmaclee/scrmlTS/blob/main/compiler/SPEC.md"
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md
             </a>
-            in the scrmlTS repository.
+            in the scrml repository.
         </p>
 
     </article>
