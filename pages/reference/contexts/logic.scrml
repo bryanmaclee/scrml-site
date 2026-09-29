@@ -122,7 +122,7 @@ const &lt;label&gt; = "Clicked " + @count + " times"
         </h3>
 
         <p class="text-slate-700 leading-relaxed mb-3">
-            scrml has no <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">try</code>/<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">finally</code>. Inside a
+            scrml has no <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">try</code>&#47;<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">finally</code>. Inside a
             function body, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">defer &lt;statement&gt;</code> runs that statement
             when the function exits, whichever way it exits (SPEC &sect;19.16):
         </p>

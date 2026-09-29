@@ -73,6 +73,17 @@ devDependencies of its own.
 `scrml build . --output <dir>` must also exit 0 (`scrml dev` emits *leniently*,
 so only `build` is a real shape-check).
 
+A third gate checks that the documentation is true: every `<pre><code>` block
+on the built site must compile, or carry a visible `data-sample` label
+(`fragment` / `syntax` / `spec` / `error` / `other` — rules in the script
+header). CI runs it on every deploy, against the release compiler
+(`SAMPLES_SCRML_REF` in `deploy.yml`):
+
+```
+scrml build . --target static --output /tmp/site
+SCRML=../scrml/compiler/bin/scrml.js node scripts/audit-samples.mjs /tmp/site   # exit 0 = green
+```
+
 ## Regenerate the flagship artifacts
 
 ```

@@ -53,6 +53,14 @@ concurrency:
 env:
   SCRML_REPO: bryanmaclee/scrml
   SCRML_REF: 50478f0ee674d198bc69119c525b60493ce151a1  # S287 — gated 2026-07-26
+  # The compiler the code SAMPLES are checked against — the release the site
+  # advertises (v0.8.0, tag commit), not the build pin above. Readers copy
+  # samples into the compiler they install, so that is the one that has to
+  # accept them. Kept separate from SCRML_REF because on 2026-09-29 a bump of
+  # the build pin to v0.8.0-era main broke the /showcase provenance pane (a
+  # nested `for … lift` now emits an extra list-wrapper <div>; gold-verify
+  # 9/11), while every sample compiles at v0.8.0. Bump this with each release.
+  SAMPLES_SCRML_REF: 8cd1e0223df26735dbae473991cc963f5afe2445  # tag v0.8.0 (2026-09-26)
 
 jobs:
   build:
@@ -105,6 +113,32 @@ jobs:
           bun scrml/compiler/bin/scrml.js build scrml-site \
             --target static \
             --output "$GITHUB_WORKSPACE/_site"
+
+      - name: Checkout scrml compiler for the sample gate (release)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SCRML_REPO }}
+          ref: ${{ env.SAMPLES_SCRML_REF }}
+          path: scrml-samples
+
+      - name: Install sample-gate compiler dependencies
+        run: |
+          cd scrml-samples
+          bun install --production
+          cd compiler && bun install --production
+
+      - name: Gate — every code sample on the site compiles
+        # scripts/audit-samples.mjs extracts every <pre><code> block from the
+        # built site and compiles it with the release compiler
+        # (SAMPLES_SCRML_REF). An unlabelled
+        # scrml sample that does not compile fails the deploy; blocks that are
+        # fragments / syntax summaries / specified-not-shipped / error demos /
+        # non-scrml carry a data-sample label (see the script header). Added
+        # 2026-09-29 after ~20 reader-facing samples were found not compiling.
+        env:
+          SCRML: ${{ github.workspace }}/scrml-samples/compiler/bin/scrml.js
+          AUDIT_WORK: ${{ runner.temp }}/scrml-site-audit
+        run: node scrml-site/scripts/audit-samples.mjs "$GITHUB_WORKSPACE/_site"
 
       - name: Stage flagship artifacts
         # `data/` holds the precomputed flagship outputs the /showcase page
