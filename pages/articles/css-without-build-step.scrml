@@ -22,6 +22,7 @@
         </header>
         <p class="text-slate-700 leading-relaxed my-4"><em>authored by claude, rubber stamped by Bryan MacLee</em></p>
         <p class="text-slate-700 leading-relaxed my-4"><strong>TL;DR: Native CSS shipped <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@scope</code> while we were not looking. scrml compiles to that. No PostCSS, no runtime, no className mangler.</strong></p>
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800"><strong>Correction, 2026-09-29.</strong> The core claim holds: component <code>#&#123; &#125;</code> blocks compile to native <code>@scope</code>. Two details changed since this was written. The emitted CSS now names the scope after the component (<code>data-scrml="Card"</code>) and wraps each selector in <code>:where()</code>, so the output selectors are close to, not identical to, the source; the output block below shows what the v0.8.0 compiler emits. And a flat <code>#&#123; property: value; &#125;</code> block becomes an inline <code>style=""</code> only as a direct child of a component's root element; the original example placed it inside a <code>lift</code>ed element, where the v0.8.0 compiler drops it, so the example has been replaced.</div>
         <p class="text-slate-700 leading-relaxed my-4">I designed scrml to have the <em>fewest</em> moving parts that could deliver real reactivity, real state, and real components. Then I looked at what shipping styles costs in modern frameworks, and I almost laughed.</p>
         <p class="text-slate-700 leading-relaxed my-4">I am not an experienced framework developer. I can hobble through React if I HAVE TO. I have written enough CSS to know what fine-tuning a layout feels like. Most of what I have read about scoped CSS in framework land is people building elaborate machinery to compensate for a feature the browser had not yet shipped. The browser shipped it. The machinery did not retire.</p>
         <p class="text-slate-700 leading-relaxed my-4">This is the fourth of six features the browser-language overview piece promised to unpack later. CSS, in detail.</p>
@@ -39,7 +40,7 @@
 
         <p class="text-slate-700 leading-relaxed my-4"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@scope</code> is in the browser now.</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>@scope ([data-card]) to ([data-card]) {
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>@scope ([data-card]) to ([data-card]) {
     .body { padding: 16px; }
     .title { font-size: 1.25rem; }
 }</code></pre>
@@ -59,7 +60,7 @@ ${
             .card { padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; }
             .title { font-size: 1.25rem; font-weight: 600; }
         }
-        &lt;div class="card" data-scrml="card"&gt;
+        &lt;div class="card"&gt;
             &lt;h2 class="title"&gt;${title}&lt;&#47;h2&gt;
         &lt;&#47;div&gt;
     &lt;&#47;&gt;
@@ -69,24 +70,28 @@ ${
 
         <p class="text-slate-700 leading-relaxed my-4">The compiler emits this CSS:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>@scope ([data-scrml="card"]) to ([data-scrml]) {
-    .card { padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; }
-    .title { font-size: 1.25rem; font-weight: 600; }
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>@scope ([data-scrml="Card"]) to ([data-scrml]) {
+    :where(.card) { padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; }
+    :where(.title) { font-size: 1.25rem; font-weight: 600; }
 }</code></pre>
 
         <p class="text-slate-700 leading-relaxed my-4">That is the entire pipeline. The selectors in the source are the selectors in the output. DevTools shows you <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.title</code>, not <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.title_h7Bz4</code>. Source maps are optional. The donut limit (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">to ([data-scrml])</code>) is implicit: nested constructors get their own scope and the outer rules stop at the boundary.</p>
         <p class="text-slate-700 leading-relaxed my-4">There is one more sub-mode. A <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">#{}</code> block with no selectors, just bare <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">property: value;</code> pairs, compiles to an inline <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">style=""</code> attribute on the containing element. It does not appear in the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.css</code> file at all.</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>${
-    &lt;title&gt; = "Hello"
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
 
-    l&#105;ft &lt;div data-scrml="card"&gt;
+${
+    c&#111;nst Box = &lt;div props={ heading: string }&gt;
         #{ padding: 16px; }
-        &lt;h2&gt;${@title}&lt;&#47;h2&gt;
-    &lt;&#47;div&gt;
-}</code></pre>
+        &lt;h2&gt;${heading}&lt;&#47;h2&gt;
+    &lt;&#47;&gt;
+}
 
-        <p class="text-slate-700 leading-relaxed my-4">becomes a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;div style="padding: 16px;"&gt;</code> directly. The most common case (one or two declarations on one element) gets the lightest possible compilation.</p>
+&lt;Box heading="Hello"&#47;&gt;
+
+&lt;&#47;program&gt;</code></pre>
+
+        <p class="text-slate-700 leading-relaxed my-4">becomes a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;div data-scrml="Box" style="padding: 16px;"&gt;</code> directly. The most common case (one or two declarations on one element) gets the lightest possible compilation.</p>
         <p class="text-slate-700 leading-relaxed my-4">That is it. No PostCSS. No runtime. No hash mangler. No <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">tailwind.config.js</code> <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">content</code> glob. No styled-components Babel plugin. No SSR critical-extraction. The compiler reads the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">#{}</code> block, decides whether it is selector-based or flat-declaration, and emits the corresponding output. Co-location of behavior was a founding philosophy of scrml. The styles for a component live inside the component. They compile next to the markup that wears them.</p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">What this kills</h2>
