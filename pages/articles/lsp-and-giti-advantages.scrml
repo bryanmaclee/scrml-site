@@ -40,7 +40,7 @@
         <p class="text-slate-700 leading-relaxed my-4">scrml's compiler owns every context in one AST. A <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.scrml</code> file's markup, logic, components, SQL, CSS, and reactive declarations are all parsed by the same pipeline (PP, BS, TAB, MOD, CE, PA, RI, TS, META, DG, BP, CG). The PA (protect= Analyzer) pass already builds a <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">views</code> map keyed by <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt; db&gt;</code> block, and each entry carries every table's full schema. That data is sitting in memory the moment the LSP runs analysis on a buffer.</p>
         <p class="text-slate-700 leading-relaxed my-4">So when you type:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;db src=".&#47;app.db" tables="users,posts"&#47;&gt;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;db src=".&#47;app.db" tables="users,posts"&#47;&gt;
 
 &lt;program&gt;
 ${
@@ -61,7 +61,7 @@ ${
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">Cross-file component prop completion</h3>
 
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&#47;&#47; components&#47;card.scrml
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&#47;&#47; components&#47;card.scrml
 e&#120;port c&#111;nst Card = &lt;article props={ title: string, body: string, publishedAt: string }&gt;
     &lt;h2&gt;${title}&lt;&#47;h2&gt;
     &lt;p&gt;${body}&lt;&#47;p&gt;
@@ -78,7 +78,7 @@ i&#109;port { Card } from "..&#47;components&#47;card.scrml"
 
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">Cross-file go-to-definition that's actually accurate</h3>
 
-        <p class="text-slate-700 leading-relaxed my-4">This is the table-stakes feature TypeScript devs ship by default. scrml shipped it in L2 (S40) via a workspace cache that holds:</p>
+        <p class="text-slate-700 leading-relaxed my-4">This is the table-stakes feature TypeScript devs ship by default. scrml shipped it in L2 via a workspace cache that holds:</p>
         <ul class="list-disc list-outside ml-6 space-y-2 text-slate-700 my-4">
             <li><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">exportRegistry: Map&lt;filePath, Map&lt;exportName, ExportInfo&gt;&gt;</code></li>
             <li><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">fileASTMap</code></li>
@@ -89,7 +89,7 @@ i&#109;port { Card } from "..&#47;components&#47;card.scrml"
 
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">Code actions that quick-fix scrml-specific errors</h3>
 
-        <p class="text-slate-700 leading-relaxed my-4">L4 (S40) shipped <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">codeActionProvider</code> quick-fixes for:</p>
+        <p class="text-slate-700 leading-relaxed my-4">L4 shipped <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">codeActionProvider</code> quick-fixes for:</p>
         <ul class="list-disc list-outside ml-6 space-y-2 text-slate-700 my-4">
             <li><strong>E-IMPORT-004</strong>: Levenshtein-rank closest exported name from the imported module's actual exports. ("<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">Cardd</code> not exported from <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.&#47;card.scrml</code>. Did you mean <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">Card</code>?")</li>
             <li><strong>E-IMPORT-005</strong>: bare specifier missing <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">.&#47;</code> prefix. (Auto-prefix.)</li>
@@ -103,7 +103,7 @@ i&#109;port { Card } from "..&#47;components&#47;card.scrml"
 
         <p class="text-slate-700 leading-relaxed my-4">L4 also shipped <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">signatureHelpProvider</code> triggered on <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">(</code> and <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">,</code>. For cross-file imported functions, the LSP synthesizes the function shape from the export's <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">raw</code> source (parsed at workspace-bootstrap). So:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>i&#109;port { computeTotal } from ".&#47;billing.scrml"
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>i&#109;port { computeTotal } from ".&#47;billing.scrml"
 
 c&#111;nst total = computeTotal(|    -- cursor here, signature popup shows:
                                 --   computeTotal(items: List&lt;Item&gt;, taxRate: Number)
@@ -124,7 +124,7 @@ c&#111;nst total = computeTotal(|    -- cursor here, signature popup shows:
 
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">Document symbols with semantic meaning</h3>
 
-        <p class="text-slate-700 leading-relaxed my-4">The outline panel (L1, S40) populates with: <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;state&gt;</code> blocks, components, server&#47;client functions, machines, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;db&gt;</code> blocks. Each gets a symbol kind (Variable &#47; Class &#47; Function &#47; Module) appropriate to scrml's mental model, not JS's. A scrml dev sees their <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">state</code> blocks as first-class entities in the outline. A TS dev with a similar Zustand store sees a generic function. The LSP can show the structure the dev actually thinks in.</p>
+        <p class="text-slate-700 leading-relaxed my-4">The outline panel (L1) populates with: <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;state&gt;</code> blocks, components, server&#47;client functions, machines, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;db&gt;</code> blocks. Each gets a symbol kind (Variable &#47; Class &#47; Function &#47; Module) appropriate to scrml's mental model, not JS's. A scrml dev sees their <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">state</code> blocks as first-class entities in the outline. A TS dev with a similar Zustand store sees a generic function. The LSP can show the structure the dev actually thinks in.</p>
 
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">What's deliberately NOT shipped (and why)</h3>
 
@@ -161,7 +161,7 @@ c&#111;nst total = computeTotal(|    -- cursor here, signature popup shows:
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">The 5-function surface</h3>
 
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>giti save     : snapshot working state (no staging area; everything i&#115; included)
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>giti save     : snapshot working state (no staging area; everything i&#115; included)
 giti switch   : move to a different point in history
 giti merge    : bring another line of work in
 giti undo     : reverse the last operation
