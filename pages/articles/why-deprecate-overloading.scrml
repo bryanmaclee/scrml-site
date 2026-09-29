@@ -22,6 +22,7 @@
         </header>
         <p class="text-slate-700 leading-relaxed my-4"><em>by Bryan MacLee</em></p>
         <p class="text-slate-700 leading-relaxed my-4"><strong>TL;DR: Two scrml features, function overloading and component overloading, are dying in v0.2.0. They shipped, they worked, and on a self-audit nothing in scrml's own samples, examples, stdlib, or self-host modules actually relied on them. The companion piece, "The compiler that grows up with your app," shows the primitives that survived. This piece explains why these two didn't.</strong></p>
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800"><strong>Correction, 2026-09-29.</strong> The final example's match arms were written <code>.User u -&gt; &hellip;</code>. With the v0.8.0 compiler that binding form compiles without an error but lowers to nothing &mdash; the whole <code>match</code> returns <code>undefined</code>, with only a warning. The example now uses the positional form, <code>.User(userId, email, name) :&gt; &hellip;</code>, which lowers correctly, and it declares a database so it compiles as shown. The <code>actorKey(target)</code> call is also moved out of the SQL template into a local, because a helper called inside a server-side <code>?&#123;&#125;</code> template is currently not included in the server bundle. The first example (the overloaded version) is shown as it was written; it still compiles, because the removal left each state's function in place and dropped only the overload dispatch.</div>
         <p class="text-slate-700 leading-relaxed my-4">Two features are leaving the language in v0.2.0. They shipped, they worked, and I had been quietly wondering for a while what I would actually use them for, given everything scrml's primitives already do. Last week I asked claude, the LLM I have been pair-programming the compiler with, to walk me through what using the function-overload mechanism for a real centralization problem would actually look like. The drafts confirmed what I had been suspecting. Fifteen minutes after the engine-shaped rewrite landed on screen, the features were dead.</p>
         <p class="text-slate-700 leading-relaxed my-4">If that sounds dismissive, hear me out. State-type-discriminated function overloading has been in the compiler for roughly a year and it did work. Sixty lines of codegen, cleanly written, tests covering it. Component overloading was a different beast: a SPEC-ISSUE that tracked the design intent but was never implemented in the compiler. So one half of what is leaving v0.2.0 is shipped code with users that turned out to be zero; the other half is a doc-only proposal that never quite earned implementation. With the language as it is today, neither shape can do anything <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">m&#97;tch</code> and <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">e&#110;gine</code> don't already do better, and the self-audit couldn't surface a single case to the contrary.</p>
         <p class="text-slate-700 leading-relaxed my-4">About twenty compiler attempts behind me. Eighteen months of design. The thing that made me kill these two features was not a benchmark or a roadmap pruning. It was an introspective moment of epiphany'd defeat. I had insisted on and worked to add overloading as a first-class feature. I wanted scrml to have an easy bridge from JS. And perhaps without building that bridge for myself, I wouldn't have had the perspective to see the right path.</p>
@@ -41,7 +42,7 @@
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">Draft one: split the body across the two state-constructor scopes</h3>
 
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;${
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program db=".&#47;app.db"&gt;${
 
   f&#117;nction checkRateLimit(actorId: string, kind: string) -&gt; boolean {
     c&#111;nst recent = ?{
@@ -98,7 +99,7 @@
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">Draft two: give up on overloading; rename the functions</h3>
 
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>f&#117;nction sendUserNotification(user: UserFlow, message: string) -&gt; string {
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>f&#117;nction sendUserNotification(user: UserFlow, message: string) -&gt; string {
   i&#102; (!checkRateLimit(user.userId, "user")) { r&#101;turn "rate-limited"; }
   &#47;&#47; ... user body, same as above ...
 }
@@ -110,7 +111,7 @@ f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; str
 
         <p class="text-slate-700 leading-relaxed my-4">Bodies are centralized; the contract is at least visible. But every call site replaces the dispatch the compiler used to do:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>i&#102; (currentActor.__scrml_state_type == "UserFlow") {
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>i&#102; (currentActor.__scrml_state_type == "UserFlow") {
   result = sendUserNotification(currentActor, msg);
 } e&#108;se {
   result = sendAdminNotification(currentActor, msg);
@@ -122,7 +123,7 @@ f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; str
         <h3 class="text-xl font-semibold text-slate-900 mt-8 mb-3">Draft three: manual one-name top-level dispatcher</h3>
 
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>f&#117;nction sendNotification(target, message: string) -&gt; string {
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>f&#117;nction sendNotification(target, message: string) -&gt; string {
   c&#111;nst tag = target.__scrml_state_type;
   i&#102; (tag == "UserFlow") {
     i&#102; (!checkRateLimit(target.userId, "user")) { r&#101;turn "rate-limited"; }
@@ -149,7 +150,7 @@ f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; str
         <p class="text-slate-700 leading-relaxed my-4">And once the gate is one expression, the stringly-typed return is the other half of the problem. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">"rate-limited"</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">"queued:5"</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">"paged:7"</code> — a sum-type return value smuggled in as a string. The call site loses every typed-variant guarantee; downstream consumers stringly-compare instead of pattern-matching. Exactly the bug class that <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">enum</code> and <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">m&#97;tch</code> were specifically designed to kill.</p>
         <p class="text-slate-700 leading-relaxed my-4">Claude rewrote the example. The new version had no <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">sendNotification</code> overload at all — one function, dispatched at the match-arm:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;${
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program db=".&#47;app.db"&gt;${
 
   t&#121;pe SendOutcome:enum = {
     RateLimited,
@@ -164,17 +165,18 @@ f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; str
 
   f&#110; actorKey(a: Actor) -&gt; string {
     m&#97;tch a {
-      .User u  -&gt; u.userId
-      .Admin a -&gt; a.adminId
+      .User(userId, email, name)        :&gt; userId
+      .Admin(adminId, pagerToken, role) :&gt; adminId
     }
   }
 
   &#47;&#47; Derived view of state: how many messages has this actor sent recently?
   &#47;&#47; The body i&#115; a SQL query; the compiler routes it s&#101;rver-side automatically.
   f&#117;nction recentSendCount(target: Actor) -&gt; number {
+    c&#111;nst key = actorKey(target)
     c&#111;nst result = ?{
       SELECT COUNT(*) AS n FROM notifications_log
-      WHERE actor_id = ${actorKey(target)}
+      WHERE actor_id = ${key}
         AND created_at &gt; NOW() - INTERVAL '1 minute'
     }
     r&#101;turn result.n
@@ -185,25 +187,25 @@ f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; str
     i&#102; (recentSendCount(target) &gt;= 10) { r&#101;turn .RateLimited }
 
     m&#97;tch target {
-      .User u -&gt; {
+      .User(userId, email, name) :&gt; {
         l&#101;t emailId = ?{
           INSERT INTO email_queue (to_addr, subject, body)
-          VALUES (${u.email},
-                  "Notification f&#111;r " + u.name,
-                  "Hi " + u.name + ",\n\n" + message)
+          VALUES (${email},
+                  "Notification f&#111;r " + name,
+                  "Hi " + name + ",\n\n" + message)
           RETURNING id
         }
         r&#101;turn .Queued(emailId)
       }
-      .Admin a -&gt; {
+      .Admin(adminId, pagerToken, role) :&gt; {
         l&#101;t pagerId = ?{
           INSERT INTO pager_queue (token, payload)
-          VALUES (${a.pagerToken},
-                  "[ALERT][" + a.role + "] " + message)
+          VALUES (${pagerToken},
+                  "[ALERT][" + role + "] " + message)
           RETURNING id
         }
         ?{ INSERT INTO admin_audit (admin_id, action)
-           VALUES (${a.adminId}, 'paged') }
+           VALUES (${adminId}, 'paged') }
         r&#101;turn .Paged(pagerId)
       }
     }
@@ -214,7 +216,7 @@ f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; str
         <p class="text-slate-700 leading-relaxed my-4">Look at what disappeared. There is no <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">sendNotification</code> <em>overload</em>, because there is no need for one. There is one <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">send</code> function, written once, whose body dispatches by match-on-arm over the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">Actor</code> enum. Each arm gets the variant's payload statically typed (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">u: { userId, email, name }</code> in the User arm, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">a: { adminId, pagerToken, role }</code> in the Admin arm) — the same per-actor type-safety that the overload mechanism was trying to provide, but uniformly, in one body, with the return type a typed <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">SendOutcome</code> variant instead of a string sum-type smuggled through <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">"queued:5"</code> &#47; <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">"paged:7"</code> &#47; <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">"rate-limited"</code>.</p>
         <p class="text-slate-700 leading-relaxed my-4">No string sum-type. No <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102;</code>-ladder over a runtime tag. No two function bodies that have to stay in sync. No reaching under the hood for <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">__scrml_state_type</code>. The whole "where do I centralize the overload?" question dissolved, because the dispatch primitive <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">m&#97;tch</code> does the discrimination directly. The actor types live in one enum, the send body lives in one function, and the arms of the match handle the variant-specific work with full type-system visibility into each variant's payload.</p>
         <p class="text-slate-700 leading-relaxed my-4">That is the moment the feature died. Not because it was broken. Because the language already had its dispatch primitives (typed <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">enum</code>s with payloads, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">m&#97;tch</code> over discriminated unions, derived state for queries-as-data, and <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;e&#110;gine&gt;</code> for genuinely stateful flows) that did the same job at a higher level of expressiveness, with full type-system visibility, with no string contracts and no hand-rolled dispatch. The bridge I had insisted on building was already in the language.</p>
-        <p class="text-slate-700 leading-relaxed my-4">If you want to see those three primitives in action, that is what the <a hard href="/articles/tier-ladder-promotion" class="text-blue-700 hover:text-blue-900 underline">companion piece, *The compiler that grows up with your app*</a>, shows in detail. The <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102;=</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;m&#97;tch&gt;</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;e&#110;gine&gt;</code> ladder where state-children migrate verbatim and the wrapper is the only thing that changes. That ladder is the canonical path for case analysis on a discriminated value. Function and component overloading were a parallel path that did not earn its keep against the ladder.</p>
+        <p class="text-slate-700 leading-relaxed my-4">If you want to see those three primitives in action, that is what the <a hard href="/articles/tier-ladder-promotion" class="text-blue-700 hover:text-blue-900 underline">companion piece, <em>The compiler that grows up with your app</em></a>, shows in detail. The <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">i&#102;=</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;m&#97;tch&gt;</code> → <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;e&#110;gine&gt;</code> ladder where state-children migrate verbatim and the wrapper is the only thing that changes. That ladder is the canonical path for case analysis on a discriminated value. Function and component overloading were a parallel path that did not earn its keep against the ladder.</p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">The sliver test</h2>
 
@@ -237,7 +239,7 @@ f&#117;nction sendAdminNotification(admin: AdminFlow, message: string) -&gt; str
         <p class="text-slate-700 leading-relaxed my-4">Function overloading and component overloading reached for argument-type-discriminated method dispatch as a primitive. scrml already has argument-type discrimination: it is <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">m&#97;tch</code> over a discriminated union, or an <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">e&#110;gine</code> whose transition arms are typed. The match-on-arm syntax IS the dispatch. The dispatch was never the missing primitive. The instinct to reach for it was. And yes, the instinct is mine. I had been suspicious for a while; the drafts on screen were what moved the suspicion from quiet to acted-on. I started this language with the intent that it be JS-identical with a slight superset. For a long time I tried to keep the easy dev-conversion path open, even though I had known for some time that scrml had grown past that. This is a language. It is its own. It should stand as such. The companion piece is about the ladder that catches the instinct early. This piece is about closing the dead end of the language because the ladder already covers it.</p>
         <p class="text-slate-700 leading-relaxed my-4">Two features. Fifteen minutes. Dead. Onward.</p>
         <hr class="my-8 border-slate-200"/>
-        <p class="text-slate-700 leading-relaxed my-4"><em>Drafted with Claude. The verbatim conversation and the radical-doubt deep dive that produced this article are both preserved in the project's design archive. Companion: [The compiler that grows up with your app](&#47;articles&#47;tier-ladder-promotion).</em></p>
+        <p class="text-slate-700 leading-relaxed my-4"><em>Drafted with Claude. The verbatim conversation and the radical-doubt deep dive that produced this article are both preserved in the project's design archive. Companion: <a hard href="/articles/tier-ladder-promotion" class="text-blue-700 hover:text-blue-900 underline">The compiler that grows up with your app</a>.</em></p>
 
     </article>
 
