@@ -22,6 +22,7 @@
         </header>
         <p class="text-slate-700 leading-relaxed my-4"><em>authored by claude, rubber stamped by Bryan MacLee</em></p>
         <p class="text-slate-700 leading-relaxed my-4"><strong>TL;DR: ORMs trade raw SQL for a query DSL that approximates SQL plus a schema file that drifts from the database. When the compiler owns the SQL block and the schema is in the same AST, neither tradeoff exists.</strong></p>
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800"><strong>Correction, 2026-09-29.</strong> The code sample below did not compile as first published: a <code>&lt;schema&gt;</code> must sit inside a <code>&lt;program db=&hellip;&gt;</code>, and the sample had it above the program. It has been moved, and the sample now compiles with v0.8.0. The list of refusals was re-checked against v0.8.0: a missing database file is <code>E-PA-002</code> and a misspelled <code>tables=</code> entry is <code>E-PA-004</code>; <code>E-SQL-003</code> now fires; <code>E-SQL-002</code> still does not.</div>
         <p class="text-slate-700 leading-relaxed my-4">Every ORM I have ever looked at started by promising it would let me write code instead of SQL, and ended with me reading the generated SQL anyway because something was off.</p>
         <p class="text-slate-700 leading-relaxed my-4">I am not an experienced framework developer. I can hobble through React if I HAVE TO. But across about twenty compiler attempts, the same shape kept showing up: if the language can read the database schema at compile time, the entire reason ORMs exist quietly evaporates. The query string stops being a string. The schema stops being a separate file. The migration story stops being a separate workflow.</p>
         <p class="text-slate-700 leading-relaxed my-4">This is the third feature from the browser-language overview piece. Boundary disappearing was the second. Query layer collapsing into the compiler is the third. Same structural argument: vertical integration of a thoughtful design unlocks features that piecewise alternatives literally cannot ship.</p>
@@ -46,7 +47,9 @@
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">The same feature in scrml</h2>
 
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;schema&gt;
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program db=".&#47;app.db"&gt;
+
+&lt;schema&gt;
     users {
         id:       integer primary key
         username: text n&#111;t null unique
@@ -59,8 +62,6 @@
         body:      text n&#111;t null
     }
 &lt;&#47;&gt;
-
-&lt;program&gt;
 
 &lt;db src=".&#47;app.db" tables="users, posts"&#47;&gt;
 
@@ -102,7 +103,7 @@ ${
             <p class="font-semibold text-slate-900 mb-2">Accuracy note &mdash; corrected 2026-07-27</p>
             <p class="leading-relaxed">
                 An earlier revision of this page listed six compile-time refusals. All six were
-                probed against v0.7.1 (S287) by building each case and reading the emitted output.
+                probed against v0.7.1 by building each case and reading the emitted output.
                 <strong>Three hold exactly as described</strong> &mdash; <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-PA-007</code>,
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-SQL-004</code>, and mandatory bound
                 parameters. <strong>One had the wrong code</strong> (a bad
@@ -121,12 +122,12 @@ ${
             </p>
         </div>
 
-        <p class="text-slate-700 leading-relaxed my-4">Six refusals worth naming &mdash; four enforced today, two catalogued but not yet firing:</p>
-        <p class="text-slate-700 leading-relaxed my-4"><strong>E-PA-001 &#47; E-PA-006.</strong> <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;db src=".&#47;missing.db"&gt;</code> where the file does not exist, or the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">src=</code> attribute is missing entirely. The build fails before any query runs.</p>
-        <p class="text-slate-700 leading-relaxed my-4"><strong>E-PA-002.</strong> <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;db tables="usrs"&gt;</code> where the table is misspelled or does not exist. The build prints the actual table list. (Verified 2026-07-27. Earlier revisions of this page cited <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-PA-004</code> for this; the refusal is real, the code was wrong.)</p>
+        <p class="text-slate-700 leading-relaxed my-4">Six refusals worth naming &mdash; five enforced today, one catalogued but not yet firing:</p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>E-PA-002 &#47; E-PA-006.</strong> <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;db src=".&#47;missing.db"&gt;</code> where the file does not exist, or the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">src=</code> attribute is missing entirely. The build fails before any query runs.</p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>E-PA-004.</strong> <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;db tables="usrs"&gt;</code> where the table is misspelled or does not exist. The build names the missing table and the database it looked in. (Re-verified against v0.8.0 on 2026-09-29.)</p>
         <p class="text-slate-700 leading-relaxed my-4"><strong>E-PA-007.</strong> <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">protect="passwrd"</code> against a table whose actual protected column is <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">password_hash</code>. Compile error with a Levenshtein-ranked "did you mean <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">password_hash</code>?" quick-fix from the LSP.</p>
-        <p class="text-slate-700 leading-relaxed my-4"><strong>E-SQL-002 &mdash; NOT ENFORCED TODAY.</strong> This code is catalogued for a SQL template that is syntactically invalid, but it does not fire. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?&#123;`SELCT usrnme FRM users WHERE`&#125;</code> builds <strong>exit 0</strong> and ships to the server bundle verbatim. Verified against v0.7.1 on 2026-07-27.</p>
-        <p class="text-slate-700 leading-relaxed my-4"><strong>E-SQL-003 &mdash; NOT ENFORCED TODAY.</strong> This code is catalogued for constructing the SQL string at runtime, but it does not fire, and the failure mode is worse than a missing diagnostic: given <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">const q = "SELECT &hellip;"</code> then <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?&#123;q&#125;.all()</code>, the compiler emits the <em>identifier</em> as literal SQL &mdash; <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">_scrml_sql`q`</code>. Exit 0. The query the program runs is the one-character statement <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">q</code>. Verified 2026-07-27 and escalated to the compiler team.</p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>E-SQL-002 &mdash; NOT ENFORCED TODAY.</strong> This code is catalogued for a SQL template that is syntactically invalid, but it does not fire. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?&#123;`SELCT usrnme FRM users WHERE`&#125;</code> builds <strong>exit 0</strong> and ships to the server bundle verbatim. Verified against v0.7.1 on 2026-07-27 and again against v0.8.0 on 2026-09-29.</p>
+        <p class="text-slate-700 leading-relaxed my-4"><strong>E-SQL-003.</strong> Building the SQL string at runtime and handing it to <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?&#123;&#125;</code>: given <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">const q = "SELECT &hellip;"</code> then <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?&#123;q&#125;.all()</code>, the build fails and explains that the body of <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?&#123;&#125;</code> must be a literal template, not a variable. (Earlier compilers accepted this and emitted the identifier as literal SQL; it has been a compile error since before v0.8.0. Re-verified 2026-09-29.)</p>
         <p class="text-slate-700 leading-relaxed my-4"><strong>E-SQL-004.</strong> A <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?{}</code> block with no <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;program db="..."&gt;</code> ancestor. The compiler cannot pick a driver out of thin air; it tells you which attribute is missing.</p>
         <p class="text-slate-700 leading-relaxed my-4">That last one is the structural point: the database is not a runtime concern that happens to need a driver. It is a compile-time fact the program declares.</p>
 
@@ -165,7 +166,7 @@ ${
             <li><a href="https://dev.to/bryan_maclee/what-scrmls-lsp-can-do-that-no-other-lsp-can-and-why-giti-follows-from-the-same-principle-4899" class="text-blue-700 hover:text-blue-900 underline">What scrml's LSP can do that no other LSP can, and why giti follows from the same principle</a>. Where the column-completion and <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">did you mean?</code> quick-fix live in the toolchain.</li>
             <li><a href="https://dev.to/bryan_maclee/what-npm-package-do-you-actually-need-in-scrml-2247" class="text-blue-700 hover:text-blue-900 underline">What npm package do you actually need in scrml?</a>. Includes the "Prisma, Drizzle, Kysely, TypeORM, Sequelize: replaced by the language" line item. This piece is the long form of that line.</li>
             <li><a href="https://dev.to/bryan_maclee/null-was-a-billion-dollar-mistake-falsy-was-the-second-3o61" class="text-blue-700 hover:text-blue-900 underline">Null was a billion-dollar mistake. Falsy was the second.</a>. On <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">n&#111;t</code>, presence as a type-system question, and why scrml is removing JavaScript's truthiness rules (decided; not yet enforced by the compiler).</li>
-            <li><a href="https://dev.to/bryan_maclee/retraction-scrmls-living-compiler-4bdg" class="text-blue-700 hover:text-blue-900 underline">Retraction: scrml\'s Living Compiler</a>. An earlier article in this series, "scrml\'s Living Compiler", was retracted; this note explains why. It is not recommended reading.</li>
+            <li><a href="https://dev.to/bryan_maclee/retraction-scrmls-living-compiler-4bdg" class="text-blue-700 hover:text-blue-900 underline">Retraction: scrml's Living Compiler</a>. An earlier article in this series, "scrml's Living Compiler", was retracted; this note explains why. It is not recommended reading.</li>
             <li>Companion drafts in this batch: <a hard href="/articles/components-are-states" class="text-blue-700 hover:text-blue-900 underline">Components are states</a>, <a hard href="/articles/mutability-contracts" class="text-blue-700 hover:text-blue-900 underline">Mutability contracts</a>, <a hard href="/articles/css-without-build-step" class="text-blue-700 hover:text-blue-900 underline">CSS without a build step</a>, <a hard href="/articles/realtime-and-workers" class="text-blue-700 hover:text-blue-900 underline">Realtime and workers as syntax</a>.</li>
             <li><strong>scrml on GitHub:</strong> <a href="https://github.com/bryanmaclee/scrml" class="text-blue-700 hover:text-blue-900 underline">github.com&#47;bryanmaclee&#47;scrml</a>. The working compiler, examples, spec, benchmarks.</li>
         </ul>
