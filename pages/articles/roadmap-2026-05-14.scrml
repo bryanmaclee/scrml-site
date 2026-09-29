@@ -21,6 +21,8 @@
             </h1>
         </header>
 
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800"><strong>A period document.</strong> This roadmap was written when v0.3.0 shipped (2026-05-14) and is kept as written. The current release is v0.8.0 (2026-09-26); for what has actually shipped since, see the <a href="https://github.com/bryanmaclee/scrml/blob/main/docs/changelog.md" class="text-blue-700 hover:text-blue-900 underline">changelog</a>.</div>
+
         <h1 class="text-3xl font-bold tracking-tight text-slate-900 mt-10 mb-4">scrml — where the compiler is going from v0.3</h1>
 
         <p class="text-slate-700 leading-relaxed my-4">scrml v0.3.0 just shipped. This document is a forward-looking sketch — what the compiler is investing in next, and why. <strong>No timelines.</strong> scrml is a one-person language; estimates are inherently soft. What's stable is the <em>direction</em>. The order is what matters.</p>
@@ -118,7 +120,7 @@
         <p class="text-slate-700 leading-relaxed my-4"><strong>Naming intermediates is a real cost.</strong> The design intent here is load-bearing: the time cost of choosing a good name for a value you're going to use exactly once in the next line is a tax the language shouldn't impose. The cleanliness of <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">fetchUser(id); validate(~); save(~)</code> over <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">l&#101;t u = fetchUser(id); l&#101;t v = validate(u); save(v)</code> is the point — same shape of motivation that makes ternary expressions feel clean.</p>
         <p class="text-slate-700 leading-relaxed my-4"><strong>Adoption path: v0.4 body-split is the natural discovery moment.</strong> The v0.4 anchor introduces failable batches + <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">!{}</code> handler propagation across CPS-split function bodies — exactly the pipeline shape where <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">~</code> shines. Post-v0.4 the canonical failable-pipeline example reads:</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>fetchUser(id) !{ | ::NotFound -&gt; { r&#101;turn } }
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>fetchUser(id) !{ | ::NotFound -&gt; { r&#101;turn } }
 validateUser(~) !{ | ::Invalid -&gt; { r&#101;turn } }
 saveToDB(~)    !{ | ::DBError -&gt; { r&#101;turn } }</code></pre>
 
