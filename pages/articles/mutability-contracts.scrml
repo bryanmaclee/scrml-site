@@ -32,6 +32,17 @@
             <strong>TL;DR: in mainstream stacks, "who can write to this value" is folklore. In scrml it's a compile error. Five different layers of write-authority are tracked statically: derived cells refuse direct writes, server-authority cells reject client writes, schema columns gate on <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">protect=</code>, channel state is auto-shared by structural placement, and one-shot linear values are consumed exactly once. None of this requires a runtime convention.</strong>
         </p>
 
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800">
+            <strong>Correction, 2026-09-29.</strong> Checked against the v0.8.0 compiler, three of the five layers hold and two do not.
+            Layer 1 holds: writing a derived cell is <code>E-DERIVED-WRITE</code> and mutating it in place is <code>E-DERIVED-VALUE-MUTATE</code>.
+            Layer 5 holds: a <code>lin</code> value used twice is <code>E-LIN-002</code>, and one never used is <code>E-LIN-001</code>.
+            Layer 4 (channel cells shared by placement) compiles as described.
+            Layer 2 does not hold today: a client handler writing a <code>&lt;x server&gt;</code> cell compiles, and the write lands on the client's copy; there is no diagnostic for it.
+            Layer 3 is narrower than stated: <code>protect=</code> keeps the listed columns out of client code, and a misspelled column is <code>E-PA-007</code> (the message lists the real columns), but an <code>UPDATE</code> of a protected column inside <code>?&#123;&#125;</code> is <em>not</em> a compile error.
+            Separately, a value predicate in a cell's type (<code>&lt;amount&gt;: number(&gt;0 &amp;&amp; &lt;10000) = 5</code>) is checked on the initial value (<code>E-CONTRACT-001</code>) but not on later writes &mdash; a known gap.
+            The code samples below were updated to compile (or to fail with the error they describe) on v0.8.0.
+        </div>
+
         <p class="text-slate-700 leading-relaxed my-4">
             Every codebase I've worked in had the same conversation at least once: someone wrote to a value they shouldn't have written to, the bug surfaced three pull requests later, and the fix was a comment. Sometimes a comment plus a lint rule. Sometimes a comment plus a lint rule plus a runtime assertion. The value itself was still writable. The "you can't write to this" lived in social convention.
         </p>
@@ -56,11 +67,16 @@
             A derived cell is a binding whose value is a function of other reactive bindings. The compiler tracks the deps, recomputes on dep change, caches the result.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;count&gt; = 0
+        <pre data-sample="error" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
+&lt;count&gt; = 0
 const &lt;doubled&gt; = @count * 2
 
-// later, in a handler:
-@doubled = 42         // compile error: E-DERIVED-WRITE (§6.6.8)</code></pre>
+function bump() &#123;
+    @doubled = 42     // compile error: E-DERIVED-WRITE (§6.6.8)
+&#125;
+
+&lt;button onclick=bump()&gt;go&lt;/button&gt;
+&lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed my-4">
             That's not a lint. It's not a deprecation warning. It's a compile error. The grammar accepts the write site syntactically; the resolver knows
@@ -76,10 +92,16 @@ const &lt;doubled&gt; = @count * 2
             on it doesn't compile.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;items&gt; = [1, 2, 3]
+        <pre data-sample="error" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
+&lt;items&gt; = [1, 2, 3]
 const &lt;doubled&gt; = @items.map(x =&gt; x * 2)
 
-@doubled.push(8)      // also a compile error</code></pre>
+function bump() &#123;
+    @doubled.push(8)  // also a compile error: E-DERIVED-VALUE-MUTATE
+&#125;
+
+&lt;button onclick=bump()&gt;go&lt;/button&gt;
+&lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed my-4">
             The honest reason for the second rule: even if the JS engine would technically let the push happen, the next dep-fire would recompute
@@ -107,11 +129,12 @@ const &lt;doubled&gt; = @items.map(x =&gt; x * 2)
             modifier promotes a cell to server-only authority. Client code reading it is fine. Client code writing it is a compile error.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;currentUser server&gt; = not        // server holds authority
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;currentUser server&gt; = not        // server holds authority
 
 // in a client handler:
-@currentUser = newUser              // compile error: client cannot
-                                    // write a server-authority cell</code></pre>
+@currentUser = newUser              // as of v0.8.0 this compiles: the write
+                                    // lands on the client copy (see the
+                                    // correction note at the top)</code></pre>
 
         <p class="text-slate-700 leading-relaxed my-4">
             This is the same idea as the derived rule, applied across the network boundary. The compiler knows which functions land on the server (because it placed them there) and which fragments land in the client bundle (because it placed those too). A write site to a server-authority cell from inside a client-bundle fragment is structurally impossible.
@@ -142,7 +165,9 @@ const &lt;doubled&gt; = @items.map(x =&gt; x * 2)
             takes a column list and restricts those columns to declared write paths.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;schema&gt;
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program db="./app.db"&gt;
+
+&lt;schema&gt;
   users &#123;
     id:            integer primary key
     username:      text n&#111;t null
@@ -151,7 +176,9 @@ const &lt;doubled&gt; = @items.map(x =&gt; x * 2)
   &#125;
 &lt;/&gt;
 
-&lt;db src="./app.db" protect="passwordHash, isAdmin"/&gt;</code></pre>
+&lt;db src="./app.db" tables="users" protect="passwordHash, isAdmin"/&gt;
+
+&lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed my-4">
             With those columns in
@@ -239,10 +266,19 @@ const &lt;doubled&gt; = @items.map(x =&gt; x * 2)
             keyword (SPEC §35) marks a value as linear &mdash; consumed exactly once. The compiler tracks consumption through control flow, function calls, closures, and async boundaries. A linear value used twice is a compile error. A linear value never used is also a compile error.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>lin &lt;token&gt; = mintAccessToken(@user)
+        <pre data-sample="error" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
+$&#123;
+    function mintAccessToken(user) &#123; return "token-for-" + user &#125;
+    function useToken(t) &#123; return t &#125;
 
-useToken(@token)
-useToken(@token)        // compile error: lin value used twice</code></pre>
+    function checkout() &#123;
+        lin token = mintAccessToken("ada")
+        useToken(token)
+        useToken(token)     // compile error: E-LIN-002, lin value used twice
+    &#125;
+&#125;
+&lt;button onclick=checkout()&gt;pay&lt;/button&gt;
+&lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed my-4">
             This is the layer most languages don't ship. It's what makes "you opened a file, you have to close it exactly once" a type-system contract rather than a runtime convention. The
