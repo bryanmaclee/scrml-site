@@ -43,7 +43,7 @@
                 layer. The server boundary disappears.
             </p>
             <div class="flex gap-4 mt-4 text-xs">
-                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#§8"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §8 (normative)
                 </a>

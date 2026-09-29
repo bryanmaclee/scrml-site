@@ -82,7 +82,7 @@
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = &#123; Idle, Loading, Done &#125;
 
-component LoadCard &#123;
+const LoadCard = &lt;div class="card"&gt;
   &lt;engine for=Phase initial=.Idle&gt;
   //^^^^^^
   //E-COMPONENT-ENGINE-SCOPE: engine inside component body.
@@ -90,7 +90,9 @@ component LoadCard &#123;
     &lt;Loading rule=.Done    /&gt;
     &lt;Done    rule=.Idle    /&gt;
   &lt;/&gt;
-&#125;</code></pre>
+&lt;/div&gt;
+
+&lt;LoadCard/&gt;</code></pre>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
             How to fix

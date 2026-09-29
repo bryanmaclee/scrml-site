@@ -47,7 +47,7 @@
                 <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
                     Compile-time
                 </span>
-                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#51"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §51.0.N (normative)
                 </a>

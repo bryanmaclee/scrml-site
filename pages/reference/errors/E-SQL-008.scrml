@@ -47,7 +47,7 @@
                 <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
                     Compile-time
                 </span>
-                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#8"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §8.6 (normative)
                 </a>
@@ -56,7 +56,7 @@
 
         <div class="rounded-lg border border-rose-300 bg-rose-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                <strong>Verified behaviour, 2026-07-26 against v0.7.1.</strong> In practice you will usually see a <em>structural</em> error instead. An unterminated <code>?&#123;</code> swallows the rest of the file, including the closing tags, so the block splitter reports <code>E-CTX-003: Unclosed 'program'</code> first and the build stops before the SQL-specific diagnostic is reached. The probe below produces <code>E-CTX-003</code>, not <code>E-SQL-008</code>. If you get an unexplained unclosed-element error, suspect an unterminated SQL block.
+                <strong>Verified behaviour, 2026-09-29 against v0.8.0.</strong> In practice you will usually see a <em>structural</em> error instead. An unterminated <code>?&#123;</code> swallows the rest of the file, including the closing tags, so the block splitter reports <code>E-CTX-003: Unclosed 'program'</code> first and the build stops before the SQL-specific diagnostic is reached. The probe below produces <code>E-CTX-003</code>, not <code>E-SQL-008</code>. If you get an unexplained unclosed-element error, suspect an unterminated SQL block.
             </p>
         </div>
 
@@ -76,7 +76,7 @@
             This is the exact source compiled against the linked compiler to establish the behaviour described above. Read the callout at the top of this page before using it &mdash; it does <strong>not</strong> produce <code>E-SQL-008</code>.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program db="./app.db" title="p"&gt;
+        <pre data-sample="error" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program db="./app.db" title="p"&gt;
     &lt;db src="./app.db" tables="users"/&gt;
     function load() &#123;
         return ?&#123; SELECT * FROM users WHERE id = $&#123;uid &#125;.all()

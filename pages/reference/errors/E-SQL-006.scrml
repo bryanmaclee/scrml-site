@@ -47,16 +47,20 @@
                 <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
                     Compile-time
                 </span>
-                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#44"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §44.3 (normative)
                 </a>
             </div>
         </header>
 
-        <div class="rounded-lg border border-rose-300 bg-rose-50 px-5 py-4 text-slate-800 mt-8">
+        <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-5 py-4 text-slate-800 mt-8">
             <p class="leading-relaxed">
-                <strong>Verified behaviour, 2026-07-26 against v0.7.1.</strong> This code does <em>not</em> reliably surface as a compile-time error. The compile-time diagnostic is raised only from the SQL-rewrite path that matches the backtick form <code>?&#123;`…`&#125;.prepare()</code>; on the bare form the build <strong>exits 0</strong> and the compiler instead emits a runtime <code>throw</code> carrying this message into the generated JavaScript. In the probe below the build succeeded and the error text was found in the emitted bundle. Treat <code>.prepare()</code> as a runtime failure you must catch by running the code, not by compiling it. Reported upstream.
+                <strong>Fires at compile time (verified 2026-09-29 against v0.8.0).</strong>
+                An earlier version of this page said the bare form built with exit 0 and
+                failed only at runtime. That was true of v0.7.1; the compiler now rejects
+                <code>.prepare()</code> at compile time, and the reproducer below fails the
+                build with <code>E-SQL-006</code>.
             </p>
         </div>
 
@@ -73,7 +77,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-4">
-            This is the exact source compiled against the linked compiler to establish the behaviour described above. Read the callout at the top of this page before using it &mdash; it does <strong>not</strong> produce <code>E-SQL-006</code>.
+            This is the exact source compiled against the compiler and verified to produce <code>E-SQL-006</code>.
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program db="./app.db" title="p"&gt;

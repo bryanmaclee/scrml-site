@@ -87,7 +87,9 @@
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = &#123; Idle, Loading, Done &#125;
 
-&lt;match for=Phase&gt;
+&lt;phase&gt;: Phase = .Idle
+
+&lt;match for=Phase on=@phase&gt;
   &lt;Idle    rule=.Loading /&gt;
   //       ^^^^^^^^^^^^^^^
   //       W-MATCH-RULE-INERT: rule= legal but does nothing in match.

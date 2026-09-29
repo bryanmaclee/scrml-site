@@ -134,7 +134,7 @@
             Exhaustive (clean promotion)
         </h3>
 
-        <pre class="bg-slate-900 text-slate-100 p-3 rounded-md text-xs overflow-x-auto"><code>I-MATCH-PROMOTABLE at app.scrml:42 &mdash; this if-else exhaustively covers Phase
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-3 rounded-md text-xs overflow-x-auto"><code>I-MATCH-PROMOTABLE at app.scrml:42 &mdash; this if-else exhaustively covers Phase
 (.Idle, .Loading, .Error, .Success). Run `bun scrml promote --match
 app.scrml:42` to convert.</code></pre>
 
@@ -142,7 +142,7 @@ app.scrml:42` to convert.</code></pre>
             Near-miss (concrete actionable)
         </h3>
 
-        <pre class="bg-slate-900 text-slate-100 p-3 rounded-md text-xs overflow-x-auto"><code>I-MATCH-PROMOTABLE at app.scrml:42 &mdash; this if-else covers Phase partially
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-3 rounded-md text-xs overflow-x-auto"><code>I-MATCH-PROMOTABLE at app.scrml:42 &mdash; this if-else covers Phase partially
 (.Idle, .Loading, .Error). Missing .Success. Add the missing arm, then
 run `bun scrml promote --match app.scrml:42` to convert. Once promoted,
 the compiler will catch any future variant-add at the &lt;match&gt; site
@@ -164,19 +164,27 @@ automatically.</code></pre>
             Minimal reproducer
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = { Idle, Loading, Error(msg: string), Success(count: int) }
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = &#123; Idle, Loading, Done &#125;
 
-&lt;phase&gt; = .Idle
+&lt;phase&gt;: Phase = .Idle
 
-function load() { /* ... */ }
+function load() &#123; @phase = .Loading &#125;
 
 // I-MATCH-PROMOTABLE fires here &mdash; exhaustive shape.
-${
-    if (@phase == .Idle) { lift &lt;button onclick=load()&gt;Load&lt;/button&gt; }
-    else if (@phase == .Loading) { lift &lt;p&gt;Loading...&lt;/p&gt; }
-    else if (@phase == .Error msg) { lift &lt;p class="text-rose-700"&gt;${msg}&lt;/p&gt; }
-    else if (@phase == .Success count) { lift &lt;p&gt;Got ${count} rows&lt;/p&gt; }
-}</code></pre>
+$&#123;
+    if (@phase == .Idle) &#123; lift &lt;button onclick=load()&gt;Load&lt;/button&gt; &#125;
+    else if (@phase == .Loading) &#123; lift &lt;p&gt;Loading...&lt;/p&gt; &#125;
+    else if (@phase == .Done) &#123; lift &lt;p&gt;Done&lt;/p&gt; &#125;
+&#125;</code></pre>
+
+        <p class="text-slate-700 leading-relaxed mt-3">
+            Run it with <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml compile</code>
+            to see the lint. As of v0.8.0 a chain that binds a payload
+            (<code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@phase == .Error msg</code>)
+            does not compile &mdash; the compiler reports
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-CODEGEN-INVALID-LOGIC</code>,
+            a known compiler defect &mdash; so the reproducer uses unit variants.
+        </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
             How to use

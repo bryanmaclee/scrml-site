@@ -70,22 +70,30 @@
             </div>
         </header>
 
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800">
-            <p class="font-semibold text-slate-900 mb-2">
-                Per-code reference page queued for the Day-30 build-out.
-            </p>
-            <p class="leading-relaxed">
-                The full template (what it means &middot; minimal reproducer &middot;
-                how to fix &middot; related &middot; specification) is being
-                rolled out across every error code the compiler can emit.
-                Until this page lands, the catalogue row in
-                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
-                   class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §34
-                </a>
-                is authoritative.
-            </p>
-        </div>
+        <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
+            What to do instead
+        </h2>
+
+        <p class="text-slate-700 leading-relaxed">
+            Mark a pure function with <code>fn</code>. The compiler checks the body
+            and reports a specific <code>E-FN-*</code> code for each kind of impurity
+            &mdash; for example, a write to a reactive cell:
+        </p>
+
+        <pre data-sample="error" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
+  &lt;x&gt; = 0
+  fn bump() &#123; @x = 1 &#125;      // E-FN-003: fn body writes to @x
+  &lt;button onclick=bump()&gt;bump&lt;/button&gt;
+&lt;/program&gt;</code></pre>
+
+        <p class="text-slate-700 leading-relaxed mt-3">
+            <code>pure function</code> still compiles, with the warning
+            <code>W-PURE-DEPRECATED</code>. The full list of <code>E-FN-*</code>
+            codes is in the catalogue at
+            <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
+               class="text-blue-700 hover:text-blue-900 underline">SPEC §34</a>
+            (&sect;33.6 for the rules).
+        </p>
 
         <p class="mt-10 text-sm">
             <a hard href="/reference" class="text-blue-700 hover:text-blue-900 underline">

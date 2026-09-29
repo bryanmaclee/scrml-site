@@ -98,14 +98,14 @@
             On a state cell declaration:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;firstName: string req&gt; = ""
-&lt;quantity: number req&gt; = 0</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;firstName req&gt;: string = ""
+&lt;quantity req&gt;: number  = 0</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3 mb-3">
             On a function parameter:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>function greet(name: string req) &#123; ... &#125;</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>function greet(name: string req) &#123; return "Hello, " + name &#125;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3 mb-3">
             On a struct field:
@@ -121,13 +121,15 @@
             On a schema column:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;schema&gt;
-  users &#123;
-    id:    integer req
-    email: string req
-    bio:   string is some
-  &#125;
-&lt;/schema&gt;</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program db="./app.db"&gt;
+  &lt;schema&gt;
+    users &#123;
+      id:    integer primary key
+      email: text req
+      bio:   text is some
+    &#125;
+  &lt;/schema&gt;
+&lt;/program&gt;</code></pre>
 
         // ───────────────────────────────────────────────────────────
         // §3 — Worked example
@@ -147,8 +149,8 @@
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
 
-  &lt;email: string req&gt;    = ""
-  &lt;password: string req&gt; = ""
+  &lt;email req&gt;: string    = ""
+  &lt;password req&gt;: string = ""
 
   &lt;form&gt;
     &lt;input type="email"    bind:value=@email    placeholder="Email"&gt;

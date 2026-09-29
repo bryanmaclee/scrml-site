@@ -169,7 +169,7 @@
             <li>
                 <strong>Add the variant to the rule= set</strong> if the
                 transition is legitimate. The compiler accepts:
-                <pre class="bg-slate-900 text-slate-100 p-3 rounded-md text-xs mt-2 overflow-x-auto"><code>&lt;Idle rule=(.Loading | .Done)&gt;
+                <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-3 rounded-md text-xs mt-2 overflow-x-auto"><code>&lt;Idle rule=(.Loading | .Done)&gt;
   &lt;button onclick=${@phase = .Done}&gt;Skip&lt;/button&gt;
 &lt;/&gt;</code></pre>
             </li>

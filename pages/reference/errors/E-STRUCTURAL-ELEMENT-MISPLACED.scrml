@@ -136,18 +136,24 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed mb-3">
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onTransition&gt;</code>
-            at file scope, outside any engine:
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onIdle&gt;</code>
+            inside ordinary markup, outside any engine:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;onTransition from=.A to=.B&gt;
-  ${ log("transitioned") }
-&lt;/onTransition&gt;</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = &#123; Idle, Done &#125;
+
+&lt;div&gt;
+  &lt;onIdle after=5m to=.Idle/&gt;
+&lt;/div&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             E-STRUCTURAL-ELEMENT-MISPLACED fires at the opener &mdash;
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onTransition&gt;</code>
-            outside <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;engine&gt;</code>.
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onIdle&gt;</code>
+            belongs at the root of an <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;engine&gt;</code>.
+            (A misplaced <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;onTransition from=.A to=.B&gt;</code>
+            currently reports
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-ATTR-001</code>
+            on its variant attributes first, as of v0.8.0.)
         </p>
 
         <p class="text-slate-700 leading-relaxed mt-4 mb-3">

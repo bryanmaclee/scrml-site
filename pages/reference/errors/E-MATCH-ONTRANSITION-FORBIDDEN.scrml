@@ -75,18 +75,21 @@
             Minimal reproducer
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = { Idle, Loading, Done }
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>type Phase:enum = &#123; Idle, Loading, Done &#125;
 
-&lt;match for=Phase&gt;
+&lt;phase&gt;: Phase = .Idle
+function track(name) &#123; console.log(name) &#125;
+
+&lt;match for=Phase on=@phase&gt;
   &lt;Idle&gt;&lt;/&gt;
   &lt;Loading&gt;&lt;/&gt;
-  &lt;Done&gt;&lt;/&gt;
-
-  &lt;onTransition to=.Done&gt;
-    // ^^^^^^^^^^^^^^^^^^^^^^
-    // E-MATCH-ONTRANSITION-FORBIDDEN: transition handlers are engine-only.
-    ${ analytics.track("done") }
-  &lt;/onTransition&gt;
+  &lt;Done&gt;
+    &lt;onTransition to=.Done&gt;
+      // ^^^^^^^^^^^^^^^^^^^^^^
+      // E-MATCH-ONTRANSITION-FORBIDDEN: transition handlers are engine-only.
+      ${ track("done") }
+    &lt;/onTransition&gt;
+  &lt;/&gt;
 &lt;/match&gt;</code></pre>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
@@ -107,13 +110,13 @@
             on the original site when transition-shape intent is detected.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase initial=.Idle&gt;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase initial=.Idle&gt;
   &lt;Idle    rule=.Loading /&gt;
   &lt;Loading rule=.Done    /&gt;
   &lt;Done    rule=.Idle    /&gt;
 
   &lt;onTransition to=.Done&gt;
-    ${ analytics.track("done") }
+    ${ track("done") }
   &lt;/onTransition&gt;
 &lt;/engine&gt;</code></pre>
 

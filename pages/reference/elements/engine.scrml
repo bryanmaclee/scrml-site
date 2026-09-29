@@ -53,7 +53,7 @@
                 for "UI as a fully-handled state machine."
             </p>
             <div class="flex gap-4 mt-4 text-xs">
-                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#§51"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
                     SPEC §51.0 (normative)
                 </a>

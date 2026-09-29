@@ -109,13 +109,13 @@
             Statement form:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>lift &lt;li value=name&gt;;</code></pre>
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>lift &lt;li value=name&gt;;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3 mb-3">
             Chain form (per &sect;10.3) &mdash; equivalent:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>users.select(userName).get().lift(&lt;li value=userName&gt;)</code></pre>
+        <pre data-sample="syntax" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>users.select(userName).get().lift(&lt;li value=userName&gt;)</code></pre>
 
         // ───────────────────────────────────────────────────────────
         // §3 — Worked example — accumulation mode
@@ -136,7 +136,7 @@
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;contacts&gt; = [
   &#123; name: "Alice",   email: "alice@example.com"   &#125;,
   &#123; name: "Bob",     email: "bob@example.com"     &#125;,
-&#125;
+]
 
 &lt;ul&gt;
   ${ for (let c of @contacts) { lift &lt;li&gt;${c.name} &mdash; ${c.email}&lt;/li&gt; } }
@@ -173,19 +173,27 @@
             designating that arm's result:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>const &lt;message&gt; = ${
-  if (@count == 0)        &#123; lift "no items"    &#125;
-  else if (@count == 1)   &#123; lift "one item"    &#125;
-  else                    &#123; lift "${@count} items" &#125;
-}</code></pre>
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;count&gt; = 0
+
+fn describe(n) &#123;
+  const message = if (n == 0)      &#123; lift "no items" &#125;
+                  else if (n == 1) &#123; lift "one item" &#125;
+                  else             &#123; lift n + " items" &#125;
+  return message
+&#125;
+
+&lt;p&gt;$&#123;describe(@count)&#125;&lt;/p&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3">
             Notice: the lifted value is NOT accumulated into an array
-            here. The if-as-expression's surrounding
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">${ }</code>
-            is a value-lift context (per &sect;10.2 row 4), not an
-            accumulation context. The lifted scalar becomes the
-            const binding's value.
+            here. The if-as-expression is a value-lift context (per
+            &sect;10.2 row 4), not an accumulation context. The lifted
+            scalar becomes the const binding's value. (Writing the same
+            if-expression directly as a derived cell's initializer,
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">const &lt;message&gt; = $&#123; if &hellip; &#125;</code>,
+            does not compile in v0.8.0 &mdash; the compiler reports
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-CODEGEN-INVALID-LOGIC</code>,
+            a known compiler defect. Use a function, as above.)
         </p>
 
         // ───────────────────────────────────────────────────────────
@@ -208,13 +216,13 @@
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-6">Markup</td>
                     <td class="py-2 pr-6 font-mono">markup[]</td>
-                    <td class="py-2">Rendered as a markup sequence; non-coercible items are E-TYPE-010.</td>
+                    <td class="py-2">Rendered as a markup sequence; non-coercible items are E-TYPE-010 <em>(reserved &mdash; not enforced by the compiler yet)</em>.</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-6">Style
                         <code class="font-mono text-xs">#{ }</code></td>
                     <td class="py-2 pr-6 font-mono">cssClass[]</td>
-                    <td class="py-2">Coerced to CSS class list; non-CSS items are E-TYPE-011.</td>
+                    <td class="py-2">Coerced to CSS class list; non-CSS items are E-TYPE-011 <em>(reserved &mdash; not enforced by the compiler yet)</em>.</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <td class="py-2 pr-6">Logic</td>
@@ -279,7 +287,7 @@
                 outside any
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">${ }</code>
                 context is
-                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-SYNTAX-001</code>.
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-SYNTAX-001</code> <em>(reserved &mdash; not enforced by the compiler yet)</em>; in practice <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">lift</code> outside logic is just text.
             </li>
             <li>
                 Multiple lifts on the same execution path through one
@@ -289,7 +297,7 @@
             <li>
                 Heterogeneous lifted values that aren't mutually
                 coercible is
-                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-TYPE-012</code>.
+                <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-TYPE-012</code> <em>(reserved &mdash; not enforced by the compiler yet)</em>.
             </li>
         </ul>
 

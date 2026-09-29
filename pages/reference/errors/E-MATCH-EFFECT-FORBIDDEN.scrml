@@ -103,7 +103,7 @@
             become legal:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase initial=.Idle&gt;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase initial=.Idle&gt;
   &lt;Idle    rule=.Loading /&gt;
   &lt;Loading rule=.Done effect=${ analytics.track("load") } /&gt;
   &lt;Done    rule=.Idle    /&gt;

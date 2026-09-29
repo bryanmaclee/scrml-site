@@ -50,6 +50,21 @@
             </div>
         </header>
 
+        <div class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-4 text-slate-800 mb-6">
+            <p class="leading-relaxed">
+                <strong>Not in the compiler yet (as of v0.8.0):</strong>
+                <code class="font-mono text-sm">is some</code> as a
+                <em>validator on a cell declaration</em>
+                (<code class="font-mono text-sm">&lt;bio is some&gt; = ""</code>)
+                is specified but the current compiler does not declare a
+                cell written that way &mdash; reading it fails with
+                <code class="font-mono text-sm">E-STATE-UNDECLARED</code>.
+                The examples below that use it are marked. On a schema
+                column (<code class="font-mono text-sm">bio: text is some</code>)
+                it compiles today.
+            </p>
+        </div>
+
         // ───────────────────────────────────────────────────────────
         // §1 — Summary
         // ───────────────────────────────────────────────────────────
@@ -95,8 +110,8 @@
             On a state cell:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;middleName: string is some&gt; = ""
-&lt;nickname:   string is some&gt; = ""</code></pre>
+        <pre data-sample="spec" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;middleName is some&gt;: string = ""
+&lt;nickname is some&gt;: string   = ""</code></pre>
 
         <p class="text-slate-700 leading-relaxed mt-3 mb-3">
             On a struct field:
@@ -139,10 +154,10 @@
             rather than leaving the column unvalidated.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
+        <pre data-sample="spec" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
 
-  &lt;displayName: string req&gt;     = "Alice"
-  &lt;bio:         string is some&gt; = ""
+  &lt;displayName req&gt;: string = "Alice"
+  &lt;bio is some&gt;: string     = ""
 
   &lt;form&gt;
     &lt;label&gt;

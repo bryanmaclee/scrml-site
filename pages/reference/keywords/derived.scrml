@@ -115,10 +115,12 @@
             form is the SOLE declaration syntax for derived
             reactive values (&sect;6.6.1). The
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@derived</code>
-            keyword form is explicitly NOT recognised &mdash;
-            attempting it fires
-            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-REACTIVE-001</code>
-            with a hint suggesting
+            keyword form is NOT recognised &mdash; the compiler reads
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">@derived</code>
+            as a read of an undeclared cell named <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">derived</code>
+            and reports
+            <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">E-STATE-UNDECLARED</code>.
+            Write
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">const &lt;name&gt; = expr</code>.
             (The
             <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">derived=expr</code>
@@ -128,7 +130,7 @@
             below.)
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>// Numeric derived
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>// Numeric derived
 const &lt;doubled&gt; = @count * 2
 
 // Markup-typed derived (§6.6.17)
@@ -141,7 +143,7 @@ const &lt;greeting&gt; = "Hello, " + @user.name</code></pre>
             Derived engines (Tier 2 form):
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase derived=computePhase(@a, @b)&gt;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase derived=computePhase(@a, @b)&gt;
   &lt;Idle/&gt;
   &lt;Loading/&gt;
   &lt;Ready/&gt;

@@ -38,7 +38,8 @@
                 E-MULTI-STATEMENT-HANDLER
             </h1>
             <p class="text-lg text-slate-600 mt-2">
-                A bare-form event handler contains more than one statement.
+                An <em>unbraced</em> event handler contains a
+                <code>;</code>-separated sequence of statements.
             </p>
             <div class="flex flex-wrap gap-3 mt-4 text-xs">
                 <span class="px-2 py-1 bg-rose-50 text-rose-700 rounded font-semibold">
@@ -47,9 +48,9 @@
                 <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded">
                     Compile-time
                 </span>
-                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md#4"
+                <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC-INDEX.md"
                    class="text-blue-700 hover:text-blue-900 underline">
-                    SPEC §4.14 (normative)
+                    SPEC §5.2.3 (normative)
                 </a>
             </div>
         </header>
@@ -59,7 +60,16 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            A bare-form event-handler attribute must be exactly one expression — a call (<code>onclick=save()</code>), an assignment (<code>onclick=@phase = .Loading</code>), or a single expression (<code>onclick=@count++</code>). Semicolon-separated statements in an attribute are rejected, because attribute position is not a statement context and the resulting code has no clear sequencing or scoping story. The same rule governs the <code>:</code>-shorthand body of an engine state-child.
+            A handler that does several things is fine &mdash; write it as an
+            <strong>inline block</strong> in braces:
+            <code>onclick=&#123; @count++; @flag = true &#125;</code>. That form is legal and
+            canonical (as of v0.8.0). What stays an error is the same sequence written
+            <em>without</em> braces: a bare (unbraced) handler value must be exactly one
+            expression &mdash; a call (<code>onclick=save()</code>), an assignment
+            (<code>onclick=@phase = .Loading</code>), or a single expression
+            (<code>onclick=@count++</code>). A <code>;</code> in a bare value is
+            <code>E-MULTI-STATEMENT-HANDLER</code>. The <code>:</code>-shorthand body of an
+            engine state-child is still single-expression too.
         </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
@@ -77,14 +87,32 @@
     &lt;p&gt;$&#123;@count&#125;&lt;/p&gt;
 &lt;/&gt;</code></pre>
 
+        <p class="text-slate-700 leading-relaxed mt-4 mb-3">
+            The same handler with braces compiles:
+        </p>
+
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program title="p"&gt;
+    &lt;count&gt; = 0
+    &lt;flag&gt; = false
+    &lt;button onclick=&#123; @count++; @flag = true &#125;&gt;go&lt;/button&gt;
+    &lt;p&gt;$&#123;@count&#125; $&#123;@flag&#125;&lt;/p&gt;
+&lt;/&gt;</code></pre>
+
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">
             How to fix
         </h2>
 
         <ol class="space-y-3 text-slate-700 list-decimal list-outside ml-6">
             <li>
-                <strong>Lift the body into a named function.</strong>
-                Declare <code>function handleClick() &#123; … &#125;</code> and write <code>onclick=handleClick()</code>. This is the canonical fix and keeps the handler testable.
+                <strong>Wrap the statements in braces.</strong>
+                <code>&lt;button onclick=&#123; @count++; @flag = true &#125;&gt;go&lt;/button&gt;</code>
+                &mdash; the statements run in order, each once, every time the event fires.
+                This is the canonical fix.
+            </li>
+            <li>
+                <strong>Or name a function</strong> when the logic is reused or reads
+                better with a name: <code>function handleClick() &#123; … &#125;</code> and
+                <code>onclick=handleClick()</code>. Both forms are a free choice.
             </li>
             <li>
                 <strong>For a state-child, switch to bare-body form.</strong>
@@ -110,7 +138,7 @@
         </h2>
 
         <p class="text-slate-700 leading-relaxed">
-            Normative text: <strong>§4.14, §5.2.3, §17.7.6, §34</strong>. Spec lives at
+            Normative text: <strong>§5.2.3, §4.14, §17.7.6, §34</strong>. Spec lives at
             <a href="https://github.com/bryanmaclee/scrml/blob/main/compiler/SPEC.md"
                class="text-blue-700 hover:text-blue-900 underline">
                 compiler/SPEC.md

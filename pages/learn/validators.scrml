@@ -325,7 +325,7 @@
         </p>
 
         <pre data-sample="spec" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>function report(e: ValidationError) &#123;
-  match e &#123;
+  &#109;atch e &#123;
     .Required        :&gt; logEvent("email-blank")
     .PatternMismatch :&gt; logEvent("email-malformed")
     .LengthFailed    :&gt; logEvent("email-too-short")

@@ -129,7 +129,7 @@
             cleared on exit.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;Active rule=.Idle&gt;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;Active rule=.Idle&gt;
   &lt;onTimeout after=5m to=.Idle/&gt;
   // Per-state timer — armed when entering .Active, cleared on exit.
 &lt;/&gt;</code></pre>
@@ -146,7 +146,7 @@
             to engine root:
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase initial=.Active&gt;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase initial=.Active&gt;
   &lt;Active rule=.Idle&gt;
     &lt;button onclick=refresh()&gt;I&apos;m here&lt;/button&gt;
   &lt;/&gt;

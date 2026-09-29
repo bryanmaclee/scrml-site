@@ -131,7 +131,7 @@
             Cascade pattern (recommended)
         </h2>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase initial=.Active&gt;
+        <pre data-sample="fragment" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;engine for=Phase initial=.Active&gt;
   &lt;Active rule=(.Idle | .Away) /&gt;
   &lt;Idle rule=(.Active | .Away)&gt;
     &lt;onTimeout after=25m to=.Away/&gt;
