@@ -105,8 +105,9 @@
                 </a>
                 <span class="text-sm text-slate-500 block">
                     Who can write to this value? In mainstream stacks
-                    it's folklore. In scrml it's a compile error. Five
-                    layers of write-authority, all compile-time.
+                    it's folklore. Five layers of write-authority &mdash;
+                    and, as of v0.8.0, which of them the compiler enforces
+                    (a correction note at the top says).
                 </span>
             </li>
             <li>
@@ -170,7 +171,7 @@
                 </a>
                 <span class="text-sm text-slate-500 block">
                     The big new thing: whole-stack closure analysis. Per-(entry-point, role, tier) chunks.
-                    <code class="font-mono text-sm">&lt;auth role&gt;</code> as a compile-time visibility constraint.
+                    <code class="font-mono text-sm">&lt;auth role&gt;</code> gates, which decide what client code mounts per role (not content secrecy).
                 </span>
             </li>
             <li>
