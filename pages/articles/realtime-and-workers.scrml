@@ -34,6 +34,10 @@
             <strong>TL;DR: the realtime/queue/worker plumbing that every mainstream stack treats as a vendor decision (socket.io vs. Pusher vs. Liveblocks; BullMQ vs. Inngest vs. Trigger.dev; web worker boilerplate vs. Comlink) is one language primitive in scrml. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;channel&gt;</code> for shared reactive state. Nested <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;program&gt;</code> for separate execution contexts (web worker, sidecar process, WASM module, server endpoint). Both compile to plain runtime calls; neither pulls in a library.</strong>
         </p>
 
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800">
+            <strong>Correction, 2026-09-29.</strong> Part 1 (<code>&lt;channel&gt;</code> inside <code>&lt;program&gt;</code>) matches the v0.8.0 compiler; the cursor example now declares the <code>@user</code> cell it reads and compiles. Part 2 describes nested <code>&lt;program&gt;</code> execution contexts as specified (SPEC &sect;43), <strong>not</strong> as shipped: the v0.8.0 compiler accepts a nested <code>&lt;program name=&hellip;&gt;</code> and emits a <code>new Worker("&hellip;.worker.js")</code> call, but does not emit the worker file, and the scope-isolation error <code>E-PROG-003</code> does not fire. The two worker examples are marked as specified, not shipped. Also, a client write to a server-authoritative cell is not currently rejected at compile time (see the correction on <a hard href="/articles/mutability-contracts" class="text-blue-700 hover:text-blue-900 underline">mutability contracts</a>).
+        </div>
+
         <p class="text-slate-700 leading-relaxed my-4">
             Pick any production-ready stack and trace the path from "I want multiple users to see the same value update in real time" to "I have a working feature." The shape is consistent: choose a vendor, learn its SDK, wire its client into your reactive system, write the server-side handler in its DSL, decide on the consistency model, learn its reconnection semantics, debug the case where the WebSocket and your local state disagree.
         </p>
@@ -64,6 +68,8 @@
         </p>
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program&gt;
+
+  &lt;user&gt; = &#123; id: "me" &#125;   // this client's identity (from your auth in a real app)
 
   &lt;channel name="cursors"&gt;
     &lt;positions&gt; = []      // synced across all connected clients
@@ -118,7 +124,7 @@
             <li>
                 <strong>Reconnect semantics.</strong> A
                 <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;program channel-reconnect=&gt;</code>
-                attribute sets the project-level default (S81 amendment). Per-channel override at the channel block.
+                attribute sets the project-level default. Per-channel override at the channel block.
             </li>
             <li>
                 <strong>Server-authoritative writes.</strong> A channel cell that the server treats as authoritative rejects client-side writes the same way the
@@ -190,7 +196,7 @@
             One structural primitive; four runtime targets. The developer doesn't choose between four worker libraries; they pick the attribute that matches the placement they want.
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
+        <pre data-sample="spec" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto"><code>&lt;program&gt;
 
   &lt;program name="compute"&gt;
     ${ f&#117;nction fibonacci(n: number) -&gt; number {
@@ -266,7 +272,7 @@
             grammar (§46):
         </p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program name="ingest" restart="always" max-restarts="5" within="60"&gt;
+        <pre data-sample="spec" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program name="ingest" restart="always" max-restarts="5" within="60"&gt;
   ${ // long-running ingest loop ... }
 &lt;/&gt;
 
