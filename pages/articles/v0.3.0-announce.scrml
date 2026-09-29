@@ -23,16 +23,21 @@
 
         <h1 class="text-3xl font-bold tracking-tight text-slate-900 mt-10 mb-4">scrml v0.3.0 — Approach A complete: per-route, per-role, content-addressed</h1>
 
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800"><strong>A period record (May 2026), with one correction (2026-09-29).</strong> This announcement describes v0.3.0; the current release is v0.8.0. Its first claim overstates what <code>&lt;auth role&gt;</code> does. <code>&lt;auth&gt;</code> decides which client code mounts for which role; it is not content secrecy. The gated HTML is still sent to every viewer &mdash; the compiler warns about exactly this with <a hard href="/reference/errors/W-AUTH-CONTENT-NOT-GATED" class="text-blue-700 hover:text-blue-900 underline">W-AUTH-CONTENT-NOT-GATED</a> &mdash; so anything secret belongs on the server. Per-role JavaScript chunks are opt-in through <code>scrml compile --emit-per-route</code>; <code>scrml build</code> does not take that flag. The example below now declares the <code>Role</code> enum and the <code>clearCache</code> function it uses, so it compiles as shown.</div>
+
         <p class="text-slate-700 leading-relaxed my-4">scrml v0.3.0 is shipped. The big new thing — call it <strong>Approach A</strong> — is whole-stack closure analysis: at compile time, the compiler computes exactly which component code, server functions, and stdlib units are reachable from each entry point and from each role. Two consequences fall out, and they're the reasons v0.3.0 took the shape it did:</p>
         <p class="text-slate-700 leading-relaxed my-4">1. <strong>Auth gates aren't runtime checks.</strong> A <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;auth role="Admin"&gt;</code> block surrounding markup is a compile-time visibility constraint. Anonymous visitors download a strictly smaller initial bundle than admins because the gated subtree's atoms aren't in their per-role chunk. They can't even see the admin code, let alone fetch it.</p>
         <p class="text-slate-700 leading-relaxed my-4">2. <strong>Per-route per-role chunks ship in tiers.</strong> The compiler emits one chunk per <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">(entry-point, role, tier)</code> tuple. Tier 1 (idle-prefetch) fires on <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">requestIdleCallback</code>. Tier 2 (hover-prefetch) fires on hover via <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">data-scrml-prefetch</code> markup that the compiler weaves in based on internal <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;a href&gt;</code> links it can resolve. Tier N (on-demand) pulls when navigation actually fires. Every chunk filename embeds an FNV-1a content hash — adopter caches stay valid across builds when source bytes don't change.</p>
-        <p class="text-slate-700 leading-relaxed my-4">This is the v0.3.0 critical-path investment, and it absorbed S88 → S92 of development. The scrml repo, MIT-licensed, is at <a href="https://github.com/bryanmaclee/scrml" class="text-blue-700 hover:text-blue-900 underline">github.com&#47;bryanmaclee&#47;scrml</a> — <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun install</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun link</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml init</code> your first app.</p>
+        <p class="text-slate-700 leading-relaxed my-4">This is the v0.3.0 critical-path investment. The scrml repo, MIT-licensed, is at <a href="https://github.com/bryanmaclee/scrml" class="text-blue-700 hover:text-blue-900 underline">github.com&#47;bryanmaclee&#47;scrml</a> — <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun install</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">bun link</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">scrml init</code> your first app.</p>
         <hr class="my-8 border-slate-200"/>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;auth role&gt;</code> as a first-class element</h2>
 
 
         <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program auth="required"&gt;
+
+type Role:enum = &#123; Anonymous, Admin &#125;
+f&#117;nction clearCache() &#123; &#125;
 
 &lt;page&gt;
   &lt;h1&gt;Dashboard&lt;&#47;h1&gt;
@@ -62,7 +67,7 @@
         </ul>
         <p class="text-slate-700 leading-relaxed my-4">The manifest is at <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">chunks.json</code>. Adopter tooling can read it; the <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">compiler</code> field carries <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">"scrml-0.3.0"</code> (sourced from <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">package.json</code> automatically — drift between hard-coded constant and pkg.json was the kind of thing v0.3.0 also fixed).</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>{
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>{
   "version": 1,
   "compiler": "scrml-0.3.0",
   "entryPoints": {
