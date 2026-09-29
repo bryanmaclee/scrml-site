@@ -22,7 +22,8 @@
         </header>
         <p class="text-slate-700 leading-relaxed my-4"><em>authored by claude, rubber stamped by Bryan MacLee</em></p>
         <p class="text-slate-700 leading-relaxed my-4"><strong>TL;DR: <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;input&gt;</code> is already a state. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;Card&gt;</code> should be too. One concept replaces useState, hooks rules, dependency arrays, Zustand, Pinia, Redux, context, and most prop drilling.</strong></p>
-        <p class="text-slate-700 leading-relaxed my-4">&gt; <strong>Status:</strong> the conceptual frame (state-as-type, primitive <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;x&gt; = 0</code> reactive cells, compound state with structural-children, validators on cells, server-side authority via <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;schema&gt;</code> + <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">protect=</code> + <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;db&gt;</code> + <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;channel&gt;</code>) ships in the current compiler. The single scrml example below is a 2026-04 design preview of the user-defined <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;Card authority="s&#101;rver" table="cards"&gt;</code> "state object" surface — that exact declaration shape may use older draft attribute names. The point of the example is structural (one declaration covers shape + sync + boundary); for up-to-date code see the kickstarter at <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">docs&#47;articles&#47;llm-kickstarter-v2-2026-05-04.md</code> (compound-state, channel, and engine recipes). <strong>Correction (2026-06):</strong> an earlier version said the compiler <em>generates</em> the optimistic-update and rollback path for <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">authority="s&#101;rver"</code>. That auto-persist route was retracted (§52.6.2, 2026-06-14) and never shipped. The compiler generates the read path (initial load, SSR pre-render, the boundary check) and lands assignments locally for an instant response; the persist write is your explicit <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?{}</code> server function. The body below reflects the current model.</p>
+        <p class="text-slate-700 leading-relaxed my-4">&gt; <strong>Status:</strong> the conceptual frame (state-as-type, primitive <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;x&gt; = 0</code> reactive cells, compound state with structural-children, validators on cells, server-side authority via <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;schema&gt;</code> + <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">protect=</code> + <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;db&gt;</code> + <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;channel&gt;</code>) ships in the current compiler. The single scrml example below is a 2026-04 design preview of the user-defined <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;Card authority="s&#101;rver" table="cards"&gt;</code> "state object" surface — that exact declaration shape may use older draft attribute names. The point of the example is structural (one declaration covers shape + sync + boundary); for up-to-date code see the <a hard href="/reference" class="text-blue-700 hover:text-blue-900 underline">reference</a>. <strong>Correction (2026-06):</strong> an earlier version said the compiler <em>generates</em> the optimistic-update and rollback path for <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">authority="s&#101;rver"</code>. That auto-persist route was retracted (§52.6.2, 2026-06-14) and never shipped. The compiler generates the read path (initial load, SSR pre-render, the boundary check) and lands assignments locally for an instant response; the persist write is your explicit <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?{}</code> server function. The body below reflects the current model.</p>
+        <div class="my-4 p-4 rounded-md border border-amber-200 bg-amber-50 text-sm text-slate-800"><strong>Correction, 2026-09-29.</strong> The scrml example below has been replaced with a version that compiles with the v0.8.0 compiler: the state types are declared inside <code>$&#123; &#125;</code> in a <code>&lt;program db=&hellip;&gt;</code>, the list uses a keyed <code>&lt;each&gt;</code>, and the <code>CardRow</code> child component the text mentions is not shown. Three statements in the text are not true of the compiler today: inline predicates (&sect;53) are checked on a cell's initial value, <em>not</em> on later assignments (a known gap); a predicate on a server function's parameter is not checked at the server boundary; and a file-scope counter is written <code>&lt;count&gt; = 0</code> (<code>@count = 0</code> is the form inside <code>$&#123; &#125;</code>). The "Lifecycles" layer is spelled <code>(not to number)</code> &mdash; <code>null</code> does not exist in scrml &mdash; and <code>&lt;machine&gt;</code> has been replaced by <code>&lt;engine&gt;</code>.</div>
         <p class="text-slate-700 leading-relaxed my-4">Every framework I have looked at picks one of <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">useState</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">ref</code>, <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">createSignal</code>, or <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">signal</code>, and then bolts on a stack of secondary mechanisms to plug the gaps that one primitive cannot fill on its own. Hooks rules. Dependency arrays. A store library. A context API. Prop drilling for everything in between. I have hobbled through React when I had to. I have written enough TypeScript to be annoyed by it. I have spent eighteen months and about twenty compiler attempts circling one question: what would happen if state were a type, and a component were a state?</p>
         <p class="text-slate-700 leading-relaxed my-4">It turns out the same thing happens that happened with the server boundary. A whole shelf of libraries falls off the shelf.</p>
         <p class="text-slate-700 leading-relaxed my-4">This is the third of six features the browser-language overview piece promised to unpack. State.</p>
@@ -31,7 +32,7 @@
 
         <p class="text-slate-700 leading-relaxed my-4">A real React app, scoped to one screen. Card list, edit dialog, optimistic updates, server sync. The state surface looks roughly like this.</p>
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&#47;&#47; useCards.ts
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&#47;&#47; useCards.ts
 i&#109;port &#123; create &#125; from "zustand";
 
 interface Card &#123; id: string; title: string; column: "todo" | "doing" | "done"; &#125;
@@ -67,7 +68,7 @@ e&#120;port c&#111;nst useCardsStore = create&lt;CardsStore&gt;((set) =&gt; (&#1
 &#125;));</code></pre>
 
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&#47;&#47; CardList.tsx
+        <pre data-sample="other" class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&#47;&#47; CardList.tsx
 e&#120;port f&#117;nction CardList() &#123;
   c&#111;nst cards = useCardsStore((s) =&gt; s.cards);
   c&#111;nst isLoading = useCardsStore((s) =&gt; s.isLoading);
@@ -107,29 +108,37 @@ e&#120;port f&#117;nction CardList() &#123;
         <h2 class="text-2xl font-semibold text-slate-900 mt-10 mb-4">The same screen in scrml</h2>
 
 
-        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt; Card authority="s&#101;rver" table="cards"&gt;
-    id: number
-    title: string
-    column: Column
-&lt;&#47;&gt;
+        <pre class="bg-slate-900 text-slate-100 p-4 rounded-md text-sm overflow-x-auto my-4"><code>&lt;program db="./app.db"&gt;
 
-&lt; EditState&gt;
-    editingId: number | n&#111;t
-    draftTitle: string
-&lt;&#47;&gt;
+$&#123;
+    type Column:enum = &#123; Todo, Doing, Done &#125;
 
-&lt;Card&gt; @cards
-&lt;EditState&gt; @ui
+    function renameCard(id: number, title: string(.length &gt; 0 &amp;&amp; .length &lt; 200)) &#123;
+        ?&#123;`UPDATE cards SET title = $&#123;title&#125; WHERE id = $&#123;id&#125;`&#125;.run()
+    &#125;
+
+    &lt;Card authority="server" table="cards"&gt;
+        id: number
+        title: string
+        column: Column
+    &lt;/&gt;
+
+    &lt;EditState&gt;
+        editingId: number | not
+        draftTitle: string
+    &lt;/&gt;
+
+    &lt;Card&gt; @cards
+    &lt;EditState&gt; @ui
+&#125;
 
 &lt;ul&gt;
-    ${@cards.map(c =&gt; l&#105;ft &lt;CardRow card=c
-                                   isEditing=${@ui.editingId == c.id}
-                                   bind:draftTitle=@ui.draftTitle&#47;&gt;)}
-&lt;&#47;ul&gt;
+    &lt;each in=@cards key=@.id as c&gt;
+        &lt;li&gt;$&#123;c.title&#125;&lt;/li&gt;
+    &lt;/each&gt;
+&lt;/ul&gt;
 
-s&#101;rver f&#110; renameCard(id: number, title: string(.length &gt; 0 &amp;&amp; .length &lt; 200)) {
-    ?{`UPDATE cards SET title = ${title} WHERE id = ${id}`}.run()
-}</code></pre>
+&lt;/program&gt;</code></pre>
 
         <p class="text-slate-700 leading-relaxed my-4">That is the screen. Both halves.</p>
         <p class="text-slate-700 leading-relaxed my-4"><code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">&lt;Card&gt;</code> is a state type. The fields are typed. <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">authority="s&#101;rver"</code> and <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">table="cards"</code> say where the source of truth lives. The compiler reads the SQLite schema at compile time, generates the initial-load query, pre-renders the list in SSR, and enforces the client/server boundary (§52). The write itself stays one <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">?{}</code> server function you author, because that is the line where the real decisions live. The <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">Card</code> interface in TypeScript and the schema on disk cannot drift, because there is one declaration.</p>
@@ -185,8 +194,8 @@ s&#101;rver f&#110; renameCard(id: number, title: string(.length &gt; 0 &amp;&am
             <li><a href="https://dev.to/bryan_maclee/what-npm-package-do-you-actually-need-in-scrml-2247" class="text-blue-700 hover:text-blue-900 underline">What npm package do you actually need in scrml?</a>. The package-list-collapses argument, with the state-management category enumerated.</li>
             <li><a href="https://dev.to/bryan_maclee/what-scrmls-lsp-can-do-that-no-other-lsp-can-and-why-giti-follows-from-the-same-principle-4899" class="text-blue-700 hover:text-blue-900 underline">What scrml's LSP can do that no other LSP can, and why giti follows from the same principle</a>. What vertical integration unlocks for tooling and version control.</li>
             <li><a href="https://dev.to/bryan_maclee/introducing-scrml-a-single-file-full-stack-reactive-web-language-9dp" class="text-blue-700 hover:text-blue-900 underline">Introducing scrml: a single-file, full-stack reactive web language</a>. The starting-point overview if you haven't seen scrml before.</li>
-            <li><a href="https://dev.to/bryan_maclee/null-was-a-billion-dollar-mistake-falsy-was-the-second-3o61" class="text-blue-700 hover:text-blue-900 underline">Null was a billion-dollar mistake. Falsy was the second.</a>. On <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">n&#111;t</code>, presence as a type-system question, and why scrml refuses to inherit JavaScript's truthiness rules.</li>
-            <li><a href="https://dev.to/bryan_maclee/scrmls-living-compiler-23f9" class="text-blue-700 hover:text-blue-900 underline">scrml's Living Compiler</a>. The transformation-registry framing for the compile-time vs. runtime split that makes state-as-type cheap.</li>
+            <li><a href="https://dev.to/bryan_maclee/null-was-a-billion-dollar-mistake-falsy-was-the-second-3o61" class="text-blue-700 hover:text-blue-900 underline">Null was a billion-dollar mistake. Falsy was the second.</a>. On <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">n&#111;t</code>, presence as a type-system question, and why scrml is removing JavaScript's truthiness rules (decided; not yet enforced by the compiler).</li>
+            <li><a href="https://dev.to/bryan_maclee/retraction-scrmls-living-compiler-4bdg" class="text-blue-700 hover:text-blue-900 underline">Retraction: scrml\'s Living Compiler</a>. An earlier article in this series, "scrml\'s Living Compiler", was retracted; this note explains why. It is not recommended reading.</li>
             <li><a hard href="/articles/orm-trap" class="text-blue-700 hover:text-blue-900 underline">The ORM trap, and why scrml does not need one</a>. Companion piece: SQL as a primitive, not a thing you import.</li>
             <li><a hard href="/articles/mutability-contracts" class="text-blue-700 hover:text-blue-900 underline">Mutability contracts: predicates, lifecycles, machines</a>. The three layers of write-time guarantee the value layer of this piece is one third of.</li>
             <li><a hard href="/articles/css-without-build-step" class="text-blue-700 hover:text-blue-900 underline">CSS without a build step</a>. Native scope, native variables, no styled-components.</li>
