@@ -91,13 +91,18 @@
 
         /* dark variant for prose without per-page edits */
         .prose                        { color: rgb(203 213 225); }
+        /* !important: these rules compile into `@layer global`, and layered
+           rules lose to the unlayered typography rules in each page's CSS
+           (`.prose-slate :where(strong) { color: #0f172a }`), which left bold
+           text and inline code slate-900 on the dark page (2026-09-29). An
+           !important rule in a layer beats an unlayered normal one. */
         .prose h1, .prose h2, .prose h3, .prose h4, .prose strong {
-            color: rgb(241 245 249);
+            color: rgb(241 245 249) !important;
         }
         .prose a                      { color: rgb(125 211 252); }
         .prose a:hover                { color: rgb(186 230 253); }
         .prose code {
-            color: rgb(241 245 249);
+            color: rgb(241 245 249) !important;
             background-color: rgb(30 41 59);
             padding: 0.125rem 0.375rem;
             border-radius: 0.25rem;
